@@ -1,0 +1,400 @@
+<template>
+    <v-navigation-drawer
+        fixed
+        v-model="drawerRight"
+        right
+        clipped
+        mobile-break-point="0"
+        app>
+        <v-list v-if="!selectedSector">
+            <v-container
+                text-xs-center
+                grid-list-xs
+                style="padding: 16px;">
+                <v-layout>
+                    <v-flex>
+                        Select a sector on the map to start mapping or select a random sector by state.
+                    </v-flex>
+                </v-layout>
+            </v-container>
+            <v-list-tile v-for="(state, index) in states" :key="index">
+                <v-list-tile-content>
+                    <v-list-tile-title><span :style="{ color: state.color }">■</span> {{ state.title }}</v-list-tile-title>
+                </v-list-tile-content>
+                <v-list-tile-action>
+                    <v-btn icon @click.stop="selectRandomSector(state._id)">
+                        <v-icon>forward</v-icon>
+                    </v-btn>
+                </v-list-tile-action>
+            </v-list-tile>
+            <v-divider v-if="allEvents.length > 0"></v-divider>
+            <v-container
+                grid-list-xs
+                style="padding: 16px 16px 0 16px;">
+                <v-layout>
+                    <v-flex>
+                        <span class="font-weight-bold">Recent events</span>
+                    </v-flex>
+                </v-layout>
+            </v-container>
+            <v-container grid-list-md text-xs-center style="padding: 16px;">
+                <v-layout row v-for="(event, index) in allEvents" :key="index">
+                    <v-flex xs12>
+                        <div class="text-xs-left" @click.stop="selectSectorById(event.sector)" style="cursor: pointer;">{{ event.description }}</div>
+                        <div class="text-xs-right grey--text text--lighten-1 caption">{{ event.osmUserName }}
+                            <a
+                                :href="'https://www.openstreetmap.org/user/' + event.osmUserName"
+                                target="_blank"
+                                style="text-decoration: none;">
+                                <v-icon small style="font-size: 10px; vertical-align: initial;">launch</v-icon>
+                            </a> - <span :title="new Date(event.time)">{{ calculateDateOutput(new Date(event.time)) }}</span>
+                        </div>
+                    </v-flex>
+                </v-layout>
+            </v-container>
+        </v-list>
+        <v-list v-else>
+            <v-list-tile>
+                <v-list-tile-content>
+                    <v-list-tile-title>Sector id</v-list-tile-title>
+                </v-list-tile-content>
+                <v-list-tile-action>
+                    <v-list-tile-title class="text-xs-right">{{ selectedSector.properties._id }}</v-list-tile-title>
+                </v-list-tile-action>
+            </v-list-tile>
+            <v-list-tile>
+                <v-list-tile-content>
+                    <v-list-tile-title>State</v-list-tile-title>
+                </v-list-tile-content>
+                <v-list-tile-action>
+                    <v-list-tile-title class="text-xs-right">{{ selectedSector.properties.state.title }}</v-list-tile-title>
+                </v-list-tile-action>
+            </v-list-tile>
+            <v-container
+                text-xs-center
+                grid-list-xs
+                style="padding: 0 16px;"
+                v-if="!userLoggedIn">
+                <v-layout>
+                    <v-flex>
+                        <span class="orange--text">Please log in to map or edit this sector.</span>
+                    </v-flex>
+                </v-layout>
+            </v-container>
+            <v-container
+                text-xs-center
+                grid-list-xs
+                style="padding: 0 16px;"
+                v-if="selectedSector.properties.state.title === 'Open' && userLoggedIn">
+                <v-layout>
+                    <v-flex>
+                        <span class="orange--text">Please change the state to "Being edited" to map this sector.</span>
+                    </v-flex>
+                </v-layout>
+            </v-container>
+            <v-container
+                text-xs-center
+                grid-list-xs
+                style="padding: 0 16px;"
+                v-if="selectedSector.properties.state.title === 'Review needed' && userLoggedIn">
+                <v-layout>
+                    <v-flex>
+                        <span class="orange--text">Please change the state to "Being reviewed" to review or back to "Being edited" to edit this sector.</span>
+                    </v-flex>
+                </v-layout>
+            </v-container>
+            <v-container
+                text-xs-center
+                grid-list-xs
+                style="padding: 0 16px;"
+                v-if="selectedSector.properties.state.title === 'Completed' && userLoggedIn">
+                <v-layout>
+                    <v-flex>
+                        <span class="orange--text">Please change the state back to "Being edited" or "Being reviewed" to edit or review this sector.</span>
+                    </v-flex>
+                </v-layout>
+            </v-container>
+            <v-container grid-list-xs style="padding: 16px;">
+                <v-layout>
+                    <v-flex xs4>
+                        <v-btn
+                            color="info"
+                            @click.stop="updateSectorDialog = true"
+                            class="no-margin-button"
+                            :disabled="!userLoggedIn">
+                            Edit
+                        </v-btn>
+                    </v-flex>
+                    <v-flex xs4>
+                        <v-menu offset-y v-model="mappingMenuOpen">
+                            <template v-slot:activator="{ on }">
+                                <v-btn
+                                    color="success"
+                                    v-on="on"
+                                    class="no-margin-button"
+                                    :disabled="!userLoggedIn || selectedSector.properties.state.title === 'Open' || selectedSector.properties.state.title === 'Review needed' || selectedSector.properties.state.title === 'Completed'"
+                                    >Map</v-btn>
+                            </template>
+                            <v-list>
+                                <v-list-tile :href="idUrl" target="_blank">
+                                    <v-list-tile-title>iD</v-list-tile-title>
+                                </v-list-tile>
+                                <v-list-tile @click.stop="mapSectorInJOSM(); mappingMenuOpen = false;">
+                                        <v-list-tile-title>JOSM</v-list-tile-title>
+                                </v-list-tile>
+                            </v-list>
+                        </v-menu>
+                    </v-flex>
+                    <v-flex xs12>
+                        <v-dialog v-model="updateSectorDialog" width="500">
+                            <v-card>
+                                <v-card-text>
+                                    <v-form ref="updateSectorForm" v-model="valid">
+                                        <v-select
+                                            v-model="newState"
+                                            :items="states"
+                                            item-text="title"
+                                            item-value="_id"
+                                            :rules="[v => !!v || 'State is required']"
+                                            label="State"
+                                            required>
+                                            <template slot="item" slot-scope="data">
+                                                <v-list-tile-content>
+                                                    <v-list-tile-title><span :style="{ color: data.item.color, 'vertical-align': 'text-bottom' }">■</span> {{ data.item.title }}</v-list-tile-title>
+                                                </v-list-tile-content>
+                                            </template>
+                                        </v-select>
+                                        <v-textarea
+                                            v-model="newComment"
+                                            :counter="500"
+                                            :rules="[v => v.length <= 500 || 'Comment must be less than 500 characters']"
+                                            label="Comment"
+                                        ></v-textarea>
+                                    </v-form>
+                                </v-card-text>
+                                <v-divider></v-divider>
+                                <v-card-actions>
+                                    <v-btn v-if="adminLoggedIn" outline @click.stop="splitSector()" :disabled="!userLoggedIn">Split</v-btn>
+                                    <v-btn v-if="adminLoggedIn" outline @click.stop="deleteSector()" :disabled="!userLoggedIn">Delete</v-btn>
+                                    <v-spacer></v-spacer>
+                                    <v-btn color="primary" @click.stop="updateSector()" :disabled="!userLoggedIn">Save</v-btn>
+                                    <v-btn outline @click.stop="cancelDialog()" :disabled="!userLoggedIn">Cancel</v-btn>
+                                </v-card-actions>
+                            </v-card>
+                        </v-dialog>
+                    </v-flex>
+                </v-layout>
+            </v-container>
+            <v-divider v-if="events.length > 0"></v-divider>
+            <v-container grid-list-md text-xs-center style="padding: 16px;">
+                <v-layout row v-for="(event, index) in events" :key="index">
+                    <v-flex xs12>
+                        <div class="text-xs-left">{{ event.description }}</div>
+                        <div class="text-xs-right grey--text text--lighten-1 caption">{{ event.osmUserName }}
+                            <a
+                                :href="'https://www.openstreetmap.org/user/' + event.osmUserName"
+                                target="_blank"
+                                style="text-decoration: none;">
+                                <v-icon small style="font-size: 10px; vertical-align: initial;">launch</v-icon>
+                            </a> - <span :title="new Date(event.time)">{{ calculateDateOutput(new Date(event.time)) }}</span>
+                        </div>
+                    </v-flex>
+                </v-layout>
+            </v-container>
+        </v-list>
+    </v-navigation-drawer>
+</template>
+
+<script>
+import MapApiService from '@/services/MapApiService';
+import JOSMService from '@/services/JOSMService';
+import EventBus from '@/services/EventBus';
+
+export default {
+    name: 'CustomMenuRight',
+    data () {
+        return {
+            drawerRight: !this.$vuetify.breakpoint.xs,
+            selectedSector: null,
+            idUrl: '',
+            updateSectorDialog: false,
+            valid: true,
+            newComment: '',
+            newState: null,
+            states: null,
+            events: [],
+            userLoggedIn: false,
+            allEvents: [],
+            mappingMenuOpen: false
+        };
+    },
+    mounted () {
+        EventBus.$on('mnk:toggle-drawer-right', () => {
+            this.drawerRight = !this.drawerRight;
+        });
+        EventBus.$on('mnk:select-sector', this.selectSector);
+        EventBus.$on('mnk:oauth-user-details-received', () => {
+            this.userLoggedIn = true;
+        });
+        EventBus.$on('mnk:deselect-sector', () => {
+            this.selectedSector = null;
+        });
+
+        EventBus.$emit('mnk:start-loading', 'getAllStates');
+        MapApiService.getAllStates().then((res) => {
+            this.states = res.data;
+            EventBus.$emit('mnk:stop-loading', 'getAllStates');
+        });
+        EventBus.$emit('mnk:start-loading', 'getAllEvents');
+        MapApiService.getAllEvents(25).then((res) => {
+            this.allEvents = res.data;
+            EventBus.$emit('mnk:stop-loading', 'getAllEvents');
+        });
+    },
+    methods: {
+        selectSectorById: (id) => {
+            EventBus.$emit('mnk:go-to-sector', id);
+        },
+        selectSector: function (selectedSect) {
+            this.selectedSector = selectedSect;
+            this.newState = this.selectedSector.properties.state._id;
+
+            var coords = this.selectedSector.geometry.coordinates[0];
+            this.idUrl = 'https://www.openstreetmap.org/edit?editor=id' +
+                '&#map=13/' + (coords[1][1] + coords[2][1]) / 2 + '/' + (coords[0][0] + coords[1][0]) / 2 +
+                '&comment=MappingNorthKorea.com%20sector%20' + this.selectedSector.properties._id +
+                '&gpx=https://mappingnorthkorea.com/api/sector/generate/' + this.selectedSector.properties._id + '.gpx';
+
+            EventBus.$emit('mnk:start-loading', 'getEventsBySectorId');
+            MapApiService.getEventsBySectorId(this.selectedSector.properties._id).then((res) => {
+                if (res.data.length > 0) {
+                    this.events = res.data.sort(function (a, b) { return new Date(b.time.date) - new Date(a.time.date); }).reverse();
+                }
+                EventBus.$emit('mnk:stop-loading', 'getEventsBySectorId');
+            });
+        },
+        selectRandomSector: (id) => {
+            EventBus.$emit('mnk:select-random-sector-by-state-id', id);
+        },
+        updateSector: function () {
+            var apiSector = this.geoJsonSectorToApiSector(this.selectedSector);
+
+            EventBus.$emit('mnk:start-loading', 'updateSector');
+            MapApiService.updateSector({
+                sector: apiSector,
+                comment: this.newComment,
+                state: this.states.filter(state => state._id === this.newState)[0]
+            }).then((res) => {
+                for (var event of res.data.events) {
+                    this.events.unshift(event);
+                    this.allEvents.unshift(event);
+                }
+
+                this.selectedSector = this.sectorToGeoJson(res.data.sector);
+                this.updateSectorDialog = false;
+                this.newComment = '';
+                this.newState = this.selectedSector.properties.state._id;
+
+                EventBus.$emit('mnk:message-success', 'Sector updated');
+                EventBus.$emit('mnk:update-sector', this.selectedSector);
+                EventBus.$emit('mnk:stop-loading', 'updateSector');
+            }).catch(() => {
+                EventBus.$emit('mnk:message-error', 'Something went wrong');
+                EventBus.$emit('mnk:stop-loading', 'updateSector');
+            });
+        },
+        mapSectorInJOSM () {
+            var loadAndZoomParams = {
+                left: this.selectedSector.geometry.coordinates[0][0][0],
+                bottom: this.selectedSector.geometry.coordinates[0][2][1],
+                right: this.selectedSector.geometry.coordinates[0][1][0],
+                top: this.selectedSector.geometry.coordinates[0][0][1],
+                changeset_comment: encodeURIComponent('MappingNorthKorea.com sector ' + this.selectedSector.properties._id)
+            };
+
+            EventBus.$emit('mnk:start-loading', 'sendJOSMCommand');
+            JOSMService.sendJOSMCommand('https://127.0.0.1:8112/load_and_zoom', loadAndZoomParams).catch(() => {
+                EventBus.$emit('mnk:message-error', 'Failed to load data into JOSM. Is JOSM running and is Remote Contol (by HTTPS) enabled?');
+                EventBus.$emit('mnk:stop-loading', 'sendJOSMCommand');
+            });
+            JOSMService.sendJOSMCommand('https://127.0.0.1:8112/imagery', {
+                type: 'bing',
+                url: 'https://www.bing.com/maps/'
+            });
+        },
+        cancelDialog: function () {
+            this.updateSectorDialog = false;
+            this.newComment = '';
+            this.newState = this.selectedSector.properties.state._id;
+        },
+        geoJsonSectorToApiSector: (sect) => {
+            return {
+                _id: sect.properties._id,
+                sectorSet: sect.properties.sectorSet,
+                state: sect.properties.state,
+                coordinates: sect.geometry.coordinates
+            };
+        },
+        calculateDateOutput: (time) => {
+            const today = new Date();
+            var yesterday = new Date();
+            yesterday.setDate(yesterday.getDate() - 1);
+
+            if (time.getDate() === today.getDate() &&
+                time.getMonth() === today.getMonth() &&
+                time.getFullYear() === today.getFullYear()) {
+                return 'today';
+            } else if (time.getDate() === yesterday.getDate() &&
+                time.getMonth() === yesterday.getMonth() &&
+                time.getFullYear() === yesterday.getFullYear()) {
+                return 'yesterday';
+            } else {
+                return time.toLocaleString('nl-NL', { year: 'numeric', month: 'long', day: 'numeric' });
+            }
+        },
+        sectorToGeoJson: function (sector) {
+            return {
+                type: 'Feature',
+                properties: {
+                    _id: sector._id,
+                    state: sector.state,
+                    sectorSet: sector.sectorSet
+                },
+                geometry: {
+                    type: 'Polygon',
+                    coordinates: sector.coordinates
+                }
+            };
+        },
+        deleteSector: function () {
+            EventBus.$emit('mnk:start-loading', 'deleteSectorById');
+            MapApiService.deleteSectorById(this.selectedSector.properties._id).then(function (res) {
+                EventBus.$emit('mnk:stop-loading', 'deleteSectorById');
+                location.reload();
+            });
+        },
+        splitSector: function () {
+            EventBus.$emit('mnk:start-loading', 'splitSectorById');
+            MapApiService.splitSectorById(this.selectedSector.properties._id).then(function (res) {
+                EventBus.$emit('mnk:stop-loading', 'splitSectorById');
+                location.reload();
+            });
+        }
+    },
+    computed: {
+        adminLoggedIn: function () {
+            if (this.userLoggedIn) {
+                return document.getElementById('logged-in-user-name').innerText === 'DevModeUser' || document.getElementById('logged-in-user-name').innerText === 'Artemis64';
+            } else {
+                return false;
+            }
+        }
+    }
+};
+</script>
+
+<style scope>
+.no-margin-button {
+    margin: 0;
+}
+</style>
