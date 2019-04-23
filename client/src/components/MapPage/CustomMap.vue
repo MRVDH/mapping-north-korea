@@ -6,6 +6,11 @@
 import MapApiService from '@/services/MapApiService';
 import EventBus from '@/services/EventBus';
 
+const defaultStyle = {
+    weight: 1,
+    opacity: 0.6
+};
+
 export default {
     name: 'CustomMap',
     data () {
@@ -95,8 +100,9 @@ export default {
                     style: (feature) => {
                         return {
                             color: feature.properties.state.color,
-                            weight: 1,
-                            opacity: 0.8
+                            fillColor: feature.properties.state.color,
+                            weight: defaultStyle.weight,
+                            opacity: defaultStyle.opacity
                         };
                     }
                 }).on('click', this.clickSector).on('dblclick', function (event) {
@@ -113,14 +119,28 @@ export default {
         clickSector: function (event) {
             if (this.selectedSector && this.selectedSector.feature.properties._id === event.layer.feature.properties._id) {
                 EventBus.$emit('mnk:deselect-sector');
-                event.layer.setStyle({ color: this.selectedSector.feature.properties.state.color });
+                event.layer.setStyle({
+                    color: this.selectedSector.feature.properties.state.color,
+                    weight: defaultStyle.weight,
+                    opacity: defaultStyle.opacity
+                });
                 this.selectedSector = null;
             } else {
                 EventBus.$emit('mnk:select-sector', event.layer.toGeoJSON());
-                event.layer.setStyle({ color: '#FFFF00' });
+                event.layer.bringToFront();
+                event.layer.setStyle({
+                    color: '#FFFF00',
+                    opacity: 1,
+                    weight: 2,
+                    fillColor: event.layer.options.fillColor
+                });
 
                 if (this.selectedSector) {
-                    this.selectedSector.setStyle({ color: this.selectedSector.feature.properties.state.color });
+                    this.selectedSector.setStyle({
+                        color: this.selectedSector.feature.properties.state.color,
+                        weight: defaultStyle.weight,
+                        opacity: defaultStyle.opacity
+                    });
                 }
                 this.selectedSector = event.layer;
             }
@@ -132,7 +152,11 @@ export default {
                 EventBus.$emit('mnk:deselect-sector');
                 for (var layerIndex in this.geoJsonLayer._layers) {
                     if (this.geoJsonLayer._layers[layerIndex].feature.properties._id === this.selectedSector.feature.properties._id) {
-                        this.geoJsonLayer._layers[layerIndex].setStyle({ color: this.selectedSector.feature.properties.state.color });
+                        this.geoJsonLayer._layers[layerIndex].setStyle({
+                            color: this.selectedSector.feature.properties.state.color,
+                            weight: defaultStyle.weight,
+                            opacity: defaultStyle.opacity
+                        });
                         break;
                     }
                 }
