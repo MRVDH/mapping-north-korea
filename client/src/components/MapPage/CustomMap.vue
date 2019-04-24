@@ -34,6 +34,9 @@ export default {
             for (var layerIndex in this.geoJsonLayer._layers) {
                 if (this.geoJsonLayer._layers[layerIndex].feature.properties._id === sector.properties._id) {
                     this.geoJsonLayer._layers[layerIndex].feature = sector;
+                    this.geoJsonLayer._layers[layerIndex].setStyle({
+                        fillColor: sector.properties.state.color
+                    });
                     break;
                 }
             }
@@ -189,10 +192,20 @@ export default {
         },
         selectSector: function (sector) {
             EventBus.$emit('mnk:select-sector', sector.toGeoJSON());
-            sector.setStyle({ color: '#FFFF00' });
+            sector.bringToFront();
+            sector.setStyle({
+                color: '#FFFF00',
+                opacity: 1,
+                weight: 2,
+                fillColor: sector.options.fillColor
+            });
 
             if (this.selectedSector) {
-                this.selectedSector.setStyle({ color: this.selectedSector.feature.properties.state.color });
+                this.selectedSector.setStyle({
+                    color: this.selectedSector.feature.properties.state.color,
+                    weight: defaultStyle.weight,
+                    opacity: defaultStyle.opacity
+                });
             }
             this.selectedSector = sector;
 
