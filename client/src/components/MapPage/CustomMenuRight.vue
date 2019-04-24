@@ -67,65 +67,80 @@
                     <v-list-tile-title>State</v-list-tile-title>
                 </v-list-tile-content>
                 <v-list-tile-action>
+                    <!-- replace with dropdown -->
                     <v-list-tile-title class="text-xs-right">{{ selectedSector.properties.state.title }}</v-list-tile-title>
+                    <v-menu offset-y v-model="stateEditOpen">
+                        <template v-slot:activator="{ on }">
+                            <v-btn
+                                outline
+                                v-on="on"
+                                class="no-margin-button"
+                                :disabled="!userLoggedIn"
+                                >{{ selectedSector.properties.state.title }}</v-btn>
+                        </template>
+                        <v-list>
+                            <v-list-tile
+                                v-for="(state, index) in states"
+                                :key="index"
+                                @click.stop="updateSector(state, null)"
+                                >
+                                <v-list-tile-title>
+                                    <span :style="{ color: state.color, 'vertical-align': 'text-bottom' }">■</span> {{ state.title }}
+                                </v-list-tile-title>
+                            </v-list-tile>
+                        </v-list>
+                    </v-menu>
                 </v-list-tile-action>
             </v-list-tile>
-            <v-container
-                text-xs-center
-                grid-list-xs
-                style="padding: 0 16px;"
-                v-if="!userLoggedIn">
-                <v-layout>
-                    <v-flex>
-                        <span class="orange--text">Please log in to map or edit this sector.</span>
-                    </v-flex>
-                </v-layout>
-            </v-container>
-            <v-container
-                text-xs-center
-                grid-list-xs
-                style="padding: 0 16px;"
-                v-if="selectedSector.properties.state.title === 'Open' && userLoggedIn">
-                <v-layout>
-                    <v-flex>
-                        <span class="orange--text">Please change the state to "Being edited" to map this sector.</span>
-                    </v-flex>
-                </v-layout>
-            </v-container>
-            <v-container
-                text-xs-center
-                grid-list-xs
-                style="padding: 0 16px;"
-                v-if="selectedSector.properties.state.title === 'Review needed' && userLoggedIn">
-                <v-layout>
-                    <v-flex>
-                        <span class="orange--text">Please change the state to "Being reviewed" to review or back to "Being edited" to edit this sector.</span>
-                    </v-flex>
-                </v-layout>
-            </v-container>
-            <v-container
-                text-xs-center
-                grid-list-xs
-                style="padding: 0 16px;"
-                v-if="selectedSector.properties.state.title === 'Completed' && userLoggedIn">
-                <v-layout>
-                    <v-flex>
-                        <span class="orange--text">Please change the state back to "Being edited" or "Being reviewed" to edit or review this sector.</span>
-                    </v-flex>
-                </v-layout>
-            </v-container>
+            <div>
+                <v-container
+                    text-xs-center
+                    grid-list-xs
+                    style="padding: 0 16px;"
+                    v-if="!userLoggedIn">
+                    <v-layout>
+                        <v-flex>
+                            <span class="orange--text">Please log in to map or edit this sector.</span>
+                        </v-flex>
+                    </v-layout>
+                </v-container>
+                <v-container
+                    text-xs-center
+                    grid-list-xs
+                    style="padding: 0 16px;"
+                    v-if="selectedSector.properties.state.title === 'Open' && userLoggedIn">
+                    <v-layout>
+                        <v-flex>
+                            <span class="orange--text">Please change the state to "Being edited" to map this sector.</span>
+                        </v-flex>
+                    </v-layout>
+                </v-container>
+                <v-container
+                    text-xs-center
+                    grid-list-xs
+                    style="padding: 0 16px;"
+                    v-if="selectedSector.properties.state.title === 'Review needed' && userLoggedIn">
+                    <v-layout>
+                        <v-flex>
+                            <span class="orange--text">Please change the state to "Being reviewed" to review or back to "Being edited" to edit this sector.</span>
+                        </v-flex>
+                    </v-layout>
+                </v-container>
+                <v-container
+                    text-xs-center
+                    grid-list-xs
+                    style="padding: 0 16px;"
+                    v-if="selectedSector.properties.state.title === 'Completed' && userLoggedIn">
+                    <v-layout>
+                        <v-flex>
+                            <span class="orange--text">Please change the state back to "Being edited" or "Being reviewed" to edit or review this sector.</span>
+                        </v-flex>
+                    </v-layout>
+                </v-container>
+            </div>
             <v-container grid-list-xs style="padding: 16px;">
                 <v-layout>
-                    <v-flex xs4>
-                        <v-btn
-                            color="info"
-                            @click.stop="updateSectorDialog = true"
-                            class="no-margin-button"
-                            :disabled="!userLoggedIn">
-                            Edit
-                        </v-btn>
-                    </v-flex>
-                    <v-flex xs4>
+                    <v-flex>
                         <v-menu offset-y v-model="mappingMenuOpen">
                             <template v-slot:activator="{ on }">
                                 <v-btn
@@ -144,48 +159,42 @@
                                 </v-list-tile>
                             </v-list>
                         </v-menu>
-                    </v-flex>
-                    <v-flex xs12>
-                        <v-dialog v-model="updateSectorDialog" width="500">
-                            <v-card>
-                                <v-card-text>
-                                    <v-form ref="updateSectorForm" v-model="valid">
-                                        <v-select
-                                            v-model="newState"
-                                            :items="states"
-                                            item-text="title"
-                                            item-value="_id"
-                                            :rules="[v => !!v || 'State is required']"
-                                            label="State"
-                                            required>
-                                            <template slot="item" slot-scope="data">
-                                                <v-list-tile-content>
-                                                    <v-list-tile-title><span :style="{ color: data.item.color, 'vertical-align': 'text-bottom' }">■</span> {{ data.item.title }}</v-list-tile-title>
-                                                </v-list-tile-content>
-                                            </template>
-                                        </v-select>
-                                        <v-textarea
-                                            v-model="newComment"
-                                            :counter="500"
-                                            :rules="[v => v.length <= 500 || 'Comment must be less than 500 characters']"
-                                            label="Comment"
-                                        ></v-textarea>
-                                    </v-form>
-                                </v-card-text>
-                                <v-divider></v-divider>
-                                <v-card-actions>
-                                    <v-btn v-if="adminLoggedIn" outline @click.stop="splitSector()" :disabled="!userLoggedIn">Split</v-btn>
-                                    <v-btn v-if="adminLoggedIn" outline @click.stop="deleteSector()" :disabled="!userLoggedIn">Delete</v-btn>
-                                    <v-spacer></v-spacer>
-                                    <v-btn color="primary" @click.stop="updateSector()" :disabled="!userLoggedIn">Save</v-btn>
-                                    <v-btn outline @click.stop="cancelDialog()" :disabled="!userLoggedIn">Cancel</v-btn>
-                                </v-card-actions>
-                            </v-card>
-                        </v-dialog>
+                        <v-btn
+                            v-if="adminLoggedIn"
+                            class="no-margin-button"
+                            color="warning"
+                            @click.stop="splitSector()"
+                            :disabled="!userLoggedIn"
+                            >Split</v-btn>
+                        <v-btn
+                            v-if="adminLoggedIn"
+                            class="no-margin-button"
+                            color="error"
+                            @click.stop="deleteSector()"
+                            :disabled="!userLoggedIn"
+                            >Delete</v-btn>
                     </v-flex>
                 </v-layout>
             </v-container>
-            <v-divider v-if="events.length > 0"></v-divider>
+            <v-divider></v-divider>
+            <v-container
+                text-xs-center
+                grid-list-xs
+                style="padding: 0 16px;"
+                v-if="userLoggedIn">
+                <v-layout row wrap>
+                    <v-flex xs12>
+                        <v-textarea
+                            v-model="newComment"
+                            append-outer-icon="send"
+                            @click:append-outer="postComment();"
+                            :counter="500"
+                            :rules="[v => v.length <= 500 || 'Comment must be less than 500 characters']"
+                            label="Comment"
+                        ></v-textarea>
+                    </v-flex>
+                </v-layout>
+            </v-container>
             <v-container grid-list-md text-xs-center style="padding: 16px;">
                 <v-layout row v-for="(event, index) in events" :key="index">
                     <v-flex xs12>
@@ -217,7 +226,6 @@ export default {
             drawerRight: !this.$vuetify.breakpoint.xs,
             selectedSector: null,
             idUrl: '',
-            updateSectorDialog: false,
             valid: true,
             newComment: '',
             newState: null,
@@ -225,7 +233,8 @@ export default {
             events: [],
             userLoggedIn: false,
             allEvents: [],
-            mappingMenuOpen: false
+            mappingMenuOpen: false,
+            stateEditOpen: false
         };
     },
     mounted () {
@@ -276,14 +285,19 @@ export default {
         selectRandomSector: (id) => {
             EventBus.$emit('mnk:select-random-sector-by-state-id', id);
         },
-        updateSector: function () {
+        postComment: function () {
+            if (this.newComment === '' || this.newComment === null || this.newComment === undefined) return;
+            this.updateSector(this.selectedSector.properties.state, this.newComment);
+        },
+        updateSector: function (state, comment) {
             var apiSector = this.geoJsonSectorToApiSector(this.selectedSector);
+            this.stateEditOpen = false;
 
             EventBus.$emit('mnk:start-loading', 'updateSector');
             MapApiService.updateSector({
                 sector: apiSector,
-                comment: this.newComment,
-                state: this.states.filter(state => state._id === this.newState)[0]
+                comment: comment || '',
+                state: state
             }).then((res) => {
                 for (var event of res.data.events) {
                     this.events.unshift(event);
@@ -291,7 +305,6 @@ export default {
                 }
 
                 this.selectedSector = this.sectorToGeoJson(res.data.sector);
-                this.updateSectorDialog = false;
                 this.newComment = '';
                 this.newState = this.selectedSector.properties.state._id;
 
@@ -396,5 +409,9 @@ export default {
 <style scope>
 .no-margin-button {
     margin: 0;
+    margin-bottom: 4px;
+}
+.v-btn--depressed .v-btn__content {
+    padding: 0 10px;
 }
 </style>
