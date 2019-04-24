@@ -380,18 +380,22 @@ export default {
             };
         },
         deleteSector: function () {
-            EventBus.$emit('mnk:start-loading', 'deleteSectorById');
-            MapApiService.deleteSectorById(this.selectedSector.properties._id).then(function (res) {
-                EventBus.$emit('mnk:stop-loading', 'deleteSectorById');
-                location.reload();
-            });
+            if (confirm('Are you sure you want to delete this sector?')) {
+                EventBus.$emit('mnk:start-loading', 'deleteSectorById');
+                MapApiService.deleteSectorById(this.selectedSector.properties._id).then(function (res) {
+                    EventBus.$emit('mnk:stop-loading', 'deleteSectorById');
+                    location.reload();
+                });
+            }
         },
         splitSector: function () {
-            EventBus.$emit('mnk:start-loading', 'splitSectorById');
-            MapApiService.splitSectorById(this.selectedSector.properties._id).then(function (res) {
-                EventBus.$emit('mnk:stop-loading', 'splitSectorById');
-                location.reload();
-            });
+            if (confirm('Are you sure you want to split this sector?')) {
+                EventBus.$emit('mnk:start-loading', 'splitSectorById');
+                MapApiService.splitSectorById(this.selectedSector.properties._id).then(function (res) {
+                    EventBus.$emit('mnk:stop-loading', 'splitSectorById');
+                    location.reload();
+                });
+            }
         }
     },
     computed: {
@@ -408,8 +412,8 @@ export default {
 
 <style scope>
 .no-margin-button {
-    margin: 0;
-    margin-bottom: 4px;
+    margin: 0 !important;
+    margin-bottom: 4px !important;
 }
 .v-btn--depressed .v-btn__content {
     padding: 0 10px;
