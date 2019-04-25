@@ -67,7 +67,6 @@
                     <v-list-tile-title>State</v-list-tile-title>
                 </v-list-tile-content>
                 <v-list-tile-action>
-                    <!-- replace with dropdown -->
                     <v-list-tile-title class="text-xs-right">{{ selectedSector.properties.state.title }}</v-list-tile-title>
                     <v-menu offset-y v-model="stateEditOpen">
                         <template v-slot:activator="{ on }">
@@ -159,6 +158,16 @@
                                 </v-list-tile>
                             </v-list>
                         </v-menu>
+                        <v-btn
+                            class="no-margin-button"
+                            color="success"
+                            target="_blank"
+                            :href="'https://www.openstreetmap.org/#map=13/' +
+                                (this.selectedSector.geometry.coordinates[0][1][1] +
+                                this.selectedSector.geometry.coordinates[0][2][1]) / 2 + '/' +
+                                (this.selectedSector.geometry.coordinates[0][0][0] +
+                                this.selectedSector.geometry.coordinates[0][1][0]) / 2"
+                            >View</v-btn>
                         <v-btn
                             v-if="adminLoggedIn"
                             class="no-margin-button"
@@ -417,5 +426,8 @@ export default {
 }
 .v-btn--depressed .v-btn__content {
     padding: 0 10px;
+}
+.v-menu {
+    display: inline-block;
 }
 </style>
