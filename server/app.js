@@ -134,15 +134,26 @@ app.post('/webhook', (req, res) => {
 
     exec("git pull", (err, stdout, stderr) => {
         if (err) {
+            log.err("git pull error:", err);
             res.sendStatus(500);
             return;
         }
-        exec("pm2 restart mnk", (err, stdout, stderr) => {
-            
+        exec("npm install", (err, stdout, stderr) => {
+            if (err) {
+                log.err("npm install error:", err);
+                res.sendStatus(500);
+                return;
+            }
+            exec("pm2 restart mnk", (err, stdout, stderr) => {
+                if (err) {
+                    log.err("pm2 restart mnk error:", err);
+                    res.sendStatus(500);
+                    return;
+                }
+                res.sendStatus(200);
+            });
         });
     });
-
-    res.sendStatus(200);
 });
 
 log.inf("App setup finish. Starting server...");
