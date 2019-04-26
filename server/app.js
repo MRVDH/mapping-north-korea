@@ -10,6 +10,7 @@ const mongoose = require("mongoose");
 const path = require("path");
 const rateLimit = require("express-rate-limit");
 const fs = require("fs");
+const exec = require("child_process");
 
 if (!fs.existsSync(".env")) {
     log.err("Error loading configuration: .env file not found. Please use the following markup:",
@@ -127,6 +128,22 @@ app.get('/api/iteration/latest', routeIteration.getLatestIteration);
 app.get('/api/sector/completed/count/:id', routeSector.getCompletedSectorCountByIterationId);
 app.get('/api/sector/split/:id', routeSector.splitSectorBySectorId);
 app.delete('/api/sector/:id', routeSector.delete);
+
+app.post('/webhook', (req, res) => {
+    log.alt("WEBHOOK INITIATED");
+
+    exec("git pull", (err, stdout, stderr) => {
+        if (err) {
+            res.sendStatus(500);
+            return;
+        }
+        exec("pm2 restart mnk", (err, stdout, stderr) => {
+            
+        });
+    });
+
+    res.sendStatus(200);
+});
 
 log.inf("App setup finish. Starting server...");
 app.listen(global.port, () => log.suc("Server running on port " + port));
