@@ -428,6 +428,6 @@ export default {
     padding: 0 10px;
 }
 .v-menu {
-    display: inline-block;
+    display: inline-block !important;
 }
 </style>
