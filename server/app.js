@@ -74,7 +74,7 @@ db.once("open", function() {
     }
 });
 app.use(function(req, res, next) {
-    var allowedOrigins = ['https://mappingnorthkorea.com', 'https://www.openstreetmap.org'];
+    var allowedOrigins = ['https://mappingnorthkorea.com', 'https://www.openstreetmap.org', 'https://www.mapwith.ai'];
     if (global.devMode) {
         allowedOrigins.push('http://127.0.0.1:8080');
         allowedOrigins.push('http://localhost:8080');
