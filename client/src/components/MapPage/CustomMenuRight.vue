@@ -153,6 +153,9 @@
                                 <v-list-tile :href="idUrl" target="_blank">
                                     <v-list-tile-title>iD</v-list-tile-title>
                                 </v-list-tile>
+                                <v-list-tile :href="rapidUrl" target="_blank">
+                                    <v-list-tile-title>RapiD</v-list-tile-title>
+                                </v-list-tile>
                                 <v-list-tile @click.stop="mapSectorInJOSM(); mappingMenuOpen = false;">
                                         <v-list-tile-title>JOSM</v-list-tile-title>
                                 </v-list-tile>
@@ -235,6 +238,7 @@ export default {
             drawerRight: !this.$vuetify.breakpoint.xs,
             selectedSector: null,
             idUrl: '',
+            rapidUrl: '',
             valid: true,
             newComment: '',
             newState: null,
@@ -282,6 +286,10 @@ export default {
                 '&#map=13/' + (coords[1][1] + coords[2][1]) / 2 + '/' + (coords[0][0] + coords[1][0]) / 2 +
                 '&comment=MappingNorthKorea.com%20sector%20' + this.selectedSector.properties._id +
                 '&gpx=https://mappingnorthkorea.com/api/sector/generate/' + this.selectedSector.properties._id + '.gpx';
+            this.rapidUrl = 'https://www.mapwith.ai/rapid?#' +
+                'gpx=https://mappingnorthkorea.com/api/sector/generate/' + this.selectedSector.properties._id + '.gpx' +
+                '&map=13/' + (coords[1][1] + coords[2][1]) / 2 + '/' + (coords[0][0] + coords[1][0]) / 2 +
+                '&comment=MappingNorthKorea.com%20sector%20' + this.selectedSector.properties._id;
 
             EventBus.$emit('mnk:start-loading', 'getEventsBySectorId');
             MapApiService.getEventsBySectorId(this.selectedSector.properties._id).then((res) => {
