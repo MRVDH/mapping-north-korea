@@ -9,7 +9,7 @@ const mongoose = require("mongoose");
 const path = require("path");
 const rateLimit = require("express-rate-limit");
 const fs = require("fs");
-const exec = require("child_process");
+const exec = require("child_process").exec;
 
 if (!fs.existsSync(".env")) {
     log.err("Error loading configuration: .env file not found. Please use the following markup:",
