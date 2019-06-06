@@ -4,7 +4,6 @@ log.inf("Loading middleware...");
 const express = require("express");
 const session = require("express-session"); 
 const bodyParser = require("body-parser");
-const uuid = require("uuid/v4");
 const MongoStore = require("connect-mongo")(session);
 const mongoose = require("mongoose");
 const path = require("path");
@@ -95,15 +94,15 @@ const apiLimiter = rateLimit({
 });
 app.use("/api/", apiLimiter);
 app.use(session({
-    genid: (req) => {
-        return uuid();
-    },
     store: new MongoStore({
         mongooseConnection: mongoose.connection,
     }),
     secret: process.env.SESSION_SECRET,
     resave: false,
-    saveUninitialized: true
+    saveUninitialized: true,
+    cookie: {
+        maxAge: 30 * 24 * 60 * 60 * 1000 // 30 days
+    }
 }));
 app.use(express.static(__dirname + "/dist"));
 app.use(bodyParser.urlencoded({ extended: true }));
