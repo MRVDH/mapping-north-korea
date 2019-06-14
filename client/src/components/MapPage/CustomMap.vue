@@ -42,12 +42,8 @@ export default {
             }
         });
         EventBus.$on('mnk:go-to-sector', (sectorId) => {
-            for (var layerIndex in this.geoJsonLayer._layers) {
-                if (this.geoJsonLayer._layers[layerIndex].feature.properties._id === sectorId) {
-                    this.selectSector(this.geoJsonLayer._layers[layerIndex]);
-                    break;
-                }
-            }
+            this.setSectorSelected(this.getSectorLayerById(sectorId), true);
+            this.flyToSectorByPolygonCoordinates(this.selectedSector.feature.geometry.coordinates[0]);
         });
         EventBus.$on('mnk:select-random-sector-by-state-id', (stateId) => {
             var sectorsByStateId = [];
@@ -57,7 +53,8 @@ export default {
                 }
             }
             if (sectorsByStateId.length > 0) {
-                this.selectSector(sectorsByStateId[Math.floor(Math.random() * sectorsByStateId.length)]);
+                this.setSectorSelected(sectorsByStateId[Math.floor(Math.random() * sectorsByStateId.length)], true);
+                this.flyToSectorByPolygonCoordinates(this.selectedSector.feature.geometry.coordinates[0]);
             } else {
                 EventBus.$emit('mnk:message-info', 'No sectors with that state.');
             }
@@ -108,34 +105,32 @@ export default {
                             opacity: defaultStyle.opacity
                         };
                     }
-                }).on('click', this.clickSector).on('dblclick', function (event) {
+                }).on('click', this.clickSectorEvent).on('dblclick', function (event) {
                     // eslint-disable-next-line
                     L.DomEvent.stopPropagation(event);
                     return false;
                 }).addTo(this.map);
+
+                if (this.$route.params.sectorId) {
+                    this.setSectorSelected(this.getSectorLayerById(this.$route.params.sectorId), true);
+                    this.flyToSectorByPolygonCoordinates(this.selectedSector.feature.geometry.coordinates[0]);
+                }
+
                 EventBus.$emit('mnk:stop-loading', 'loadingsectors');
             }).catch(() => {
                 EventBus.$emit('mnk:message-error', 'Something went wrong');
                 EventBus.$emit('mnk:stop-loading', 'loadingsectors');
             });
         },
-        clickSector: function (event) {
-            if (this.selectedSector && this.selectedSector.feature.properties._id === event.layer.feature.properties._id) {
-                EventBus.$emit('mnk:deselect-sector');
-                event.layer.setStyle({
-                    color: this.selectedSector.feature.properties.state.color,
-                    weight: defaultStyle.weight,
-                    opacity: defaultStyle.opacity
-                });
-                this.selectedSector = null;
-            } else {
-                EventBus.$emit('mnk:select-sector', event.layer.toGeoJSON());
-                event.layer.bringToFront();
-                event.layer.setStyle({
+        setSectorSelected: function (layer, select) {
+            if (select) {
+                EventBus.$emit('mnk:select-sector', layer.toGeoJSON());
+                layer.bringToFront();
+                layer.setStyle({
                     color: '#FFFF00',
                     opacity: 1,
                     weight: 2,
-                    fillColor: event.layer.options.fillColor
+                    fillColor: layer.options.fillColor
                 });
 
                 if (this.selectedSector) {
@@ -145,7 +140,22 @@ export default {
                         opacity: defaultStyle.opacity
                     });
                 }
-                this.selectedSector = event.layer;
+                this.selectedSector = layer;
+            } else {
+                EventBus.$emit('mnk:deselect-sector');
+                layer.setStyle({
+                    color: this.selectedSector.feature.properties.state.color,
+                    weight: defaultStyle.weight,
+                    opacity: defaultStyle.opacity
+                });
+                this.selectedSector = null;
+            }
+        },
+        clickSectorEvent: function (event) {
+            if (this.selectedSector && this.selectedSector.feature.properties._id === event.layer.feature.properties._id) {
+                this.setSectorSelected(event.layer, false);
+            } else {
+                this.setSectorSelected(event.layer, true);
             }
             // eslint-disable-next-line
             L.DomEvent.stopPropagation(event);
@@ -155,15 +165,17 @@ export default {
                 EventBus.$emit('mnk:deselect-sector');
                 for (var layerIndex in this.geoJsonLayer._layers) {
                     if (this.geoJsonLayer._layers[layerIndex].feature.properties._id === this.selectedSector.feature.properties._id) {
-                        this.geoJsonLayer._layers[layerIndex].setStyle({
-                            color: this.selectedSector.feature.properties.state.color,
-                            weight: defaultStyle.weight,
-                            opacity: defaultStyle.opacity
-                        });
+                        this.setSectorSelected(this.geoJsonLayer._layers[layerIndex], false);
                         break;
                     }
                 }
-                this.selectedSector = null;
+            }
+        },
+        getSectorLayerById: function (sectorId) {
+            for (var layerIndex in this.geoJsonLayer._layers) {
+                if (this.geoJsonLayer._layers[layerIndex].feature.properties._id === sectorId) {
+                    return this.geoJsonLayer._layers[layerIndex];
+                }
             }
         },
         sectorsToGeoJson: function (sectors) {
@@ -189,27 +201,6 @@ export default {
         },
         flyToSectorByPolygonCoordinates: function (coordinates) {
             this.map.flyTo([(coordinates[2][1] + coordinates[0][1]) / 2, (coordinates[1][0] + coordinates[0][0]) / 2], 13);
-        },
-        selectSector: function (sector) {
-            EventBus.$emit('mnk:select-sector', sector.toGeoJSON());
-            sector.bringToFront();
-            sector.setStyle({
-                color: '#FFFF00',
-                opacity: 1,
-                weight: 2,
-                fillColor: sector.options.fillColor
-            });
-
-            if (this.selectedSector) {
-                this.selectedSector.setStyle({
-                    color: this.selectedSector.feature.properties.state.color,
-                    weight: defaultStyle.weight,
-                    opacity: defaultStyle.opacity
-                });
-            }
-            this.selectedSector = sector;
-
-            this.flyToSectorByPolygonCoordinates(this.selectedSector.feature.geometry.coordinates[0]);
         }
     }
 };
