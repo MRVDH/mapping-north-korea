@@ -72,7 +72,7 @@ export default {
     methods: {
         initMap: function () {
             // eslint-disable-next-line
-            this.map = L.map('map').on('click', this.clickMap).setView([ 39.686, 127.500 ], 7);
+            this.map = L.map('map').on('click', this.clickMapEvent).setView([ 39.686, 127.500 ], 7);
 
             // eslint-disable-next-line
             this.lightTileLayer = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
@@ -125,6 +125,7 @@ export default {
         setSectorSelected: function (layer, select) {
             if (select) {
                 EventBus.$emit('mnk:select-sector', layer.toGeoJSON());
+                this.$router.push({ name: 'MapPage', params: { sectorId: layer.feature.properties._id } });
                 layer.bringToFront();
                 layer.setStyle({
                     color: '#FFFF00',
@@ -143,6 +144,7 @@ export default {
                 this.selectedSector = layer;
             } else {
                 EventBus.$emit('mnk:deselect-sector');
+                this.$router.push({ name: 'MapPage', params: { sectorId: null } });
                 layer.setStyle({
                     color: this.selectedSector.feature.properties.state.color,
                     weight: defaultStyle.weight,
@@ -160,7 +162,7 @@ export default {
             // eslint-disable-next-line
             L.DomEvent.stopPropagation(event);
         },
-        clickMap: function () {
+        clickMapEvent: function () {
             if (this.selectedSector) {
                 EventBus.$emit('mnk:deselect-sector');
                 for (var layerIndex in this.geoJsonLayer._layers) {
