@@ -130,7 +130,7 @@ app.get('/api/sector/completed/count/:id', routeSector.getCompletedSectorCountBy
 app.get('/api/sector/split/:id', routeSector.splitSectorBySectorId);
 app.delete('/api/sector/:id', routeSector.delete);
 
-app.post('/webhook', (req, res) => {
+app.post('/api/webhook', (req, res) => {
     log.alt("WEBHOOK INITIATED");
 
     exec("git pull", (err, stdout, stderr) => {
