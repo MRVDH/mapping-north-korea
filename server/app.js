@@ -10,6 +10,7 @@ const path = require("path");
 const rateLimit = require("express-rate-limit");
 const fs = require("fs");
 const exec = require("child_process").exec;
+const history = require("connect-history-api-fallback");
 
 if (!fs.existsSync(".env")) {
     log.err("Error loading configuration: .env file not found. Please use the following markup:",
@@ -38,6 +39,7 @@ const routeIteration = require("./routes/iteration");
 
 log.inf("Configuring middleware...");
 const app = express();
+app.use(history());
 var mongodbConnection = "";
 global.devMode = null;
 global.port = 8081;
