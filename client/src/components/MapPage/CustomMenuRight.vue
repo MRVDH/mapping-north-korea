@@ -265,11 +265,17 @@ export default {
         EventBus.$emit('mnk:start-loading', 'getAllStates');
         MapApiService.getAllStates().then((res) => {
             this.states = res.data;
+        }).catch(() => {
+            EventBus.$emit('mnk:message-error', 'Something went wrong while trying to get all possible sector states.');
+        }).finally(() => {
             EventBus.$emit('mnk:stop-loading', 'getAllStates');
         });
         EventBus.$emit('mnk:start-loading', 'getAllEvents');
         MapApiService.getAllEvents(25).then((res) => {
             this.allEvents = res.data;
+        }).catch(() => {
+            EventBus.$emit('mnk:message-error', 'Something went wrong while trying to get recent events.');
+        }).finally(() => {
             EventBus.$emit('mnk:stop-loading', 'getAllEvents');
         });
     },
@@ -293,9 +299,11 @@ export default {
 
             EventBus.$emit('mnk:start-loading', 'getEventsBySectorId');
             MapApiService.getEventsBySectorId(this.selectedSector.properties._id).then((res) => {
-                if (res.data.length > 0) {
-                    this.events = res.data.sort(function (a, b) { return new Date(b.time.date) - new Date(a.time.date); }).reverse();
-                }
+                if (!res.data.length) return;
+                this.events = res.data.sort(function (a, b) { return new Date(b.time.date) - new Date(a.time.date); }).reverse();
+            }).catch(() => {
+                EventBus.$emit('mnk:message-error', 'Something went wrong while trying to get the events of a sector.');
+            }).finally(() => {
                 EventBus.$emit('mnk:stop-loading', 'getEventsBySectorId');
             });
         },
@@ -327,9 +335,9 @@ export default {
 
                 EventBus.$emit('mnk:message-success', 'Sector updated');
                 EventBus.$emit('mnk:update-sector', this.selectedSector);
-                EventBus.$emit('mnk:stop-loading', 'updateSector');
             }).catch(() => {
-                EventBus.$emit('mnk:message-error', 'Something went wrong');
+                EventBus.$emit('mnk:message-error', 'Something went wrong while trying to update the sector.');
+            }).finally(() => {
                 EventBus.$emit('mnk:stop-loading', 'updateSector');
             });
         },
@@ -400,8 +408,11 @@ export default {
             if (confirm('Are you sure you want to delete this sector?')) {
                 EventBus.$emit('mnk:start-loading', 'deleteSectorById');
                 MapApiService.deleteSectorById(this.selectedSector.properties._id).then(function (res) {
-                    EventBus.$emit('mnk:stop-loading', 'deleteSectorById');
                     location.reload();
+                }).catch(() => {
+                    EventBus.$emit('mnk:message-error', 'Something went wrong while trying to delete the sector.');
+                }).finally(() => {
+                    EventBus.$emit('mnk:stop-loading', 'deleteSectorById');
                 });
             }
         },
@@ -409,8 +420,11 @@ export default {
             if (confirm('Are you sure you want to split this sector?')) {
                 EventBus.$emit('mnk:start-loading', 'splitSectorById');
                 MapApiService.splitSectorById(this.selectedSector.properties._id).then(function (res) {
-                    EventBus.$emit('mnk:stop-loading', 'splitSectorById');
                     location.reload();
+                }).catch(() => {
+                    EventBus.$emit('mnk:message-error', 'Something went wrong while trying to split the sector.');
+                }).finally(() => {
+                    EventBus.$emit('mnk:stop-loading', 'splitSectorById');
                 });
             }
         }
