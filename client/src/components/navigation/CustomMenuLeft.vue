@@ -102,13 +102,14 @@ export default {
             MapApiService.getCompletedSectorCountByIterationId(this.currentIteration._id).then((res) => {
                 this.sectorTotalCount = res.data.totalCount;
                 this.sectorDoneCount = res.data.doneCount;
-                EventBus.$emit('mnk:stop-loading', 'getCompletedSectorCountByIterationId');
             }).catch(() => {
-                EventBus.$emit('mnk:message-error', 'Something went wrong');
+                EventBus.$emit('mnk:message-error', 'Something went wrong while trying to get the completed sector count.');
+            }).finally(() => {
                 EventBus.$emit('mnk:stop-loading', 'getCompletedSectorCountByIterationId');
             });
         }).catch(() => {
-            EventBus.$emit('mnk:message-error', 'Something went wrong');
+            EventBus.$emit('mnk:message-error', 'Something went wrong while trying to get the current iteration.');
+            EventBus.$emit('mnk:stop-loading', 'getCompletedSectorCountByIterationId');
         });
     },
     computed: {

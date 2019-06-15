@@ -98,7 +98,7 @@ module.exports = {
                 var perm_data = qs.parse(body);
                 req.session.access_token = perm_data.oauth_token;
                 req.session.access_token_secret = perm_data.oauth_token_secret;
-                res.redirect(global.localurl + (global.devMode ? ":" + global.port : "") + "?callback=done");
+                res.redirect(global.localurl + (global.devMode ? ":" + global.port : ""));
             }
         });
     },

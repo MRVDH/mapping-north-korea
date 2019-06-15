@@ -115,10 +115,9 @@ export default {
                     this.setSectorSelected(this.getSectorLayerById(this.$route.params.sectorId), true);
                     this.flyToSectorByPolygonCoordinates(this.selectedSector.feature.geometry.coordinates[0]);
                 }
-
-                EventBus.$emit('mnk:stop-loading', 'loadingsectors');
             }).catch(() => {
-                EventBus.$emit('mnk:message-error', 'Something went wrong');
+                EventBus.$emit('mnk:message-error', 'Something went wrong while trying to load the sectors.');
+            }).finally(() => {
                 EventBus.$emit('mnk:stop-loading', 'loadingsectors');
             });
         },
