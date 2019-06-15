@@ -32,7 +32,7 @@ module.exports = {
     update: async function (req, res) {
         log.inf("=> PUT /sector/:id");
 
-        if (!global.devMode && (req.session.osmUserId === "" || req.session.osmUserId === null || req.session.osmUserId === undefined)) {
+        if (req.session.osmUserId === "" || req.session.osmUserId === null || req.session.osmUserId === undefined) {
             log.err(" <= RES /sector/:id unauthorized.", req.params);
             res.sendStatus(401);
             return;

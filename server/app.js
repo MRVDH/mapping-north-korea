@@ -10,7 +10,6 @@ const path = require("path");
 const rateLimit = require("express-rate-limit");
 const fs = require("fs");
 const exec = require("child_process").exec;
-const history = require("connect-history-api-fallback");
 
 if (!fs.existsSync(".env")) {
     log.err("Error loading configuration: .env file not found. Please use the following markup:",
@@ -39,7 +38,6 @@ const routeIteration = require("./routes/iteration");
 
 log.inf("Configuring middleware...");
 const app = express();
-app.use(history());
 var mongodbConnection = "";
 global.devMode = null;
 global.port = 8081;
@@ -79,6 +77,8 @@ app.use(function(req, res, next) {
     if (global.devMode) {
         allowedOrigins.push('http://127.0.0.1:8080');
         allowedOrigins.push('http://localhost:8080');
+        allowedOrigins.push('http://127.0.0.1:8081');
+        allowedOrigins.push('http://localhost:8081');
     }
     var origin = req.headers.origin;
     if(allowedOrigins.indexOf(origin) > -1){
@@ -109,6 +109,14 @@ app.use(session({
 app.use(express.static(__dirname + "/dist"));
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
+
+app.use((req, res, next) => {
+    if (!req.originalUrl.includes('/api/', 0)) {
+        res.sendFile(`${__dirname}/dist/index.html`);
+    } else {
+        next();
+    }
+});
 
 log.inf("Setting up routing...");
 //app.get("/api/main/getlocation", routeMain.getLocation);
