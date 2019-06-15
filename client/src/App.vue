@@ -49,44 +49,32 @@ export default {
 
         document.getElementById('loading-text').remove();
 
-        // Oauth callback check.
-        var param = new URL(window.location.href).searchParams.get('callback');
-        if (param === 'done') {
-            // User came back from logging in.
-            EventBus.$emit('mnk:start-loading', 'getUserDetails');
-            OAuthService.getUserDetails().then((res) => {
-                EventBus.$emit('mnk:message-success', 'Logged in. You can now start mapping');
-                EventBus.$emit('mnk:oauth-user-details-received', res.data);
-                EventBus.$emit('mnk:toggle-drawer-left');
-                EventBus.$emit('mnk:stop-loading', 'getUserDetails');
-            }).catch(() => {
-                EventBus.$emit('mnk:message-error', 'Something went wrong');
-                EventBus.$emit('mnk:stop-loading', 'getUserDetails');
-            });
-            window.history.pushState({}, document.title, '/');
-        } else {
-            // User unrelated to Oauth visits site.
-            EventBus.$emit('mnk:start-loading', 'isuserloggedin');
-            OAuthService.isUserLoggedIn().then((res) => {
-                if (!res.data.isAuthenticated) {
-                    EventBus.$emit('mnk:start-loading', 'getrequesttoken');
-                    OAuthService.getRequestToken().then((res) => {
-                        EventBus.$emit('mnk:oauth-request-token-received', res.data);
-                        EventBus.$emit('mnk:stop-loading', 'getrequesttoken');
-                    });
-                } else {
-                    EventBus.$emit('mnk:start-loading', 'getUserDetails');
-                    OAuthService.getUserDetails().then((res) => {
-                        EventBus.$emit('mnk:oauth-user-details-received', res.data);
-                        EventBus.$emit('mnk:stop-loading', 'getUserDetails');
-                    });
-                }
-                EventBus.$emit('mnk:stop-loading', 'isuserloggedin');
-            }).catch(() => {
-                EventBus.$emit('mnk:message-error', 'Something went wrong');
-                EventBus.$emit('mnk:stop-loading', 'isuserloggedin');
-            });
-        }
+        EventBus.$emit('mnk:start-loading', 'isuserloggedin');
+        OAuthService.isUserLoggedIn().then((res) => {
+            if (!res.data.isAuthenticated) {
+                EventBus.$emit('mnk:start-loading', 'getrequesttoken');
+                OAuthService.getRequestToken().then((res) => {
+                    EventBus.$emit('mnk:oauth-request-token-received', res.data);
+                }).catch(() => {
+                    EventBus.$emit('mnk:message-error', 'Something went wrong while trying to get your OAuth request token.');
+                }).finally(() => {
+                    EventBus.$emit('mnk:stop-loading', 'getrequesttoken');
+                });
+            } else {
+                EventBus.$emit('mnk:start-loading', 'getUserDetails');
+                OAuthService.getUserDetails().then((res) => {
+                    EventBus.$emit('mnk:oauth-user-details-received', res.data);
+                }).catch(() => {
+                    EventBus.$emit('mnk:message-error', 'Something went wrong while trying to get your user details.');
+                }).finally(() => {
+                    EventBus.$emit('mnk:stop-loading', 'getUserDetails');
+                });
+            }
+        }).catch(() => {
+            EventBus.$emit('mnk:message-error', 'Something went wrong while trying to check if you are logged in.');
+        }).finally(() => {
+            EventBus.$emit('mnk:stop-loading', 'isuserloggedin');
+        });
 
         EventBus.$on('mnk:toggle-dark-theme', () => {
             this.darkTheme = !this.darkTheme;
