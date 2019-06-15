@@ -432,7 +432,7 @@ export default {
     computed: {
         adminLoggedIn: function () {
             if (this.userLoggedIn) {
-                return document.getElementById('logged-in-user-name').innerText === 'DevModeUser' || document.getElementById('logged-in-user-name').innerText === 'Artemis64';
+                return document.getElementById('logged-in-user-name').innerText === 'Artemis64' || document.getElementById('logged-in-user-name').innerText === 'Artemis64dev';
             } else {
                 return false;
             }
