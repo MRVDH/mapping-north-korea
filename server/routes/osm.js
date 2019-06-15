@@ -8,15 +8,6 @@ const log = require("../utils/log.js");
 module.exports = {
     getUserDetails: (req, res) => {
         log.inf("=> GET /osm/getuserdetails");
-        if (global.devMode) {
-            req.session.osmUserId = "DevModeId";
-            req.session.osmUserName = "DevModeUser";
-            res.send({
-                id: req.session.osmUserId,
-                name: req.session.osmUserName
-            });
-            return;
-        }
         
         request({
             url: global.osm.endpoint + global.osm.api_version + "/user/details",
@@ -104,7 +95,7 @@ module.exports = {
     },
     getIsAuthenticated: (req, res) => {
         log.inf("=> GET /oauth/isauthenticated");
-        if (req.session.osmUserId && req.session.osmUserName || global.devMode) {
+        if (req.session.access_token && req.session.access_token_secret) {
             res.send({ isAuthenticated: true });
         } else {
             res.send({ isAuthenticated: false });
