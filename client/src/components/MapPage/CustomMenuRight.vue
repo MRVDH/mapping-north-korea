@@ -74,7 +74,7 @@
                                 outline
                                 v-on="on"
                                 class="no-margin-button"
-                                :disabled="!userLoggedIn"
+                                :disabled="!$root.loggedInUser"
                                 >{{ selectedSector.properties.state.title }}</v-btn>
                         </template>
                         <v-list>
@@ -96,7 +96,7 @@
                     text-xs-center
                     grid-list-xs
                     style="padding: 0 16px;"
-                    v-if="!userLoggedIn">
+                    v-if="!$root.loggedInUser">
                     <v-layout>
                         <v-flex>
                             <span class="orange--text">Please log in to map or edit this sector.</span>
@@ -107,7 +107,7 @@
                     text-xs-center
                     grid-list-xs
                     style="padding: 0 16px;"
-                    v-if="selectedSector.properties.state.title === 'Open' && userLoggedIn">
+                    v-if="selectedSector.properties.state.title === 'Open' && $root.loggedInUser">
                     <v-layout>
                         <v-flex>
                             <span class="orange--text">Please change the state to "Being edited" to map this sector.</span>
@@ -118,7 +118,7 @@
                     text-xs-center
                     grid-list-xs
                     style="padding: 0 16px;"
-                    v-if="selectedSector.properties.state.title === 'Review needed' && userLoggedIn">
+                    v-if="selectedSector.properties.state.title === 'Review needed' && $root.loggedInUser">
                     <v-layout>
                         <v-flex>
                             <span class="orange--text">Please change the state to "Being reviewed" to review or back to "Being edited" to edit this sector.</span>
@@ -129,7 +129,7 @@
                     text-xs-center
                     grid-list-xs
                     style="padding: 0 16px;"
-                    v-if="selectedSector.properties.state.title === 'Completed' && userLoggedIn">
+                    v-if="selectedSector.properties.state.title === 'Completed' && $root.loggedInUser">
                     <v-layout>
                         <v-flex>
                             <span class="orange--text">Please change the state back to "Being edited" or "Being reviewed" to edit or review this sector.</span>
@@ -146,7 +146,7 @@
                                     color="success"
                                     v-on="on"
                                     class="no-margin-button"
-                                    :disabled="!userLoggedIn || selectedSector.properties.state.title === 'Open' || selectedSector.properties.state.title === 'Review needed' || selectedSector.properties.state.title === 'Completed'"
+                                    :disabled="!$root.loggedInUser || selectedSector.properties.state.title === 'Open' || selectedSector.properties.state.title === 'Review needed' || selectedSector.properties.state.title === 'Completed'"
                                     >Map</v-btn>
                             </template>
                             <v-list>
@@ -176,14 +176,14 @@
                             class="no-margin-button"
                             color="warning"
                             @click.stop="splitSector()"
-                            :disabled="!userLoggedIn"
+                            :disabled="!$root.loggedInUser"
                             >Split</v-btn>
                         <v-btn
                             v-if="adminLoggedIn"
                             class="no-margin-button"
                             color="error"
                             @click.stop="deleteSector()"
-                            :disabled="!userLoggedIn"
+                            :disabled="!$root.loggedInUser"
                             >Delete</v-btn>
                     </v-flex>
                 </v-layout>
@@ -193,7 +193,7 @@
                 text-xs-center
                 grid-list-xs
                 style="padding: 0 16px;"
-                v-if="userLoggedIn">
+                v-if="$root.loggedInUser">
                 <v-layout row wrap>
                     <v-flex xs12>
                         <v-textarea
@@ -244,7 +244,6 @@ export default {
             newState: null,
             states: null,
             events: [],
-            userLoggedIn: false,
             allEvents: [],
             mappingMenuOpen: false,
             stateEditOpen: false
@@ -255,9 +254,6 @@ export default {
             this.drawerRight = !this.drawerRight;
         });
         EventBus.$on('mnk:select-sector', this.selectSector);
-        EventBus.$on('mnk:oauth-user-details-received', () => {
-            this.userLoggedIn = true;
-        });
         EventBus.$on('mnk:deselect-sector', () => {
             this.selectedSector = null;
         });
@@ -431,7 +427,7 @@ export default {
     },
     computed: {
         adminLoggedIn: function () {
-            if (this.userLoggedIn) {
+            if (this.$root.loggedInUser && document.getElementById('logged-in-user-name')) {
                 return document.getElementById('logged-in-user-name').innerText === 'Artemis64' || document.getElementById('logged-in-user-name').innerText === 'Artemis64dev';
             } else {
                 return false;

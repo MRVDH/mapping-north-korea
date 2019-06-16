@@ -10,7 +10,11 @@ export default new Router({
     mode: 'history',
     routes: [
         {
-            path: '/:sectorId?',
+            path: '/',
+            redirect: { name: 'MapPage' }
+        },
+        {
+            path: '/map/:sectorId?',
             name: 'MapPage',
             component: MapPage
         },

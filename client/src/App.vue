@@ -40,6 +40,8 @@ export default {
         };
     },
     mounted () {
+        this.$root.loggedInUser = null;
+
         if (localStorage.darkTheme) {
             this.darkTheme = localStorage.darkTheme === 'true';
         } else {
@@ -63,7 +65,7 @@ export default {
             } else {
                 EventBus.$emit('mnk:start-loading', 'getUserDetails');
                 OAuthService.getUserDetails().then((res) => {
-                    EventBus.$emit('mnk:oauth-user-details-received', res.data);
+                    this.$root.loggedInUser = res.data;
                 }).catch(() => {
                     EventBus.$emit('mnk:message-error', 'Something went wrong while trying to get your user details.');
                 }).finally(() => {
