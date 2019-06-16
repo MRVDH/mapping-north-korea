@@ -34,6 +34,10 @@
                     <p>
                         To avoid abuse of the system currently only people whom have administrator rights are allowed to do this. Please send an email to <a href="mailto:info@maartenvandenhoven.com">info@maartenvandenhoven.com</a> for a split request and include the sector id. The sector id can be found after selecting a sector.
                     </p>
+                    <h3>Where can I contribute code or report bugs and enhancements?</h3>
+                    <p>
+                        There is a public GitHub repository <a href="https://github.com/MRVDH/mapping-north-korea" target="_blank">here</a> where you can contribute either by writing code or by reporting bugs and enhancements. If you don't have a GitHub account or with to quickly send me a message about a bug or enhancement you can send me an email at the email address above.
+                    </p>
                 </v-card-text>
                 <v-divider></v-divider>
                 <v-card-actions>

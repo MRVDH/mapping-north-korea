@@ -16,7 +16,7 @@
                         <v-card-text>
                             The map is divided into 4723 sectors at the time of writing. These sectors can be selected for editing, reviews and more. Reviews can be done by anyone who would like to, but it's encouraged to let experienced OpenStreetMap mappers do it. An OpenStreetMap account is required to edit sectors. Users can log in with the OpenStreetMap account via OAuth using the menu on the left.<br/>
                             The sectors are part of an iteration. The iteration system was added for the reason that once mapping starts, it will take a long time for the whole country to be completed. By the time the last sectors are done, the first sectors might be outdated. After completing the country a second iteration can be started for updates.<br/>
-                            The application is fully dynamic, which means it can be used for any other place on earth as well. A GitHub repository will soon be created for people to fork the code and apply it to their own countries, cities and so forth.
+                            The application is fully dynamic, which means it can be used for any other place on earth as well. The GitHub repository can be found <a href="https://github.com/MRVDH/mapping-north-korea" target="_blank">here</a>.
                         </v-card-text>
                         <v-card-title id="about-page-attribution">
                             <h5 class="headline">Attribution</h5>
@@ -60,7 +60,7 @@
                             <h5 class="headline">Contact</h5>
                         </v-card-title>
                         <v-card-text>
-                            You can contact me at <a href="mailto:info@maartenvandenhoven.com">info@maartenvandenhoven.com</a> for questions about this project and anything else or visit my website at <a href="https://maartenvandenhoven.com">https://maartenvandenhoven.com</a>.
+                            You can contact me at <a href="mailto:info@maartenvandenhoven.com">info@maartenvandenhoven.com</a> for questions about this project and anything else or visit my website at <a href="https://maartenvandenhoven.com">https://maartenvandenhoven.com</a>. Alternatively I am also reachable on OpenStreetMap by the username <a href="https://www.openstreetmap.org/user/Artemis64" target="_blank">Artmemis64</a> or on GitHub <a href="https://github.com/MRVDH/mapping-north-korea" target="_blank">here</a>.
                         </v-card-text>
                     </v-card>
                 </v-flex>
