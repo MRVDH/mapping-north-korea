@@ -6,9 +6,9 @@
         v-model="drawerLeft">
         <v-toolbar flat class="transparent">
             <v-list class="pa-0">
-                <v-list-tile avatar v-if="loggedInUser" :href="'https://www.openstreetmap.org/user/' + loggedInUser.name" target="_blank">
+                <v-list-tile avatar v-if="$root.loggedInUser" :href="'https://www.openstreetmap.org/user/' + $root.loggedInUser.name" target="_blank">
                     <v-list-tile-content>
-                        <v-list-tile-title id="logged-in-user-name">{{ loggedInUser.name }}</v-list-tile-title>
+                        <v-list-tile-title id="logged-in-user-name">{{ $root.loggedInUser.name }}</v-list-tile-title>
                     </v-list-tile-content>
                 </v-list-tile>
                 <v-list-tile avatar v-else>
@@ -20,7 +20,7 @@
         </v-toolbar>
         <v-list>
             <v-divider></v-divider>
-            <v-list-tile :to="{ path: '/' }">
+            <v-list-tile :to="{ path: '/map' }">
                 <v-list-tile-action>
                     <v-icon>dashboard</v-icon>
                 </v-list-tile-action>
@@ -73,7 +73,6 @@ export default {
     data () {
         return {
             drawerLeft: false,
-            loggedInUser: null,
             loginLink: '',
             currentIteration: null,
             sectorTotalCount: 0,
@@ -86,9 +85,6 @@ export default {
         });
         EventBus.$on('mnk:oauth-request-token-received', (link) => {
             this.loginLink = link;
-        });
-        EventBus.$on('mnk:oauth-user-details-received', (user) => {
-            this.loggedInUser = user;
         });
         EventBus.$on('mnk:update-sector', (sector) => {
             if (sector.properties.state.title === 'Completed') {
