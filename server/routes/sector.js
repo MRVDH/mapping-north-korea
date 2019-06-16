@@ -62,14 +62,6 @@ module.exports = {
             res.sendStatus(400);
             return;
         }
-        
-        // Set dev mode test data.
-        var osmUserId = "DevModeId";
-        var osmUserName = "DevModeName";
-        if (!global.devMode) {
-            osmUserId = req.session.osmUserId;
-            osmUserName = req.session.osmUserName;
-        }
 
         // Check if a comment was added.
         var newEventComment = null;
@@ -78,8 +70,8 @@ module.exports = {
                 description: req.body.comment,
                 sector: req.body.sector,
                 time: new Date(),
-                osmUserId: osmUserId,
-                osmUserName: osmUserName
+                osmUserId: req.session.osmUserId,
+                osmUserName: req.session.osmUserName
             });
             newEventComment = await newEventComment.save();
         }
@@ -98,8 +90,8 @@ module.exports = {
                     description: "State changed to " + req.body.sector.state.title,
                     sector: req.body.sector,
                     time: new Date(),
-                    osmUserId: osmUserId,
-                    osmUserName: osmUserName
+                    osmUserId: req.session.osmUserId,
+                    osmUserName: req.session.osmUserName
                 });
                 newEventState = await newEventState.save();
 
