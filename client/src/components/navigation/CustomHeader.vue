@@ -1,3 +1,14 @@
+<i18n>
+{
+    "en": {
+        "hello": "hello world!"
+    },
+    "ko": {
+        "hello": "안녕하세요!"
+    }
+}
+</i18n>
+
 <template>
     <v-toolbar app clipped-right extended extension-height="7">
         <v-toolbar-side-icon @click.stop="toggleDrawerLeft()"></v-toolbar-side-icon>
@@ -9,6 +20,17 @@
         <v-btn icon @click.stop="toggleDarkTheme()">
             <v-icon>invert_colors</v-icon>
         </v-btn>
+        <p>message: {{ $t('hello') }}</p>
+        <v-menu offset-y>
+            <template v-slot:activator="{ on }">
+                <v-btn icon v-on="on">
+                    <v-icon>translate</v-icon>
+                </v-btn>
+            </template>
+            <v-list>
+                <v-list-tile v-for="(item, index) in langs" :key="index" @click="setLocale(item.localeCode)"><v-list-tile-title>{{ item.title }}</v-list-tile-title></v-list-tile>
+            </v-list>
+        </v-menu>
         <v-toolbar-side-icon v-if="displayRightIcon" @click.stop="toggleDrawerRight()"></v-toolbar-side-icon>
         <v-progress-linear v-if="processesWorking.length > 0" slot="extension" :indeterminate="true" class="ma-0"></v-progress-linear>
         <v-dialog v-model="infoDialog" max-width="700px">
@@ -58,7 +80,18 @@ export default {
         return {
             processesWorking: [],
             displayRightIcon: this.$router.currentRoute.name === 'MapPage',
-            infoDialog: false
+            infoDialog: false,
+            locale: 'en',
+            langs: [
+                {
+                    title: "English",
+                    localeCode: "en"
+                },
+                {
+                    title: "한국어",
+                    localeCode: "ko"
+                }
+            ]
         };
     },
     mounted () {
@@ -80,11 +113,17 @@ export default {
         },
         removeLoading: function (id) {
             this.processesWorking = this.processesWorking.filter(pw => pw !== id);
+        },
+        setLocale: function (localeCode) {
+            this.locale = localeCode;
         }
     },
     watch: {
         '$route' () {
             this.displayRightIcon = this.$router.currentRoute.name === 'MapPage';
+        },
+        'locale' (val) {
+            this.$i18n.locale = val;
         }
     }
 };
