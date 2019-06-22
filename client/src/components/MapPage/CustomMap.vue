@@ -1,3 +1,22 @@
+<i18n>
+{
+    "en": {
+        "no_sectors_with_state": "No sectors with that state.",
+
+        "request": {
+            "load_sectors": "Something went wrong while trying to load the sectors."
+        }
+    },
+    "ko": {
+        "no_sectors_with_state": null,
+
+        "request": {
+            "load_sectors": null
+        }
+    }
+}
+</i18n>
+
 <template>
     <div id="map"></div>
 </template>
@@ -26,6 +45,9 @@ export default {
     mounted () {
         this.initMap();
 
+        EventBus.$on('mnk:set-locale', (localeCode) => {
+            this.$i18n.locale = localeCode;
+        });
         EventBus.$on('mnk:update-sector', (sector) => {
             // find and update the sector in the sector list.
             this.sectors.features[this.sectors.features.findIndex(x => x.properties._id === sector.properties._id)] = sector;
@@ -56,7 +78,7 @@ export default {
                 this.setSectorSelected(sectorsByStateId[Math.floor(Math.random() * sectorsByStateId.length)], true);
                 this.flyToSectorByPolygonCoordinates(this.selectedSector.feature.geometry.coordinates[0]);
             } else {
-                EventBus.$emit('mnk:message-info', 'No sectors with that state.');
+                EventBus.$emit('mnk:message-info', this.$t('no_sectors_with_state'));
             }
         });
         EventBus.$on('mnk:toggle-dark-theme', (newThemeIsDark) => {
@@ -116,7 +138,7 @@ export default {
                     this.flyToSectorByPolygonCoordinates(this.selectedSector.feature.geometry.coordinates[0]);
                 }
             }).catch(() => {
-                EventBus.$emit('mnk:message-error', 'Something went wrong while trying to load the sectors.');
+                EventBus.$emit('mnk:message-error', this.$('request.load_sectors'));
             }).finally(() => {
                 EventBus.$emit('mnk:stop-loading', 'loadingsectors');
             });
