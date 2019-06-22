@@ -1,3 +1,84 @@
+<i18n>
+{
+    "en": {
+        "help": {
+            "select_sector": "Select a sector on the map to start mapping or select a random sector by state.",
+            "login": "Please log in to map or edit this sector.",
+            "change_being_edited": "Please change the state to 'Being edited' to map this sector.",
+            "change_being_reviewed": "Please change the state to 'Being reviewed' to review or back to 'Being edited' to edit this sector.",
+            "change_back": "Please change the state back to 'Being edited' or 'Being reviewed' to edit or review this sector."
+        },
+
+        "recent_events": "Recent events",
+
+        "sector": {
+            "id": "Sector id",
+            "state": "State",
+            "button": {
+                "map": "Map",
+                "view": "View",
+                "split": "Split",
+                "delete": "Delete"
+            }
+        },
+
+        "comment_less_than": "Comment must be less than 500 characters.",
+        "comment": "Comment",
+
+        "request": {
+            "get_sector_states": "Something went wrong while trying to get all possible sector states.",
+            "recent_events": "Something went wrong while trying to get recent events.",
+            "sector_events": "Something went wrong while trying to get the events of a sector.",
+            "sector_updated": "Sector updated.",
+            "sector_update": "Something went wrong while trying to update the sector.",
+            "josm_failed": "Failed to load data into JOSM. Is JOSM running and is Remote Contol (by HTTPS) enabled?",
+            "confirm_deletion": "Are you sure you want to delete this sector?",
+            "deletion": "Something went wrong while trying to delete the sector.",
+            "confirm_split": "Are you sure you want to split this sector?",
+            "split": "Something went wrong while trying to split the sector."
+        }
+    },
+    "ko": {
+        "help": {
+            "select_sector": "지도를 만들 부분을 선택하세요. 상태 옆의 화살표를 누르면 임의의 작업이 선택됩니다.",
+            "login": "이 부분의 지도를 제작하거나 편집하려면 로그인하세요.",
+            "change_being_edited": null,
+            "change_being_reviewed": null,
+            "change_back": null
+        },
+
+        "recent_events": "최근 내역",
+
+        "sector": {
+            "id": "이 부분의 id",
+            "state": "상태",
+            "button": {
+                "map": "매핑",
+                "view": null,
+                "split": null,
+                "delete": null
+            }
+        },
+
+        "comment_less_than": null,
+        "comment": null,
+
+        "request": {
+            "get_sector_states": null,
+            "recent_events": null,
+            "sector_events": null,
+            "sector_updated": null,
+            "sector_update": null,
+            "josm_failed": null,
+            "confirm_deletion": null,
+            "deletion": null,
+            "confirm_split": null,
+            "split": null
+        }
+    }
+}
+</i18n>
+
 <template>
     <v-navigation-drawer
         fixed
@@ -12,9 +93,7 @@
                 grid-list-xs
                 style="padding: 16px;">
                 <v-layout>
-                    <v-flex>
-                        Select a sector on the map to start mapping or select a random sector by state.
-                    </v-flex>
+                    <v-flex>{{ $t('help.select_sector') }}</v-flex>
                 </v-layout>
             </v-container>
             <v-list-tile v-for="(state, index) in states" :key="index">
@@ -33,7 +112,7 @@
                 style="padding: 16px 16px 0 16px;">
                 <v-layout>
                     <v-flex>
-                        <span class="font-weight-bold">Recent events</span>
+                        <span class="font-weight-bold">{{ $t('recent_events') }}</span>
                     </v-flex>
                 </v-layout>
             </v-container>
@@ -56,7 +135,7 @@
         <v-list v-else>
             <v-list-tile>
                 <v-list-tile-content>
-                    <v-list-tile-title>Sector id</v-list-tile-title>
+                    <v-list-tile-title>{{ $t('sector.id') }}</v-list-tile-title>
                 </v-list-tile-content>
                 <v-list-tile-action>
                     <v-list-tile-title class="text-xs-right">{{ selectedSector.properties._id }}</v-list-tile-title>
@@ -64,7 +143,7 @@
             </v-list-tile>
             <v-list-tile>
                 <v-list-tile-content>
-                    <v-list-tile-title>State</v-list-tile-title>
+                    <v-list-tile-title>{{ $t('sector.state') }}</v-list-tile-title>
                 </v-list-tile-content>
                 <v-list-tile-action>
                     <v-list-tile-title class="text-xs-right">{{ selectedSector.properties.state.title }}</v-list-tile-title>
@@ -99,7 +178,7 @@
                     v-if="!$root.loggedInUser">
                     <v-layout>
                         <v-flex>
-                            <span class="orange--text">Please log in to map or edit this sector.</span>
+                            <span class="orange--text">{{ $t('help.login') }}</span>
                         </v-flex>
                     </v-layout>
                 </v-container>
@@ -110,7 +189,7 @@
                     v-if="selectedSector.properties.state.title === 'Open' && $root.loggedInUser">
                     <v-layout>
                         <v-flex>
-                            <span class="orange--text">Please change the state to "Being edited" to map this sector.</span>
+                            <span class="orange--text">{{ $t('help.change_being_edited') }}</span>
                         </v-flex>
                     </v-layout>
                 </v-container>
@@ -121,7 +200,7 @@
                     v-if="selectedSector.properties.state.title === 'Review needed' && $root.loggedInUser">
                     <v-layout>
                         <v-flex>
-                            <span class="orange--text">Please change the state to "Being reviewed" to review or back to "Being edited" to edit this sector.</span>
+                            <span class="orange--text">{{ $t('help.change_being_reviewed') }}</span>
                         </v-flex>
                     </v-layout>
                 </v-container>
@@ -132,7 +211,7 @@
                     v-if="selectedSector.properties.state.title === 'Completed' && $root.loggedInUser">
                     <v-layout>
                         <v-flex>
-                            <span class="orange--text">Please change the state back to "Being edited" or "Being reviewed" to edit or review this sector.</span>
+                            <span class="orange--text">{{ $t('help.change_back') }}</span>
                         </v-flex>
                     </v-layout>
                 </v-container>
@@ -147,7 +226,7 @@
                                     v-on="on"
                                     class="no-margin-button"
                                     :disabled="!$root.loggedInUser || selectedSector.properties.state.title === 'Open' || selectedSector.properties.state.title === 'Review needed' || selectedSector.properties.state.title === 'Completed'"
-                                    >Map</v-btn>
+                                    >{{ $t('sector.button.map') }}</v-btn>
                             </template>
                             <v-list>
                                 <v-list-tile :href="idUrl" target="_blank">
@@ -162,7 +241,7 @@
                             </v-list>
                         </v-menu>
                         <v-btn
-                            class="no-margin-button"
+                            class="left-margin-button"
                             color="success"
                             target="_blank"
                             :href="'https://www.openstreetmap.org/#map=13/' +
@@ -170,21 +249,21 @@
                                 this.selectedSector.geometry.coordinates[0][2][1]) / 2 + '/' +
                                 (this.selectedSector.geometry.coordinates[0][0][0] +
                                 this.selectedSector.geometry.coordinates[0][1][0]) / 2"
-                            >View</v-btn>
+                            >{{ $t('sector.button.view') }}</v-btn>
                         <v-btn
                             v-if="adminLoggedIn"
-                            class="no-margin-button"
+                            class="left-margin-button"
                             color="warning"
                             @click.stop="splitSector()"
                             :disabled="!$root.loggedInUser"
-                            >Split</v-btn>
+                            >{{ $t('sector.button.split') }}</v-btn>
                         <v-btn
                             v-if="adminLoggedIn"
-                            class="no-margin-button"
+                            class="left-margin-button"
                             color="error"
                             @click.stop="deleteSector()"
                             :disabled="!$root.loggedInUser"
-                            >Delete</v-btn>
+                            >{{ $t('sector.button.delete') }}</v-btn>
                     </v-flex>
                 </v-layout>
             </v-container>
@@ -201,8 +280,8 @@
                             append-outer-icon="send"
                             @click:append-outer="postComment();"
                             :counter="500"
-                            :rules="[v => v.length <= 500 || 'Comment must be less than 500 characters']"
-                            label="Comment"
+                            :rules="[v => v.length <= 500 || $t('comment_less_than')]"
+                            :label="$t('comment')"
                         ></v-textarea>
                     </v-flex>
                 </v-layout>
@@ -257,12 +336,15 @@ export default {
         EventBus.$on('mnk:deselect-sector', () => {
             this.selectedSector = null;
         });
+        EventBus.$on('mnk:set-locale', (localeCode) => {
+            this.$i18n.locale = localeCode;
+        });
 
         EventBus.$emit('mnk:start-loading', 'getAllStates');
         MapApiService.getAllStates().then((res) => {
             this.states = res.data;
         }).catch(() => {
-            EventBus.$emit('mnk:message-error', 'Something went wrong while trying to get all possible sector states.');
+            EventBus.$emit('mnk:message-error', this.$t('request.get_sector_states'));
         }).finally(() => {
             EventBus.$emit('mnk:stop-loading', 'getAllStates');
         });
@@ -270,7 +352,7 @@ export default {
         MapApiService.getAllEvents(25).then((res) => {
             this.allEvents = res.data;
         }).catch(() => {
-            EventBus.$emit('mnk:message-error', 'Something went wrong while trying to get recent events.');
+            EventBus.$emit('mnk:message-error', this.$t('request.recent_events'));
         }).finally(() => {
             EventBus.$emit('mnk:stop-loading', 'getAllEvents');
         });
@@ -298,7 +380,7 @@ export default {
                 if (!res.data.length) return;
                 this.events = res.data.sort(function (a, b) { return new Date(b.time.date) - new Date(a.time.date); }).reverse();
             }).catch(() => {
-                EventBus.$emit('mnk:message-error', 'Something went wrong while trying to get the events of a sector.');
+                EventBus.$emit('mnk:message-error', this.$t('request.sector_events'));
             }).finally(() => {
                 EventBus.$emit('mnk:stop-loading', 'getEventsBySectorId');
             });
@@ -329,10 +411,10 @@ export default {
                 this.newComment = '';
                 this.newState = this.selectedSector.properties.state._id;
 
-                EventBus.$emit('mnk:message-success', 'Sector updated');
+                EventBus.$emit('mnk:message-success', this.$t('request.sector_updated'));
                 EventBus.$emit('mnk:update-sector', this.selectedSector);
             }).catch(() => {
-                EventBus.$emit('mnk:message-error', 'Something went wrong while trying to update the sector.');
+                EventBus.$emit('mnk:message-error', this.$t('request.sector_update'));
             }).finally(() => {
                 EventBus.$emit('mnk:stop-loading', 'updateSector');
             });
@@ -348,7 +430,7 @@ export default {
 
             EventBus.$emit('mnk:start-loading', 'sendJOSMCommand');
             JOSMService.sendJOSMCommand('https://127.0.0.1:8112/load_and_zoom', loadAndZoomParams).catch(() => {
-                EventBus.$emit('mnk:message-error', 'Failed to load data into JOSM. Is JOSM running and is Remote Contol (by HTTPS) enabled?');
+                EventBus.$emit('mnk:message-error', this.$t('request.josm_failed'));
                 EventBus.$emit('mnk:stop-loading', 'sendJOSMCommand');
             });
             JOSMService.sendJOSMCommand('https://127.0.0.1:8112/imagery', {
@@ -401,24 +483,24 @@ export default {
             };
         },
         deleteSector: function () {
-            if (confirm('Are you sure you want to delete this sector?')) {
+            if (confirm(this.$t('request.confirm_deletion'))) {
                 EventBus.$emit('mnk:start-loading', 'deleteSectorById');
                 MapApiService.deleteSectorById(this.selectedSector.properties._id).then(function () {
                     location.reload();
                 }).catch(() => {
-                    EventBus.$emit('mnk:message-error', 'Something went wrong while trying to delete the sector.');
+                    EventBus.$emit('mnk:message-error', this.$t('request.deletion'));
                 }).finally(() => {
                     EventBus.$emit('mnk:stop-loading', 'deleteSectorById');
                 });
             }
         },
         splitSector: function () {
-            if (confirm('Are you sure you want to split this sector?')) {
+            if (confirm(this.$t('request.confirm_split'))) {
                 EventBus.$emit('mnk:start-loading', 'splitSectorById');
                 MapApiService.splitSectorById(this.selectedSector.properties._id).then(function () {
                     location.reload();
                 }).catch(() => {
-                    EventBus.$emit('mnk:message-error', 'Something went wrong while trying to split the sector.');
+                    EventBus.$emit('mnk:message-error', this.$t('request.split'));
                 }).finally(() => {
                     EventBus.$emit('mnk:stop-loading', 'splitSectorById');
                 });
@@ -441,6 +523,11 @@ export default {
 .no-margin-button {
     margin: 0 !important;
     margin-bottom: 4px !important;
+}
+.left-margin-button {
+    margin: 0 !important;
+    margin-bottom: 4px !important;
+    margin-left: 4px !important;
 }
 .v-btn--depressed .v-btn__content {
     padding: 0 10px;
