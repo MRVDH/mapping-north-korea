@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
     <head>
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width,initial-scale=1.0">
@@ -16,10 +16,11 @@
         <meta property="og:url" content="https://mappingnorthkorea.com" />
         <meta property="og:site_name" content="Mapping North Korea" />
 
-        <link rel="icon" type="image/png" href="./static/favicon.png" />
+        <link rel="icon" href="<%= BASE_URL %>favicon.png">
 
         <!-- Icons -->
-        <link href='https://fonts.googleapis.com/css?family=Roboto:100,300,400,500,700,900|Material+Icons' rel="stylesheet">
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:100,300,400,500,700,900">
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Material+Icons">
 
         <!-- Leaflet -->
         <link href="https://unpkg.com/leaflet@1.4.0/dist/leaflet.css" rel="stylesheet"
@@ -27,6 +28,9 @@
             crossorigin=""/>
     </head>
     <body>
+        <noscript>
+            <strong>We're sorry but client doesn't work properly without JavaScript enabled. Please enable it to continue.</strong>
+        </noscript>
         <!-- Shown while Vue.js is loading. Won't be delete but won't be visible either -->
         <p id="loading-text" style="margin: 0;
         position: absolute;
