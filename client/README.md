@@ -1,22 +1,34 @@
-# mappingnorthkorea
+# client
 
-> Community effort for mapping North Korea.
-
-## Build Setup
-
-To do live editing:
-``` bash
-# install dependencies
+## Project setup
+```
 npm install
-
-# serve with hot reload at localhost:8080
-npm run dev
 ```
 
-To build for production:
-``` bash
-# run this
+### Compiles and hot-reloads for development
+```
+npm run serve
+```
+
+### Compiles and minifies for production
+```
 npm run build
-# then delete the server/dist folder
-# then copy the client/dist folder to the server folder. (still need to automate this)
 ```
+
+### Run your tests
+```
+npm run test
+```
+
+### Lints and fixes files
+```
+npm run lint
+```
+
+### Run your unit tests
+```
+npm run test:unit
+```
+
+### Customize configuration
+See [Configuration Reference](https://cli.vuejs.org/config/).
