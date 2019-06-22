@@ -20,7 +20,7 @@
                 <v-card-text>
                     <h3>What is this?</h3>
                     <p>
-                        This is MappingNorthKorea.com, a collaborative effort to map one of the most isolated countries on earth. Read more on the about page <a @click.stop="infoDialog = false" href="/#/about">here</a>.
+                        This is MappingNorthKorea.com, a collaborative effort to map one of the most isolated countries on earth. Read more on the about page <a @click.stop="infoDialog = false" href="/about">here</a>.
                     </p>
                     <h3>Why are all the buttons disabled?</h3>
                     <p>
