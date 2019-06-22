@@ -403,7 +403,7 @@ export default {
         deleteSector: function () {
             if (confirm('Are you sure you want to delete this sector?')) {
                 EventBus.$emit('mnk:start-loading', 'deleteSectorById');
-                MapApiService.deleteSectorById(this.selectedSector.properties._id).then(function (res) {
+                MapApiService.deleteSectorById(this.selectedSector.properties._id).then(function () {
                     location.reload();
                 }).catch(() => {
                     EventBus.$emit('mnk:message-error', 'Something went wrong while trying to delete the sector.');
@@ -415,7 +415,7 @@ export default {
         splitSector: function () {
             if (confirm('Are you sure you want to split this sector?')) {
                 EventBus.$emit('mnk:start-loading', 'splitSectorById');
-                MapApiService.splitSectorById(this.selectedSector.properties._id).then(function (res) {
+                MapApiService.splitSectorById(this.selectedSector.properties._id).then(function () {
                     location.reload();
                 }).catch(() => {
                     EventBus.$emit('mnk:message-error', 'Something went wrong while trying to split the sector.');
