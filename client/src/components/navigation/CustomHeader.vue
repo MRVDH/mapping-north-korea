@@ -1,10 +1,70 @@
 <i18n>
 {
     "en": {
-        "hello": "hello world!"
+        "faq": {
+            "head": "New to mappingnorthkorea.com?",
+            "subtitle": "Read some frequently asked questions here.",
+
+            "q1": {
+                "question": "What is this?",
+                "answer": "This is MappingNorthKorea.com, a collaborative effort to map one of the most isolated countries on earth. Read more on the about page {0}.",
+                "link": "here"
+            },
+            "q2": {
+                "question": "Why are all the buttons disabled?",
+                "answer": "You probably haven't logged in yet. You can browse sectors without an account, but to map you will need an OpenStreetMap account. If you don't have one, sign up {0}. If you have an account, open the left menu by pressing the three-lined-button in the top left corner and click the login button. If only the Map button is disabled but the edit button is clickable, then the sector is probably not in an editable state. Check the question below.",
+                "link": "here"
+            },
+            "q3": {
+                "question": "Why is the Map button disabled?",
+                "answer": "The sector that you selected is probably not in an editable state. Use the Edit button to switch the sector to either Being edited or Being reviewed. If the edit button is disabled then you are probably not logged in yet. Check the question above."
+            },
+            "q4": {
+                "question": "The sector I am editing is too much work or too big. How do I split a sector into smaller sectors?",
+                "answer": "To avoid abuse of the system currently only people whom have administrator rights are allowed to do this. Please send an email to {0} for a split request and include the sector id. The sector id can be found after selecting a sector.",
+                "link": "info@maartenvandenhoven.com"
+            },
+            "q5": {
+                "question": "Where can I contribute code or report bugs and enhancements?",
+                "answer": "There is a public GitHub repository {0} where you can contribute either by writing code or by reporting bugs and enhancements. If you don't have a GitHub account or with to quickly send me a message about a bug or enhancement you can send me an email at the email address above.",
+                "link": "here"
+            },
+
+            "confirm": "Got it"
+        }
     },
     "ko": {
-        "hello": "안녕하세요!"
+        "faq": {
+            "head": "mappingnorthkorea.com이 처음이세요?",
+            "subtitle": "자주 묻는 질문들을 읽어요.",
+
+            "q1": {
+                "question": null,
+                "answer": null,
+                "link": null
+            },
+            "q2": {
+                "question": null,
+                "answer": null,
+                "link": null
+            },
+            "q3": {
+                "question": null,
+                "answer": null
+            },
+            "q4": {
+                "question": null,
+                "answer": null,
+                "link": null
+            },
+            "q5": {
+                "question": null,
+                "answer": null,
+                "link": null
+            },
+
+            "confirm": "알겠습니다"
+        }
     }
 }
 </i18n>
@@ -20,7 +80,6 @@
         <v-btn icon @click.stop="toggleDarkTheme()">
             <v-icon>invert_colors</v-icon>
         </v-btn>
-        <p>message: {{ $t('hello') }}</p>
         <v-menu offset-y>
             <template v-slot:activator="{ on }">
                 <v-btn icon v-on="on">
@@ -28,7 +87,15 @@
                 </v-btn>
             </template>
             <v-list>
-                <v-list-tile v-for="(item, index) in langs" :key="index" @click="setLocale(item.localeCode)"><v-list-tile-title>{{ item.title }}</v-list-tile-title></v-list-tile>
+                <v-list-tile
+                    v-for="(item, index) in langs"
+                    :key="index"
+                    @click="setLocale(item.localeCode)"
+                    active-class="highlighted"
+                    :class="item.localeCode === $i18n.locale ? 'highlighted' : ''"
+                    >
+                    <v-list-tile-title>{{ item.title }}</v-list-tile-title>
+                </v-list-tile>
             </v-list>
         </v-menu>
         <v-toolbar-side-icon v-if="displayRightIcon" @click.stop="toggleDrawerRight()"></v-toolbar-side-icon>
@@ -36,35 +103,37 @@
         <v-dialog v-model="infoDialog" max-width="700px">
             <v-card id="info-dialog">
                 <v-card-title>
-                    <h1>New to mappingnorthkorea.com?</h1>
-                    Read some frequently asked questions here.
+                    <h1>{{ $t('faq.head') }}</h1>
+                    {{ $t('faq.subtitle') }}
                 </v-card-title>
                 <v-card-text>
-                    <h3>What is this?</h3>
-                    <p>
-                        This is MappingNorthKorea.com, a collaborative effort to map one of the most isolated countries on earth. Read more on the about page <a @click.stop="infoDialog = false" href="/about">here</a>.
-                    </p>
-                    <h3>Why are all the buttons disabled?</h3>
-                    <p>
-                        You probably haven't logged in yet. You can browse sectors without an account, but to map you will need an OpenStreetMap account. If you don't have one, sign up <a href="https://www.openstreetmap.org/user/new" target="_blank">here</a>. If you have an account, open the left menu by pressing the three-lined-button in the top left corner and click the login button. If only the Map button is disabled but the edit button is clickable, then the sector is probably not in an editable state. Check the question below.
-                    </p>
-                    <h3>Why is the Map button disabled?</h3>
-                    <p>
-                        The sector that you selected is probably not in an editable state. Use the Edit button to switch the sector to either Being edited or Being reviewed. If the edit button is disabled then you are probably not logged in yet. Check the question above.
-                    </p>
-                    <h3>The sector I am editing is too much work or too big. How do I split a sector into smaller sectors?</h3>
-                    <p>
-                        To avoid abuse of the system currently only people whom have administrator rights are allowed to do this. Please send an email to <a href="mailto:info@maartenvandenhoven.com">info@maartenvandenhoven.com</a> for a split request and include the sector id. The sector id can be found after selecting a sector.
-                    </p>
-                    <h3>Where can I contribute code or report bugs and enhancements?</h3>
-                    <p>
-                        There is a public GitHub repository <a href="https://github.com/MRVDH/mapping-north-korea" target="_blank">here</a> where you can contribute either by writing code or by reporting bugs and enhancements. If you don't have a GitHub account or with to quickly send me a message about a bug or enhancement you can send me an email at the email address above.
-                    </p>
+                    <h3>{{ $t('faq.q1.question') }}</h3>
+                    <i18n path="faq.q1.answer" tag="p">
+                        <a href="/about" @click.stop="infoDialog = false" target="_blank">{{ $t('faq.q1.link') }}</a>
+                    </i18n>
+
+                    <h3>{{ $t('faq.q2.question') }}</h3>
+                    <i18n path="faq.q2.answer" tag="p">
+                        <a href="https://www.openstreetmap.org/user/new" @click.stop="infoDialog = false" target="_blank">{{ $t('faq.q2.link') }}</a>
+                    </i18n>
+
+                    <h3>{{ $t('faq.q3.question') }}</h3>
+                    <p>{{ $t('faq.q3.answer') }}</p>
+
+                    <h3>{{ $t('faq.q4.question') }}</h3>
+                    <i18n path="faq.q4.answer" tag="p">
+                        <a href="mailto:info@maartenvandenhoven.com" @click.stop="infoDialog = false" target="_blank">{{ $t('faq.q4.link') }}</a>
+                    </i18n>
+
+                    <h3>{{ $t('faq.q5.question') }}</h3>
+                    <i18n path="faq.q5.answer" tag="p">
+                        <a href="https://github.com/MRVDH/mapping-north-korea" @click.stop="infoDialog = false" target="_blank">{{ $t('faq.q5.link') }}</a>
+                    </i18n>
                 </v-card-text>
                 <v-divider></v-divider>
                 <v-card-actions>
                     <v-spacer></v-spacer>
-                    <v-btn outline @click.stop="infoDialog = false">Got it</v-btn>
+                    <v-btn outline @click.stop="infoDialog = false">{{ $t('faq.confirm') }}</v-btn>
                 </v-card-actions>
             </v-card>
         </v-dialog>
@@ -81,20 +150,24 @@ export default {
             processesWorking: [],
             displayRightIcon: this.$router.currentRoute.name === 'MapPage',
             infoDialog: false,
-            locale: 'en',
             langs: [
                 {
-                    title: "English",
-                    localeCode: "en"
+                    title: 'English',
+                    localeCode: 'en',
+                    active: true
                 },
                 {
-                    title: "한국어",
-                    localeCode: "ko"
+                    title: '한국어',
+                    localeCode: 'ko',
+                    active: false
                 }
             ]
         };
     },
     mounted () {
+        EventBus.$on('mnk:set-locale', (localeCode) => {
+            this.$i18n.locale = localeCode;
+        });
         EventBus.$on('mnk:start-loading', this.addLoading);
         EventBus.$on('mnk:stop-loading', this.removeLoading);
     },
@@ -115,15 +188,12 @@ export default {
             this.processesWorking = this.processesWorking.filter(pw => pw !== id);
         },
         setLocale: function (localeCode) {
-            this.locale = localeCode;
+            EventBus.$emit('mnk:set-locale', localeCode);
         }
     },
     watch: {
         '$route' () {
             this.displayRightIcon = this.$router.currentRoute.name === 'MapPage';
-        },
-        'locale' (val) {
-            this.$i18n.locale = val;
         }
     }
 };
@@ -135,5 +205,8 @@ export default {
     }
     #info-dialog a {
         color: #6baff3;
+    }
+    .highlighted {
+        color: rgb(25, 118, 210);
     }
 </style>

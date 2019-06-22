@@ -1,3 +1,36 @@
+<i18n>
+{
+    "en": {
+        "button": {
+            "login": "Login"
+        },
+        "menu": {
+            "map": "Map",
+            "about": "About"
+        },
+        "request": {
+            "completed_sector_count": "Something went wrong while trying to get the completed sector count.",
+            "current_iteration": "Something went wrong while trying to get the current iteration."
+        },
+        "iteration": "Iteration: {iterationTitle}"
+    },
+    "ko": {
+        "button": {
+            "login": "로그인"
+        },
+        "menu": {
+            "map": "지도",
+            "about": "정보"
+        },
+        "request": {
+            "completed_sector_count": null,
+            "current_iteration": null
+        },
+        "iteration": "반복: {iterationTitle}"
+    }
+}
+</i18n>
+
 <template>
     <v-navigation-drawer
         app
@@ -13,7 +46,7 @@
                 </v-list-tile>
                 <v-list-tile avatar v-else>
                     <v-list-tile-action>
-                        <v-btn color="info" :href="loginLink" :disabled="loginLink.length === 0">Login</v-btn>
+                        <v-btn color="info" :href="loginLink" :disabled="loginLink.length === 0">{{ $t('button.login') }}</v-btn>
                     </v-list-tile-action>
                 </v-list-tile>
             </v-list>
@@ -25,7 +58,7 @@
                     <v-icon>dashboard</v-icon>
                 </v-list-tile-action>
                 <v-list-tile-content>
-                    <v-list-tile-title>Map</v-list-tile-title>
+                    <v-list-tile-title>{{ $t('menu.map') }}</v-list-tile-title>
                 </v-list-tile-content>
             </v-list-tile>
             <!--<v-list-tile :to="{ path: '/stats' }">
@@ -41,7 +74,7 @@
                     <v-icon>info_outline</v-icon>
                 </v-list-tile-action>
                 <v-list-tile-content>
-                    <v-list-tile-title>About</v-list-tile-title>
+                    <v-list-tile-title>{{ $t('menu.about') }}</v-list-tile-title>
                 </v-list-tile-content>
             </v-list-tile>
         </v-list>
@@ -49,7 +82,7 @@
             <v-divider></v-divider>
             <v-list-tile>
                 <v-list-tile-content>
-                    <v-list-tile-title>Iteration: {{ currentIteration.title }}</v-list-tile-title>
+                    <v-list-tile-title>{{ $t('iteration', { iterationTitle: currentIteration.title }) }}</v-list-tile-title>
                 </v-list-tile-content>
             </v-list-tile>
             <v-list-tile>
@@ -80,6 +113,9 @@ export default {
         };
     },
     mounted () {
+        EventBus.$on('mnk:set-locale', (localeCode) => {
+            this.$i18n.locale = localeCode;
+        });
         EventBus.$on('mnk:toggle-drawer-left', () => {
             this.drawerLeft = !this.drawerLeft;
         });
@@ -99,12 +135,12 @@ export default {
                 this.sectorTotalCount = res.data.totalCount;
                 this.sectorDoneCount = res.data.doneCount;
             }).catch(() => {
-                EventBus.$emit('mnk:message-error', 'Something went wrong while trying to get the completed sector count.');
+                EventBus.$emit('mnk:message-error', this.$t('request.completed_sector_count'));
             }).finally(() => {
                 EventBus.$emit('mnk:stop-loading', 'getCompletedSectorCountByIterationId');
             });
         }).catch(() => {
-            EventBus.$emit('mnk:message-error', 'Something went wrong while trying to get the current iteration.');
+            EventBus.$emit('mnk:message-error', this.$t('request.current_iteration'));
             EventBus.$emit('mnk:stop-loading', 'getCompletedSectorCountByIterationId');
         });
     },

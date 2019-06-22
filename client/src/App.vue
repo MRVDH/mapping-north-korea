@@ -1,3 +1,18 @@
+<i18n>
+{
+    "en": {
+        "dismiss": "Dismiss",
+
+        "request": {
+            "oauth_token": "Something went wrong while trying to get your OAuth request token.",
+            "user_details": "Something went wrong while trying to get your user details.",
+            "logged_in": "Something went wrong while trying to check if you are logged in."
+        }
+    },
+    "ko": { }
+}
+</i18n>
+
 <template>
     <v-app id="app" v-bind:dark="darkTheme" v-cloak>
         <CustomMenuLeft/>
@@ -13,7 +28,7 @@
             <v-btn
                 flat
                 @click="snackbar = false">
-                Close
+                {{ $t('dismiss') }}
             </v-btn>
         </v-snackbar>
     </v-app>
@@ -48,6 +63,17 @@ export default {
             localStorage.darkTheme = false;
             this.darkTheme = false;
         }
+        if (localStorage.locale) {
+            this.$i18n.locale = localStorage.locale;
+            EventBus.$emit('mnk:set-locale', localStorage.locale);
+        } else {
+            localStorage.locale = this.$i18n.locale;
+        }
+
+        EventBus.$on('mnk:set-locale', (localeCode) => {
+            this.$i18n.locale = localeCode;
+            localStorage.locale = localeCode;
+        });
 
         document.getElementById('loading-text').remove();
 
@@ -58,7 +84,7 @@ export default {
                 OAuthService.getRequestToken().then((res) => {
                     EventBus.$emit('mnk:oauth-request-token-received', res.data);
                 }).catch(() => {
-                    EventBus.$emit('mnk:message-error', 'Something went wrong while trying to get your OAuth request token.');
+                    EventBus.$emit('mnk:message-error', this.$t('request.oauth_token'));
                 }).finally(() => {
                     EventBus.$emit('mnk:stop-loading', 'getrequesttoken');
                 });
@@ -67,13 +93,13 @@ export default {
                 OAuthService.getUserDetails().then((res) => {
                     this.$root.loggedInUser = res.data;
                 }).catch(() => {
-                    EventBus.$emit('mnk:message-error', 'Something went wrong while trying to get your user details.');
+                    EventBus.$emit('mnk:message-error', this.$t('request.user_details'));
                 }).finally(() => {
                     EventBus.$emit('mnk:stop-loading', 'getUserDetails');
                 });
             }
         }).catch(() => {
-            EventBus.$emit('mnk:message-error', 'Something went wrong while trying to check if you are logged in.');
+            EventBus.$emit('mnk:message-error', this.$t('request.logged_in'));
         }).finally(() => {
             EventBus.$emit('mnk:stop-loading', 'isuserloggedin');
         });
