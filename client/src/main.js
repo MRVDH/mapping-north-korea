@@ -5,6 +5,7 @@ import App from './App';
 import router from './router';
 import 'vuetify/dist/vuetify.min.css';
 import i18n from './i18n';
+import 'leaflet/dist/leaflet.css';
 
 Vue.config.productionTip = false;
 

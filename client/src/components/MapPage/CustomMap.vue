@@ -24,6 +24,7 @@
 <script>
 import MapApiService from '@/services/MapApiService';
 import EventBus from '@/services/EventBus';
+import * as L from 'leaflet/src/Leaflet';
 
 const defaultStyle = {
     weight: 1,
@@ -93,15 +94,12 @@ export default {
     },
     methods: {
         initMap: function () {
-            // eslint-disable-next-line
             this.map = L.map('map').on('click', this.clickMapEvent).setView([ 39.686, 127.500 ], 7);
 
-            // eslint-disable-next-line
             this.lightTileLayer = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
                 maxZoom: 19,
                 attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
             });
-            // eslint-disable-next-line
             this.darkTileLayer = L.tileLayer('https://tiles.stadiamaps.com/tiles/alidade_smooth_dark/{z}/{x}/{y}{r}.png', {
                 maxZoom: 19,
                 attribution: '&copy; <a href="https://stadiamaps.com/">Stadia Maps</a>, &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
@@ -117,7 +115,6 @@ export default {
             MapApiService.getAllSectors().then((res) => {
                 this.sectors = this.sectorsToGeoJson(res.data);
 
-                // eslint-disable-next-line
                 this.geoJsonLayer = L.geoJSON(this.sectors, {
                     style: (feature) => {
                         return {
@@ -128,7 +125,6 @@ export default {
                         };
                     }
                 }).on('click', this.clickSectorEvent).on('dblclick', function (event) {
-                    // eslint-disable-next-line
                     L.DomEvent.stopPropagation(event);
                     return false;
                 }).addTo(this.map);
@@ -180,7 +176,6 @@ export default {
             } else {
                 this.setSectorSelected(event.layer, true);
             }
-            // eslint-disable-next-line
             L.DomEvent.stopPropagation(event);
         },
         clickMapEvent: function () {
