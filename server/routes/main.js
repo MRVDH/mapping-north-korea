@@ -1,5 +1,3 @@
-const geoip = require("geoip-lite");
-
 const log = require("../utils/log.js");
 
 module.exports = {
