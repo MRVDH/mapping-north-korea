@@ -2,9 +2,7 @@
     <v-toolbar app clipped-right extended extension-height="7">
         <v-toolbar-side-icon @click.stop="toggleDrawerLeft()"></v-toolbar-side-icon>
         <v-toolbar-title>Mapping North Korea</v-toolbar-title>
-        <v-btn icon @click.stop="infoDialog = true">
-            <v-icon>help_outline</v-icon>
-        </v-btn>
+        <CustomHeaderFaq/>
         <v-spacer></v-spacer>
         <v-btn icon @click.stop="toggleDarkTheme()">
             <v-icon>invert_colors</v-icon>
@@ -29,7 +27,6 @@
         </v-menu>
         <v-toolbar-side-icon v-if="displayRightIcon" @click.stop="toggleDrawerRight()"></v-toolbar-side-icon>
         <v-progress-linear v-if="processesWorking.length > 0" slot="extension" :indeterminate="true" class="ma-0"></v-progress-linear>
-        <CustomHeaderFaq/>
     </v-toolbar>
 </template>
 

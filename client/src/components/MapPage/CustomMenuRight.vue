@@ -81,7 +81,6 @@
 
 <template>
     <v-navigation-drawer
-        fixed
         v-model="drawerRight"
         right
         clipped

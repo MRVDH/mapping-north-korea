@@ -70,7 +70,10 @@
 </i18n>
 
 <template>
-    <v-toolbar app clipped-right extended extension-height="7">
+    <div>
+        <v-btn icon @click.stop="infoDialog = true">
+            <v-icon>help_outline</v-icon>
+        </v-btn>
         <v-dialog v-model="infoDialog" max-width="700px">
             <v-card id="info-dialog">
                 <v-card-title>
@@ -108,7 +111,7 @@
                 </v-card-actions>
             </v-card>
         </v-dialog>
-    </v-toolbar>
+    </div>
 </template>
 
 <script>
