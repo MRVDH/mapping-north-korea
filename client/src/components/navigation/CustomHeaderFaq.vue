@@ -29,6 +29,11 @@
                 "answer": "There is a public GitHub repository {0} where you can contribute either by writing code or by reporting bugs and enhancements. If you don't have a GitHub account or with to quickly send me a message about a bug or enhancement you can send me an email at the email address above.",
                 "link": "here"
             },
+            "q6": {
+                "question": "Why does the JOSM map option give an error?",
+                "answer": "For some reason the website can't connect with your JOSM instance. Is JOSM running and is Remote Contol (by HTTPS) enabled? You can enable this in the settings of JOSM. In some browsers it is required to accept the HTTPS certificate before the website can connect to JOSM. To do this, go to {0} in your browser",
+                "link": "https://127.0.0.1:8112/"
+            },
 
             "confirm": "Got it"
         }
@@ -58,6 +63,11 @@
                 "link": null
             },
             "q5": {
+                "question": null,
+                "answer": null,
+                "link": null
+            },
+            "q6": {
                 "question": null,
                 "answer": null,
                 "link": null
@@ -102,6 +112,11 @@
                     <h3>{{ $t('faq.q5.question') }}</h3>
                     <i18n path="faq.q5.answer" tag="p">
                         <a href="https://github.com/MRVDH/mapping-north-korea" @click.stop="infoDialog = false" target="_blank">{{ $t('faq.q5.link') }}</a>
+                    </i18n>
+
+                    <h3>{{ $t('faq.q6.question') }}</h3>
+                    <i18n path="faq.q6.answer" tag="p">
+                        <a href="https://127.0.0.1:8112/" @click.stop="infoDialog = false" target="_blank">{{ $t('faq.q6.link') }}</a>
                     </i18n>
                 </v-card-text>
                 <v-divider></v-divider>
