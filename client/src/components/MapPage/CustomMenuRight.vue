@@ -31,7 +31,7 @@
             "sector_events": "Something went wrong while trying to get the events of a sector.",
             "sector_updated": "Sector updated.",
             "sector_update": "Something went wrong while trying to update the sector.",
-            "josm_failed": "Failed to load data into JOSM. Is JOSM running and is Remote Contol (by HTTPS) enabled?",
+            "josm_failed": "Failed to load data into JOSM. See the FAQ for more information.",
             "confirm_deletion": "Are you sure you want to delete this sector?",
             "deletion": "Something went wrong while trying to delete the sector.",
             "confirm_split": "Are you sure you want to split this sector?",
@@ -430,11 +430,15 @@ export default {
             EventBus.$emit('mnk:start-loading', 'sendJOSMCommand');
             JOSMService.sendJOSMCommand('https://127.0.0.1:8112/load_and_zoom', loadAndZoomParams).catch(() => {
                 EventBus.$emit('mnk:message-error', this.$t('request.josm_failed'));
+            }).finally(() => {
                 EventBus.$emit('mnk:stop-loading', 'sendJOSMCommand');
             });
+            EventBus.$emit('mnk:start-loading', 'sendJOSMImageryCommand');
             JOSMService.sendJOSMCommand('https://127.0.0.1:8112/imagery', {
                 type: 'bing',
                 url: 'https://www.bing.com/maps/'
+            }).finally(() => {
+                EventBus.$emit('mnk:stop-loading', 'sendJOSMImageryCommand');
             });
         },
         cancelDialog: function () {
