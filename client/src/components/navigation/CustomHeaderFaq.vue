@@ -31,8 +31,7 @@
             },
             "q6": {
                 "question": "Why does the JOSM map option give an error?",
-                "answer": "For some reason the website can't connect with your JOSM instance. Is JOSM running and is Remote Contol (by HTTPS) enabled? You can enable this in the settings of JOSM. In some browsers it is required to accept the HTTPS certificate before the website can connect to JOSM. To do this, go to {0} in your browser",
-                "link": "https://127.0.0.1:8112/"
+                "answer": "For some reason the website can't connect with your JOSM instance. Is JOSM running and is Remote Contol enabled? You can enable this in the settings of JOSM.",
             },
 
             "confirm": "Got it"
