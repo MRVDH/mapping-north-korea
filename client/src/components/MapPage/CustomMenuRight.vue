@@ -428,13 +428,13 @@ export default {
             };
 
             EventBus.$emit('mnk:start-loading', 'sendJOSMCommand');
-            JOSMService.sendJOSMCommand('https://127.0.0.1:8112/load_and_zoom', loadAndZoomParams).catch(() => {
+            JOSMService.sendJOSMCommand('http://127.0.0.1:8111/load_and_zoom', loadAndZoomParams).catch(() => {
                 EventBus.$emit('mnk:message-error', this.$t('request.josm_failed'));
             }).finally(() => {
                 EventBus.$emit('mnk:stop-loading', 'sendJOSMCommand');
             });
             EventBus.$emit('mnk:start-loading', 'sendJOSMImageryCommand');
-            JOSMService.sendJOSMCommand('https://127.0.0.1:8112/imagery', {
+            JOSMService.sendJOSMCommand('http://127.0.0.1:8111/imagery', {
                 type: 'bing',
                 url: 'https://www.bing.com/maps/'
             }).finally(() => {
