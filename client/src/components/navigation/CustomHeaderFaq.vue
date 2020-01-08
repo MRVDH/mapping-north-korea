@@ -31,7 +31,7 @@
             },
             "q6": {
                 "question": "Why does the JOSM map option give an error?",
-                "answer": "For some reason the website can't connect with your JOSM instance. Is JOSM running and is Remote Contol enabled? You can enable this in the settings of JOSM.",
+                "answer": "For some reason the website can't connect with your JOSM instance. Is JOSM running and is Remote Contol enabled? You can enable this in the settings of JOSM."
             },
 
             "confirm": "Got it"
@@ -68,8 +68,7 @@
             },
             "q6": {
                 "question": null,
-                "answer": null,
-                "link": null
+                "answer": null
             },
 
             "confirm": "알겠습니다"
@@ -114,9 +113,7 @@
                     </i18n>
 
                     <h3>{{ $t('faq.q6.question') }}</h3>
-                    <i18n path="faq.q6.answer" tag="p">
-                        <a href="https://127.0.0.1:8112/" @click.stop="infoDialog = false" target="_blank">{{ $t('faq.q6.link') }}</a>
-                    </i18n>
+                    <p>{{ $t('faq.q6.answer') }}</p>
                 </v-card-text>
                 <v-divider></v-divider>
                 <v-card-actions>
