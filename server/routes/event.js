@@ -9,8 +9,6 @@ const Event = require("../models/Event.js");
 
 module.exports = {
     getAll: (req, res) => {
-        log.inf("=> GET /event/all/:amount");
-
         if (req.params.amount === "" || req.params.amount === null || req.params.amount === undefined) {
             log.err(" <= RES /event/all/:amount invalid or no req param amount.", req.params);
             res.sendStatus(400);
@@ -27,8 +25,6 @@ module.exports = {
         });
     },
     getBySectorId: (req, res) => {
-        log.inf("=> GET /event/sector/:id");
-
         if (req.params.id === "" || req.params.id === null || req.params.id === undefined) {
             log.err(" <= RES /event/sector/:id invalid or no req param id.", req.params);
             res.sendStatus(400);

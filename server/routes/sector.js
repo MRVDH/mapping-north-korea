@@ -9,8 +9,6 @@ const Event = require("../models/Event.js");
 
 module.exports = {
     getAll: (req, res) => {
-        log.inf("=> GET /sector");
-        
         Sector.find({})
             .populate({
                 path: "sectorSet",
@@ -30,8 +28,6 @@ module.exports = {
         });
     },
     update: async function (req, res) {
-        log.inf("=> PUT /sector/:id");
-
         if (req.session.osmUserId === "" || req.session.osmUserId === null || req.session.osmUserId === undefined) {
             log.err(" <= RES /sector/:id unauthorized.", req.params);
             res.sendStatus(401);
@@ -123,8 +119,6 @@ module.exports = {
         }
     },
     generateGpxBySectorId: (req, res) => {
-        log.inf("=> GET /sector/generate/:id");
-        
         if (req.params.id === "" || req.params.id === null || req.params.id === undefined) {
             log.err(" <= RES /sector/generate/:id invalid or no req param id.", req.params);
             res.sendStatus(400);
@@ -160,8 +154,6 @@ module.exports = {
         });
     },
     getCompletedSectorCountByIterationId: (req, res) => {
-        log.inf("=> GET /api/sector/completed/count/:id");
-
         if (req.params.id === "" || req.params.id === null || req.params.id === undefined) {
             log.err(" <= RES /api/sector/completed/count/:id invalid or no req param id.", req.params);
             res.sendStatus(400);
@@ -187,8 +179,6 @@ module.exports = {
         });
     },
     delete: (req, res) => {
-        log.inf("=> DELETE /api/sector/:id");
-
         if (!global.devMode) {
             if (req.session.osmUserName !== process.env.OSM_ADMIN_NAME) {
                 log.err(" <= RES /sector/split/:id unauthorised.", req.session);
@@ -221,8 +211,6 @@ module.exports = {
         });
     },
     splitSectorBySectorId: (req, res) => {
-        log.inf("=> GET /api/sector/split/:id");
-
         if (!global.devMode) {
             if (req.session.osmUserName !== process.env.OSM_ADMIN_NAME) {
                 log.err(" <= RES /sector/split/:id unauthorised.", req.session);
