@@ -7,8 +7,6 @@ const log = require("../utils/log.js");
 
 module.exports = {
     getUserDetails: (req, res) => {
-        log.inf("=> GET /osm/getuserdetails");
-        
         request({
             url: global.osm.endpoint + global.osm.api_version + "/user/details",
             method: "GET",
@@ -50,7 +48,6 @@ module.exports = {
         });
     },
     getRequestToken: (req, res) => {
-        log.inf("=> POST /oauth/request");
         request.post({
             url: global.osm.endpoint + "/oauth/request_token", 
             oauth: {
@@ -71,7 +68,6 @@ module.exports = {
         });
     },
     doRequestTokenCallback: (req, res) => {
-        log.alt("=> GET /oauth/callback");
         request.post({
             url: global.osm.endpoint + "/oauth/access_token", 
             oauth: {
@@ -94,7 +90,6 @@ module.exports = {
         });
     },
     getIsAuthenticated: (req, res) => {
-        log.inf("=> GET /oauth/isauthenticated");
         if (req.session.access_token && req.session.access_token_secret) {
             res.send({ isAuthenticated: true });
         } else {
@@ -102,7 +97,6 @@ module.exports = {
         }
     },
     doLogout: (req, res) => {
-        log.inf("=> GET /oauth/logout");
         req.session.destroy((err) => {
             if (err) {
                 log.err(" <= RES /oauth/logout ERROR", err);

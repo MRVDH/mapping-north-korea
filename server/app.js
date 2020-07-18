@@ -11,6 +11,7 @@ const rateLimit = require("express-rate-limit");
 const fs = require("fs");
 const exec = require("child_process").exec;
 
+// check for an environment variable
 if (!fs.existsSync(".env")) {
     log.err("Error loading configuration: .env file not found. Please use the following markup:",
     'SESSION_SECRET="secret here"\n\r' +
@@ -38,6 +39,8 @@ const routeIteration = require("./routes/iteration");
 
 log.inf("Configuring middleware...");
 const app = express();
+
+// set global variables based on dev or prod
 var mongodbConnection = "";
 global.devMode = null;
 global.port = 8081;
@@ -62,39 +65,49 @@ if (process.argv.includes("dev")) {
     global.osm.consumer_key = process.env.OSM_CONSUMER_KEY;
     global.osm.api_version = process.env.OSM_API_VERSION;
 }
+
+// connect with the mongodb database
 mongoose.connect(mongodbConnection, { useNewUrlParser: true });
 var db = mongoose.connection;
 db.on("error", console.error.bind(console, 'connection error:'));
 db.once("open", function() {
     log.suc("Connected to the MongoDB Atlas Cloud!");
+    
     if (process.argv.includes("dev") && process.argv.includes("resetdb")) {
         log.alt("(RE)POPULATING THE DATABASE");
         require("./utils/populateDb.js").run({ removeCollections: true, keepSessions: false });
     }
 });
+
+// enable CORS
 app.use(function(req, res, next) {
     var allowedOrigins = ['https://mappingnorthkorea.com', 'https://www.openstreetmap.org', 'https://www.mapwith.ai'];
+    
     if (global.devMode) {
-        allowedOrigins.push('http://127.0.0.1:8080');
-        allowedOrigins.push('http://localhost:8080');
-        allowedOrigins.push('http://127.0.0.1:8081');
-        allowedOrigins.push('http://localhost:8081');
+        allowedOrigins = allowedOrigins.concat(['http://127.0.0.1:8080', 'http://localhost:8080', 'http://127.0.0.1:8081', 'http://localhost:8081']);
     }
+
     var origin = req.headers.origin;
-    if(allowedOrigins.indexOf(origin) > -1){
+    
+    if (allowedOrigins.includes(origin)) {
          res.setHeader('Access-Control-Allow-Origin', origin);
     }
+    
     res.header('Access-Control-Allow-Methods', 'GET, PUT, POST, DELETE, OPTIONS');
     res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
     res.header('Access-Control-Allow-Credentials', true);
+
     return next();
-  });
-app.enable("trust proxy");
-const apiLimiter = rateLimit({
-  windowMs: 10 * 60 * 1000, // 15 minutes
-  max: 100
 });
-app.use("/api/", apiLimiter);
+app.enable("trust proxy");
+
+// max 100 api requests per 10 minutes
+app.use("/api/", rateLimit({
+    windowMs: 10 /* <= amount of minutes */ * 60 * 1000,
+    max: 100
+}));
+
+// enable session management
 app.use(session({
     store: new MongoStore({
         mongooseConnection: mongoose.connection,
@@ -106,10 +119,15 @@ app.use(session({
         maxAge: 30 * 24 * 60 * 60 * 1000 // 30 days
     }
 }));
+
+// define static files
 app.use(express.static(__dirname + "/dist"));
+
+// output and input as json
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 
+// return index file if not api
 app.use((req, res, next) => {
     if (!req.originalUrl.includes('/api/', 0)) {
         res.sendFile(`${__dirname}/dist/index.html`);
@@ -118,6 +136,13 @@ app.use((req, res, next) => {
     }
 });
 
+// log incomming requests
+app.use((req, res, next) => {
+    log.inf(`=> ${req.method} ${req.url}`);
+    next();
+});
+
+// define all routes
 log.inf("Setting up routing...");
 //app.get("/api/main/getlocation", routeMain.getLocation);
 app.post("/api/osm/oauth/request", routeOsm.getRequestToken);
@@ -138,6 +163,7 @@ app.get('/api/sector/completed/count/:id', routeSector.getCompletedSectorCountBy
 app.get('/api/sector/split/:id', routeSector.splitSectorBySectorId);
 app.delete('/api/sector/:id', routeSector.delete);
 
+// github restarting
 app.post('/api/webhook', (req, res) => {
     log.alt("WEBHOOK INITIATED");
 
@@ -165,5 +191,6 @@ app.post('/api/webhook', (req, res) => {
     });
 });
 
+// server start
 log.inf("App setup finish. Starting server...");
 app.listen(global.port, () => log.suc("Server running on port " + port));

@@ -9,8 +9,6 @@ const Event = require("../models/Event.js");
 
 module.exports = {
     getLatestIteration: (req, res) => {
-        log.inf("=> GET /iteration/latest");
-        
         Iteration.find({}).sort('-start').exec(function (err, iterations) { 
             if (err) {
                 log.err(" <= RES /iteration/latest ERROR db error.", err);

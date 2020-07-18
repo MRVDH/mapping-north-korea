@@ -9,8 +9,6 @@ const Event = require("../models/Event.js");
 
 module.exports = {
     getAll: (req, res) => {
-        log.inf("=> GET /state");
-        
         State.find({}, function (err, states) {
             if (err) {
                 log.err(" <= RES /state ERROR db error.", err);

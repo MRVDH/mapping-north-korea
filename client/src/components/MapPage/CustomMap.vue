@@ -134,7 +134,7 @@ export default {
                     this.flyToSectorByPolygonCoordinates(this.selectedSector.feature.geometry.coordinates[0]);
                 }
             }).catch(() => {
-                EventBus.$emit('mnk:message-error', this.$('request.load_sectors'));
+                EventBus.$emit('mnk:message-error', this.$t('request.load_sectors'));
             }).finally(() => {
                 EventBus.$emit('mnk:stop-loading', 'loadingsectors');
             });
