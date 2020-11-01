@@ -72,6 +72,9 @@ export default {
         }
     },
     mounted () {
+        this.$i18n.locale = this.locale;
+        this.$vuetify.theme.dark = this.darkMode;
+
         // Remove the loading screen.
         document.getElementById('loading-text').remove();
 

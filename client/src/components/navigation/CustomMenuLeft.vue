@@ -49,7 +49,7 @@
                 </v-list-item>
                 <v-list-item class="pa-0" v-else>
                     <v-list-item-action>
-                        <v-btn color="info" :href="loginLink" :disabled="loginLink.length === 0">{{ $t('button.login') }}</v-btn>
+                        <v-btn color="info" :href="loginLink" :disabled="!loginLink">{{ $t('button.login') }}</v-btn>
                     </v-list-item-action>
                 </v-list-item>
             </v-list>

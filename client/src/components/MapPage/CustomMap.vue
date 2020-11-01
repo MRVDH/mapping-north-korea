@@ -52,17 +52,13 @@ export default {
     },
     watch: {
         darkMode (newThemeIsDark) {
-            if (newThemeIsDark) {
-                this.map.removeLayer(this.lightTileLayer);
-                this.map.addLayer(this.darkTileLayer);
-            } else {
-                this.map.removeLayer(this.darkTileLayer);
-                this.map.addLayer(this.lightTileLayer);
-            }
+            this.setDarkMode(newThemeIsDark);
         }
     },
     mounted () {
         this.initMap();
+        
+        this.setDarkMode(this.darkMode);
 
         EventBus.$on('mnk:update-sector', (sector) => {
             // find and update the sector in the sector list.
@@ -225,6 +221,15 @@ export default {
         },
         flyToSectorByPolygonCoordinates: function (coordinates) {
             this.map.flyTo([(coordinates[2][1] + coordinates[0][1]) / 2, (coordinates[1][0] + coordinates[0][0]) / 2], 13);
+        },
+        setDarkMode(newThemeIsDark) {
+            if (newThemeIsDark) {
+                this.map.removeLayer(this.lightTileLayer);
+                this.map.addLayer(this.darkTileLayer);
+            } else {
+                this.map.removeLayer(this.darkTileLayer);
+                this.map.addLayer(this.lightTileLayer);
+            }
         }
     }
 };

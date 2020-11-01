@@ -35,6 +35,9 @@ export default new Vuex.Store({
         [mt.TOGGLE_DRAWER_RIGHT] (state) {
             state.drawerRight = !state.drawerRight;
         },
+        [mt.SET_DRAWER_RIGHT] (state, show) {
+            state.drawerRight = show;
+        },
         [mt.START_LOADING] (state, key) {
             state.processesWorking.push(key);
         },
@@ -63,6 +66,9 @@ export default new Vuex.Store({
         },
         [mt.TOGGLE_DRAWER_RIGHT] ({ commit }) {
             commit(mt.TOGGLE_DRAWER_RIGHT);
+        },
+        [mt.SET_DRAWER_RIGHT] ({ commit }, show) {
+            commit(mt.SET_DRAWER_RIGHT, show);
         },
         [mt.START_LOADING] ({ commit }, key) {
             commit(mt.START_LOADING, key);

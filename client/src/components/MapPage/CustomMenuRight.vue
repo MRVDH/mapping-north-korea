@@ -309,7 +309,7 @@ import MapApiService from '@/services/MapApiService';
 import JOSMService from '@/services/JOSMService';
 import EventBus from '@/events/EventBus';
 import { MESSAGE_ERROR, MESSAGE_SUCCESS } from '@/events/eventTypes';
-import { START_LOADING, STOP_LOADING } from "@/store/mutationTypes";
+import { START_LOADING, STOP_LOADING, SET_DRAWER_RIGHT } from "@/store/mutationTypes";
 
 export default {
     name: 'CustomMenuRight',
@@ -327,8 +327,28 @@ export default {
             stateEditOpen: false
         };
     },
+    computed: {
+        adminLoggedIn () {
+            if (this.$root.loggedInUser && document.getElementById('logged-in-user-name')) {
+                return document.getElementById('logged-in-user-name').innerText === 'Artemis64' || document.getElementById('logged-in-user-name').innerText === 'Artemis64dev';
+            } else {
+                return false;
+            }
+        },
+        drawerRight: {
+            set (newValue) {
+                this.$store.commit(SET_DRAWER_RIGHT, newValue);
+            },
+            get () {
+                return this.$store.state.drawerRight;
+            }
+        },
+        selectedSector () {
+            return this.$store.state.selectedSector;
+        }
+    },
     mounted () {
-        this.drawerRight = !this.$vuetify.breakpoint.xs;
+        this.$store.dispatch(SET_DRAWER_RIGHT, !this.$vuetify.breakpoint.xs);
 
         this.$store.dispatch(START_LOADING, 'getAllStates');
         MapApiService.getAllStates().then((res) => {
@@ -477,21 +497,6 @@ export default {
                     this.$store.dispatch(STOP_LOADING, 'splitSectorById');
                 });
             }
-        }
-    },
-    computed: {
-        adminLoggedIn () {
-            if (this.$root.loggedInUser && document.getElementById('logged-in-user-name')) {
-                return document.getElementById('logged-in-user-name').innerText === 'Artemis64' || document.getElementById('logged-in-user-name').innerText === 'Artemis64dev';
-            } else {
-                return false;
-            }
-        },
-        drawerRight () {
-            return this.$store.state.drawerRight;
-        },
-        selectedSector () {
-            return this.$store.state.selectedSector;
         }
     },
     watch: {
