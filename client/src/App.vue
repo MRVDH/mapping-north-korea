@@ -14,7 +14,7 @@
 </i18n>
 
 <template>
-    <v-app id="app" v-bind:dark="darkTheme" v-cloak>
+    <v-app id="app" v-cloak>
         <CustomMenuLeft/>
         <CustomHeader/>
         <router-view/>
@@ -26,7 +26,7 @@
             :timeout="snackbarOptions.timeout">
             {{ snackbarOptions.text }}
             <v-btn
-                flat
+                text
                 @click="snackbar = false">
                 {{ $t('dismiss') }}
             </v-btn>
@@ -40,7 +40,6 @@ import CustomHeader from '@/components/navigation/CustomHeader';
 import CustomFooter from '@/components/navigation/CustomFooter';
 import OAuthService from '@/services/OAuthService';
 import EventBus from '@/services/EventBus';
-
 export default {
     name: 'App',
     data: () => {
@@ -56,7 +55,6 @@ export default {
     },
     mounted () {
         this.$root.loggedInUser = null;
-
         if (localStorage.darkTheme) {
             this.darkTheme = localStorage.darkTheme === 'true';
         } else {
@@ -69,14 +67,11 @@ export default {
         } else {
             localStorage.locale = this.$i18n.locale;
         }
-
         EventBus.$on('mnk:set-locale', (localeCode) => {
             this.$i18n.locale = localeCode;
             localStorage.locale = localeCode;
         });
-
         document.getElementById('loading-text').remove();
-
         EventBus.$emit('mnk:start-loading', 'isuserloggedin');
         OAuthService.isUserLoggedIn().then((res) => {
             if (!res.data.isAuthenticated) {
@@ -103,7 +98,6 @@ export default {
         }).finally(() => {
             EventBus.$emit('mnk:stop-loading', 'isuserloggedin');
         });
-
         EventBus.$on('mnk:toggle-dark-theme', () => {
             this.darkTheme = !this.darkTheme;
         });
@@ -126,6 +120,7 @@ export default {
     watch: {
         darkTheme (newSetting) {
             localStorage.darkTheme = newSetting;
+            this.$vuetify.theme.dark = !this.$vuetify.theme.dark;
         }
     },
     components: {

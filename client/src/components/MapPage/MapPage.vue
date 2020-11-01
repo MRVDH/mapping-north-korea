@@ -1,5 +1,5 @@
 <template>
-    <v-content>
+    <v-main>
         <v-container id="content-container" fluid fill-height>
             <v-layout>
                 <v-flex>
@@ -8,7 +8,7 @@
             </v-layout>
         </v-container>
         <CustomMenuRight/>
-    </v-content>
+    </v-main>
 </template>
 
 <script>

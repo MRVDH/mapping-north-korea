@@ -1,6 +1,6 @@
 <template>
-    <v-toolbar app clipped-right extended extension-height="7">
-        <v-toolbar-side-icon @click.stop="toggleDrawerLeft()"></v-toolbar-side-icon>
+    <v-app-bar app clipped-right extended extension-height="7">
+        <v-app-bar-nav-icon @click.stop="toggleDrawerLeft()"></v-app-bar-nav-icon>
         <v-toolbar-title>Mapping North Korea</v-toolbar-title>
         <CustomHeaderFaq/>
         <v-spacer></v-spacer>
@@ -14,20 +14,20 @@
                 </v-btn>
             </template>
             <v-list>
-                <v-list-tile
+                <v-list-item
                     v-for="(item, index) in langs"
                     :key="index"
                     @click="setLocale(item.localeCode)"
                     active-class="highlighted"
                     :class="item.localeCode === $i18n.locale ? 'highlighted' : ''"
                     >
-                    <v-list-tile-title>{{ item.title }}</v-list-tile-title>
-                </v-list-tile>
+                    <v-list-item-title>{{ item.title }}</v-list-item-title>
+                </v-list-item>
             </v-list>
         </v-menu>
-        <v-toolbar-side-icon v-if="displayRightIcon" @click.stop="toggleDrawerRight()"></v-toolbar-side-icon>
+        <v-app-bar-nav-icon v-if="displayRightIcon" @click.stop="toggleDrawerRight()"></v-app-bar-nav-icon>
         <v-progress-linear v-if="processesWorking.length > 0" slot="extension" :indeterminate="true" class="ma-0"></v-progress-linear>
-    </v-toolbar>
+    </v-app-bar>
 </template>
 
 <script>

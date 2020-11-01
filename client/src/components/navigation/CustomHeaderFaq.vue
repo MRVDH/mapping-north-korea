@@ -118,7 +118,7 @@
                 <v-divider></v-divider>
                 <v-card-actions>
                     <v-spacer></v-spacer>
-                    <v-btn outline @click.stop="infoDialog = false">{{ $t('faq.confirm') }}</v-btn>
+                    <v-btn outlined @click.stop="infoDialog = false">{{ $t('faq.confirm') }}</v-btn>
                 </v-card-actions>
             </v-card>
         </v-dialog>

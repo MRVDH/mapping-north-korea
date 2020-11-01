@@ -84,27 +84,28 @@
         v-model="drawerRight"
         right
         clipped
-        mobile-break-point="0"
-        app>
+        mobile-breakpoint="0"
+        app
+        class="drawer">
         <v-list v-if="!selectedSector">
             <v-container
-                text-xs-center
+                text-center
                 grid-list-xs
                 style="padding: 16px;">
                 <v-layout>
                     <v-flex>{{ $t('help.select_sector') }}</v-flex>
                 </v-layout>
             </v-container>
-            <v-list-tile v-for="(state, index) in states" :key="index">
-                <v-list-tile-content>
-                    <v-list-tile-title><span :style="{ color: state.color }">■</span> {{ state.title }}</v-list-tile-title>
-                </v-list-tile-content>
-                <v-list-tile-action>
+            <v-list-item v-for="(state, index) in states" :key="index">
+                <v-list-item-content class="pa-0">
+                    <v-list-item-title><span :style="{ color: state.color }">■</span> {{ state.title }}</v-list-item-title>
+                </v-list-item-content>
+                <v-list-item-action class="ma-0">
                     <v-btn icon @click.stop="selectRandomSector(state._id)">
                         <v-icon>forward</v-icon>
                     </v-btn>
-                </v-list-tile-action>
-            </v-list-tile>
+                </v-list-item-action>
+            </v-list-item>
             <v-divider v-if="allEvents.length > 0"></v-divider>
             <v-container
                 grid-list-xs
@@ -115,11 +116,11 @@
                     </v-flex>
                 </v-layout>
             </v-container>
-            <v-container grid-list-md text-xs-center style="padding: 16px;">
-                <v-layout row v-for="(event, index) in allEvents" :key="index">
+            <v-container grid-list-md text-center style="padding: 16px;">
+                <v-layout class="row" v-for="(event, index) in allEvents" :key="index">
                     <v-flex xs12>
-                        <div class="text-xs-left" @click.stop="selectSectorById(event.sector)" style="cursor: pointer;">{{ event.description }}</div>
-                        <div class="text-xs-right grey--text text--lighten-1 caption">{{ event.osmUserName }}
+                        <div class="text-left" @click.stop="selectSectorById(event.sector)" style="cursor: pointer;">{{ event.description }}</div>
+                        <div class="text-right grey--text text--lighten-1 caption">{{ event.osmUserName }}
                             <a
                                 :href="'https://www.openstreetmap.org/user/' + event.osmUserName"
                                 target="_blank"
@@ -132,46 +133,45 @@
             </v-container>
         </v-list>
         <v-list v-else>
-            <v-list-tile>
-                <v-list-tile-content>
-                    <v-list-tile-title>{{ $t('sector.id') }}</v-list-tile-title>
-                </v-list-tile-content>
-                <v-list-tile-action>
-                    <v-list-tile-title class="text-xs-right">{{ selectedSector.properties._id }}</v-list-tile-title>
-                </v-list-tile-action>
-            </v-list-tile>
-            <v-list-tile>
-                <v-list-tile-content>
-                    <v-list-tile-title>{{ $t('sector.state') }}</v-list-tile-title>
-                </v-list-tile-content>
-                <v-list-tile-action>
-                    <v-list-tile-title class="text-xs-right">{{ selectedSector.properties.state.title }}</v-list-tile-title>
+            <v-list-item>
+                <v-list-item-content>
+                    <v-list-item-title>{{ $t('sector.id') }}</v-list-item-title>
+                </v-list-item-content>
+                <v-list-item-action>
+                    <v-list-item-title class="text-right">{{ selectedSector.properties._id }}</v-list-item-title>
+                </v-list-item-action>
+            </v-list-item>
+            <v-list-item>
+                <v-list-item-content>
+                    <v-list-item-title>{{ $t('sector.state') }}</v-list-item-title>
+                </v-list-item-content>
+                <v-list-item-action>
                     <v-menu offset-y v-model="stateEditOpen">
                         <template v-slot:activator="{ on }">
                             <v-btn
-                                outline
+                                outlined
                                 v-on="on"
                                 class="no-margin-button"
                                 :disabled="!$root.loggedInUser"
                                 >{{ selectedSector.properties.state.title }}</v-btn>
                         </template>
                         <v-list>
-                            <v-list-tile
+                            <v-list-item
                                 v-for="(state, index) in states"
                                 :key="index"
                                 @click.stop="updateSector(state, null)"
                                 >
-                                <v-list-tile-title>
+                                <v-list-item-title>
                                     <span :style="{ color: state.color, 'vertical-align': 'text-bottom' }">■</span> {{ state.title }}
-                                </v-list-tile-title>
-                            </v-list-tile>
+                                </v-list-item-title>
+                            </v-list-item>
                         </v-list>
                     </v-menu>
-                </v-list-tile-action>
-            </v-list-tile>
+                </v-list-item-action>
+            </v-list-item>
             <div>
                 <v-container
-                    text-xs-center
+                    text-center
                     grid-list-xs
                     style="padding: 0 16px;"
                     v-if="!$root.loggedInUser">
@@ -182,7 +182,7 @@
                     </v-layout>
                 </v-container>
                 <v-container
-                    text-xs-center
+                    text-center
                     grid-list-xs
                     style="padding: 0 16px;"
                     v-if="selectedSector.properties.state.title === 'Open' && $root.loggedInUser">
@@ -193,7 +193,7 @@
                     </v-layout>
                 </v-container>
                 <v-container
-                    text-xs-center
+                    text-center
                     grid-list-xs
                     style="padding: 0 16px;"
                     v-if="selectedSector.properties.state.title === 'Review needed' && $root.loggedInUser">
@@ -204,7 +204,7 @@
                     </v-layout>
                 </v-container>
                 <v-container
-                    text-xs-center
+                    text-center
                     grid-list-xs
                     style="padding: 0 16px;"
                     v-if="selectedSector.properties.state.title === 'Completed' && $root.loggedInUser">
@@ -228,15 +228,15 @@
                                     >{{ $t('sector.button.map') }}</v-btn>
                             </template>
                             <v-list>
-                                <v-list-tile :href="idUrl" target="_blank">
-                                    <v-list-tile-title>iD</v-list-tile-title>
-                                </v-list-tile>
-                                <v-list-tile :href="rapidUrl" target="_blank">
-                                    <v-list-tile-title>RapiD</v-list-tile-title>
-                                </v-list-tile>
-                                <v-list-tile @click.stop="mapSectorInJOSM(); mappingMenuOpen = false;">
-                                        <v-list-tile-title>JOSM</v-list-tile-title>
-                                </v-list-tile>
+                                <v-list-item :href="idUrl" target="_blank">
+                                    <v-list-item-title>iD</v-list-item-title>
+                                </v-list-item>
+                                <v-list-item :href="rapidUrl" target="_blank">
+                                    <v-list-item-title>RapiD</v-list-item-title>
+                                </v-list-item>
+                                <v-list-item @click.stop="mapSectorInJOSM(); mappingMenuOpen = false;">
+                                        <v-list-item-title>JOSM</v-list-item-title>
+                                </v-list-item>
                             </v-list>
                         </v-menu>
                         <v-btn
@@ -268,11 +268,11 @@
             </v-container>
             <v-divider></v-divider>
             <v-container
-                text-xs-center
+                text-center
                 grid-list-xs
                 style="padding: 0 16px;"
                 v-if="$root.loggedInUser">
-                <v-layout row wrap>
+                <v-layout class="row" wrap>
                     <v-flex xs12>
                         <v-textarea
                             v-model="newComment"
@@ -285,11 +285,11 @@
                     </v-flex>
                 </v-layout>
             </v-container>
-            <v-container grid-list-md text-xs-center style="padding: 16px;">
-                <v-layout row v-for="(event, index) in events" :key="index">
+            <v-container grid-list-md text-center style="padding: 16px;">
+                <v-layout class="row" v-for="(event, index) in events" :key="index">
                     <v-flex xs12>
-                        <div class="text-xs-left">{{ event.description }}</div>
-                        <div class="text-xs-right grey--text text--lighten-1 caption">{{ event.osmUserName }}
+                        <div class="text-left">{{ event.description }}</div>
+                        <div class="text-right grey--text text--lighten-1 caption">{{ event.osmUserName }}
                             <a
                                 :href="'https://www.openstreetmap.org/user/' + event.osmUserName"
                                 target="_blank"
@@ -522,7 +522,7 @@ export default {
 };
 </script>
 
-<style scope>
+<style scoped>
 .no-margin-button {
     margin: 0 !important;
     margin-bottom: 4px !important;

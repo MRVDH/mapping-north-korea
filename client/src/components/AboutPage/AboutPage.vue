@@ -1,7 +1,7 @@
 <template>
-    <v-content>
+    <v-main>
         <v-container id="about-page" grid-list-xs fill-height>
-            <v-layout row>
+            <v-layout class="row">
                 <v-flex xs12>
                     <v-card>
                         <v-card-title id="about-page-headline">
@@ -70,27 +70,27 @@
         right
         clipped
         permanent
-        mobile-break-point="0"
+        mobile-breakpoint="0"
         app>
             <v-list>
-                <v-list-tile>
-                    <v-list-tile-action target="_blank" href="#about-page-headline">Header</v-list-tile-action>
-                </v-list-tile>
-                <v-list-tile>
-                    <v-list-tile-action target="_blank" href="#about-page-how-it-works">How it works</v-list-tile-action>
-                </v-list-tile>
-                <v-list-tile>
-                    <v-list-tile-action target="_blank" href="#about-page-attribution">Attribution</v-list-tile-action>
-                </v-list-tile>
-                <v-list-tile>
-                    <v-list-tile-action target="_blank" href="#about-page-data-usage">Data usage and Privacy</v-list-tile-action>
-                </v-list-tile>
-                <v-list-tile>
-                    <v-list-tile-action target="_blank" href="#about-page-contact">Contact</v-list-tile-action>
-                </v-list-tile>
+                <v-list-item>
+                    <v-list-item-action target="_blank" href="#about-page-headline">Header</v-list-item-action>
+                </v-list-item>
+                <v-list-item>
+                    <v-list-item-action target="_blank" href="#about-page-how-it-works">How it works</v-list-item-action>
+                </v-list-item>
+                <v-list-item>
+                    <v-list-item-action target="_blank" href="#about-page-attribution">Attribution</v-list-item-action>
+                </v-list-item>
+                <v-list-item>
+                    <v-list-item-action target="_blank" href="#about-page-data-usage">Data usage and Privacy</v-list-item-action>
+                </v-list-item>
+                <v-list-item>
+                    <v-list-item-action target="_blank" href="#about-page-contact">Contact</v-list-item-action>
+                </v-list-item>
             </v-list>
         </v-navigation-drawer>
-    </v-content>
+    </v-main>
 </template>
 
 <script>
