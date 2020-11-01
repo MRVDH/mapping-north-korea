@@ -102,7 +102,7 @@
 
 <script>
 import MapApiService from '@/services/MapApiService';
-import EventBus from '@/services/EventBus';
+import EventBus from '@/events/EventBus';
 
 export default {
     name: 'CustomMenuLeft',
@@ -116,9 +116,6 @@ export default {
         };
     },
     mounted () {
-        EventBus.$on('mnk:set-locale', (localeCode) => {
-            this.$i18n.locale = localeCode;
-        });
         EventBus.$on('mnk:toggle-drawer-left', () => {
             this.drawerLeft = !this.drawerLeft;
         });

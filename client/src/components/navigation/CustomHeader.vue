@@ -32,13 +32,12 @@
 
 <script>
 import CustomHeaderFaq from '@/components/navigation/CustomHeaderFaq';
-import EventBus from '@/services/EventBus';
+import { SET_LOCALE, TOGGLE_DARK_MODE, TOGGLE_DRAWER_LEFT, TOGGLE_DRAWER_RIGHT } from "@/store/mutationTypes";
 
 export default {
     name: 'CustomHeader',
     data () {
         return {
-            processesWorking: [],
             displayRightIcon: this.$router.currentRoute.name === 'MapPage',
             langs: [
                 {
@@ -54,31 +53,23 @@ export default {
             ]
         };
     },
-    mounted () {
-        EventBus.$on('mnk:set-locale', (localeCode) => {
-            this.$i18n.locale = localeCode;
-        });
-        EventBus.$on('mnk:start-loading', this.addLoading);
-        EventBus.$on('mnk:stop-loading', this.removeLoading);
+    computed: {
+        processesWorking () {
+            return this.$store.state.processesWorking;
+        }
     },
     methods: {
         toggleDrawerLeft: function () {
-            EventBus.$emit('mnk:toggle-drawer-left');
+            this.$store.dispatch(TOGGLE_DRAWER_LEFT);
         },
         toggleDrawerRight: function () {
-            EventBus.$emit('mnk:toggle-drawer-right');
+            this.$store.dispatch(TOGGLE_DRAWER_RIGHT);
         },
         toggleDarkTheme: function () {
-            EventBus.$emit('mnk:toggle-dark-theme', localStorage.darkTheme !== 'true');
-        },
-        addLoading: function (id) {
-            this.processesWorking.push(id);
-        },
-        removeLoading: function (id) {
-            this.processesWorking = this.processesWorking.filter(pw => pw !== id);
+            this.$store.dispatch(TOGGLE_DARK_MODE);
         },
         setLocale: function (localeCode) {
-            EventBus.$emit('mnk:set-locale', localeCode);
+            this.$store.dispatch(SET_LOCALE, localeCode);
         }
     },
     watch: {

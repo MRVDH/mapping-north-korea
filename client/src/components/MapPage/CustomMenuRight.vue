@@ -307,7 +307,7 @@
 <script>
 import MapApiService from '@/services/MapApiService';
 import JOSMService from '@/services/JOSMService';
-import EventBus from '@/services/EventBus';
+import EventBus from '@/events/EventBus';
 
 export default {
     name: 'CustomMenuRight',
@@ -334,9 +334,6 @@ export default {
         EventBus.$on('mnk:select-sector', this.selectSector);
         EventBus.$on('mnk:deselect-sector', () => {
             this.selectedSector = null;
-        });
-        EventBus.$on('mnk:set-locale', (localeCode) => {
-            this.$i18n.locale = localeCode;
         });
 
         EventBus.$emit('mnk:start-loading', 'getAllStates');

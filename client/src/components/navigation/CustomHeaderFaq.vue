@@ -126,19 +126,12 @@
 </template>
 
 <script>
-import EventBus from '@/services/EventBus';
-
 export default {
     name: 'CustomHeaderFaq',
     data () {
         return {
             infoDialog: false
         };
-    },
-    mounted () {
-        EventBus.$on('mnk:set-locale', (localeCode) => {
-            this.$i18n.locale = localeCode;
-        });
     }
 };
 </script>

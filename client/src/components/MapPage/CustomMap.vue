@@ -23,7 +23,7 @@
 
 <script>
 import MapApiService from '@/services/MapApiService';
-import EventBus from '@/services/EventBus';
+import EventBus from '@/events/EventBus';
 import * as L from 'leaflet/src/Leaflet';
 
 const defaultStyle = {
@@ -46,9 +46,6 @@ export default {
     mounted () {
         this.initMap();
 
-        EventBus.$on('mnk:set-locale', (localeCode) => {
-            this.$i18n.locale = localeCode;
-        });
         EventBus.$on('mnk:update-sector', (sector) => {
             // find and update the sector in the sector list.
             this.sectors.features[this.sectors.features.findIndex(x => x.properties._id === sector.properties._id)] = sector;
