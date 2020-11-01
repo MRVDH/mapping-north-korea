@@ -6,3 +6,4 @@ export const TOGGLE_DRAWER_LEFT = 'toggleDrawerLeft';
 export const TOGGLE_DRAWER_RIGHT = 'toggleDrawerRight';
 export const START_LOADING = 'startLoading';
 export const STOP_LOADING = 'stopLoading';
+export const SELECT_SECTOR = 'selectSector';

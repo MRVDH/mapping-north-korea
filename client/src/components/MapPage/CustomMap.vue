@@ -26,7 +26,7 @@ import MapApiService from '@/services/MapApiService';
 import EventBus from '@/events/EventBus';
 import * as L from 'leaflet/src/Leaflet';
 import { MESSAGE_ERROR, MESSAGE_INFO } from '@/events/eventTypes';
-import { START_LOADING, STOP_LOADING } from "@/store/mutationTypes";
+import { START_LOADING, STOP_LOADING, SELECT_SECTOR } from "@/store/mutationTypes";
 
 const defaultStyle = {
     weight: 1,
@@ -147,7 +147,7 @@ export default {
         },
         setSectorSelected: function (layer, select) {
             if (select) {
-                EventBus.$emit('mnk:select-sector', layer.toGeoJSON());
+                this.$store.dispatch(SELECT_SECTOR, layer.toGeoJSON());
                 this.$router.push({ name: 'MapPage', params: { sectorId: layer.feature.properties._id } });
                 layer.bringToFront();
                 layer.setStyle({
@@ -166,7 +166,7 @@ export default {
                 }
                 this.selectedSector = layer;
             } else {
-                EventBus.$emit('mnk:deselect-sector');
+                this.$store.dispatch(SELECT_SECTOR, null);
                 this.$router.push({ name: 'MapPage', params: { sectorId: null } });
                 layer.setStyle({
                     color: this.selectedSector.feature.properties.state.color,
@@ -186,7 +186,7 @@ export default {
         },
         clickMapEvent: function () {
             if (this.selectedSector) {
-                EventBus.$emit('mnk:deselect-sector');
+                this.$store.dispatch(SELECT_SECTOR, null);
                 for (var layerIndex in this.geoJsonLayer._layers) {
                     if (this.geoJsonLayer._layers[layerIndex].feature.properties._id === this.selectedSector.feature.properties._id) {
                         this.setSectorSelected(this.geoJsonLayer._layers[layerIndex], false);

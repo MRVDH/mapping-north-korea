@@ -13,7 +13,8 @@ export default new Vuex.Store({
         loginLink: null,
         drawerLeft: false,
         drawerRight: true,
-        processesWorking: []
+        processesWorking: [],
+        selectedSector: null
     },
     mutations: {
         [mt.TOGGLE_DARK_MODE] (state) {
@@ -38,8 +39,11 @@ export default new Vuex.Store({
             state.processesWorking.push(key);
         },
         [mt.STOP_LOADING] (state, key) {
-            state.processesWorking = state.processesWorking.filter(x => x.key !== key);
+            state.processesWorking = state.processesWorking.filter(x => x !== key);
         },
+        [mt.SELECT_SECTOR] (state, sector) {
+            state.selectedSector = sector;
+        }
     },
     actions: {
         [mt.TOGGLE_DARK_MODE] ({ commit }) {
@@ -65,6 +69,9 @@ export default new Vuex.Store({
         },
         [mt.STOP_LOADING] ({ commit }, key) {
             commit(mt.STOP_LOADING, key);
+        },
+        [mt.SELECT_SECTOR] ({ commit }, sector) {
+            commit(mt.SELECT_SECTOR, sector);
         }
     },
     plugins: [new VuexPersistence({

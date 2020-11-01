@@ -315,7 +315,6 @@ export default {
     name: 'CustomMenuRight',
     data () {
         return {
-            selectedSector: null,
             idUrl: '',
             rapidUrl: '',
             valid: true,
@@ -330,11 +329,6 @@ export default {
     },
     mounted () {
         this.drawerRight = !this.$vuetify.breakpoint.xs;
-
-        EventBus.$on('mnk:select-sector', this.selectSector);
-        EventBus.$on('mnk:deselect-sector', () => {
-            this.selectedSector = null;
-        });
 
         this.$store.dispatch(START_LOADING, 'getAllStates');
         MapApiService.getAllStates().then((res) => {
@@ -357,30 +351,6 @@ export default {
     methods: {
         selectSectorById: (id) => {
             EventBus.$emit('mnk:go-to-sector', id);
-        },
-        selectSector: function (selectedSect) {
-            this.selectedSector = selectedSect;
-            this.newState = this.selectedSector.properties.state._id;
-
-            var coords = this.selectedSector.geometry.coordinates[0];
-            this.idUrl = 'https://www.openstreetmap.org/edit?editor=id' +
-                '&#map=13/' + (coords[1][1] + coords[2][1]) / 2 + '/' + (coords[0][0] + coords[1][0]) / 2 +
-                '&comment=MappingNorthKorea.com%20sector%20' + this.selectedSector.properties._id +
-                '&gpx=https://mappingnorthkorea.com/api/sector/generate/' + this.selectedSector.properties._id + '.gpx';
-            this.rapidUrl = 'https://www.mapwith.ai/rapid?#' +
-                'gpx=https://mappingnorthkorea.com/api/sector/generate/' + this.selectedSector.properties._id + '.gpx' +
-                '&map=13/' + (coords[1][1] + coords[2][1]) / 2 + '/' + (coords[0][0] + coords[1][0]) / 2 +
-                '&comment=MappingNorthKorea.com%20sector%20' + this.selectedSector.properties._id;
-
-            this.$store.dispatch(START_LOADING, 'getEventsBySectorId');
-            MapApiService.getEventsBySectorId(this.selectedSector.properties._id).then((res) => {
-                if (!res.data.length) return;
-                this.events = res.data.sort(function (a, b) { return new Date(b.time.date) - new Date(a.time.date); }).reverse();
-            }).catch(() => {
-                EventBus.$emit(MESSAGE_ERROR, this.$t('request.sector_events'));
-            }).finally(() => {
-                this.$store.dispatch(STOP_LOADING, 'getEventsBySectorId');
-            });
         },
         selectRandomSector: (id) => {
             EventBus.$emit('mnk:select-random-sector-by-state-id', id);
@@ -519,6 +489,38 @@ export default {
         },
         drawerRight () {
             return this.$store.state.drawerRight;
+        },
+        selectedSector () {
+            return this.$store.state.selectedSector;
+        }
+    },
+    watch: {
+        selectedSector () {
+            if (!this.selectedSector) {
+                return;
+            }
+
+            this.newState = this.selectedSector.properties.state._id;
+
+            var coords = this.selectedSector.geometry.coordinates[0];
+            this.idUrl = 'https://www.openstreetmap.org/edit?editor=id' +
+                '&#map=13/' + (coords[1][1] + coords[2][1]) / 2 + '/' + (coords[0][0] + coords[1][0]) / 2 +
+                '&comment=MappingNorthKorea.com%20sector%20' + this.selectedSector.properties._id +
+                '&gpx=https://mappingnorthkorea.com/api/sector/generate/' + this.selectedSector.properties._id + '.gpx';
+            this.rapidUrl = 'https://www.mapwith.ai/rapid?#' +
+                'gpx=https://mappingnorthkorea.com/api/sector/generate/' + this.selectedSector.properties._id + '.gpx' +
+                '&map=13/' + (coords[1][1] + coords[2][1]) / 2 + '/' + (coords[0][0] + coords[1][0]) / 2 +
+                '&comment=MappingNorthKorea.com%20sector%20' + this.selectedSector.properties._id;
+
+            this.$store.dispatch(START_LOADING, 'getEventsBySectorId');
+            MapApiService.getEventsBySectorId(this.selectedSector.properties._id).then((res) => {
+                if (!res.data.length) return;
+                this.events = res.data.sort(function (a, b) { return new Date(b.time.date) - new Date(a.time.date); }).reverse();
+            }).catch(() => {
+                EventBus.$emit(MESSAGE_ERROR, this.$t('request.sector_events'));
+            }).finally(() => {
+                this.$store.dispatch(STOP_LOADING, 'getEventsBySectorId');
+            });
         }
     }
 };
