@@ -308,12 +308,13 @@
 import MapApiService from '@/services/MapApiService';
 import JOSMService from '@/services/JOSMService';
 import EventBus from '@/events/EventBus';
+import { MESSAGE_ERROR, MESSAGE_SUCCESS } from '@/events/eventTypes';
+import { START_LOADING, STOP_LOADING } from "@/store/mutationTypes";
 
 export default {
     name: 'CustomMenuRight',
     data () {
         return {
-            drawerRight: !this.$vuetify.breakpoint.xs,
             selectedSector: null,
             idUrl: '',
             rapidUrl: '',
@@ -328,29 +329,29 @@ export default {
         };
     },
     mounted () {
-        EventBus.$on('mnk:toggle-drawer-right', () => {
-            this.drawerRight = !this.drawerRight;
-        });
+        this.drawerRight = !this.$vuetify.breakpoint.xs;
+
         EventBus.$on('mnk:select-sector', this.selectSector);
         EventBus.$on('mnk:deselect-sector', () => {
             this.selectedSector = null;
         });
 
-        EventBus.$emit('mnk:start-loading', 'getAllStates');
+        this.$store.dispatch(START_LOADING, 'getAllStates');
         MapApiService.getAllStates().then((res) => {
             this.states = res.data;
         }).catch(() => {
-            EventBus.$emit('mnk:message-error', this.$t('request.get_sector_states'));
+            EventBus.$emit(MESSAGE_ERROR, this.$t('request.get_sector_states'));
         }).finally(() => {
-            EventBus.$emit('mnk:stop-loading', 'getAllStates');
+            this.$store.dispatch(STOP_LOADING, 'getAllStates');
         });
-        EventBus.$emit('mnk:start-loading', 'getAllEvents');
+        
+        this.$store.dispatch(START_LOADING, 'getAllEvents');
         MapApiService.getAllEvents(25).then((res) => {
             this.allEvents = res.data;
         }).catch(() => {
-            EventBus.$emit('mnk:message-error', this.$t('request.recent_events'));
+            EventBus.$emit(MESSAGE_ERROR, this.$t('request.recent_events'));
         }).finally(() => {
-            EventBus.$emit('mnk:stop-loading', 'getAllEvents');
+            this.$store.dispatch(STOP_LOADING, 'getAllEvents');
         });
     },
     methods: {
@@ -371,14 +372,14 @@ export default {
                 '&map=13/' + (coords[1][1] + coords[2][1]) / 2 + '/' + (coords[0][0] + coords[1][0]) / 2 +
                 '&comment=MappingNorthKorea.com%20sector%20' + this.selectedSector.properties._id;
 
-            EventBus.$emit('mnk:start-loading', 'getEventsBySectorId');
+            this.$store.dispatch(START_LOADING, 'getEventsBySectorId');
             MapApiService.getEventsBySectorId(this.selectedSector.properties._id).then((res) => {
                 if (!res.data.length) return;
                 this.events = res.data.sort(function (a, b) { return new Date(b.time.date) - new Date(a.time.date); }).reverse();
             }).catch(() => {
-                EventBus.$emit('mnk:message-error', this.$t('request.sector_events'));
+                EventBus.$emit(MESSAGE_ERROR, this.$t('request.sector_events'));
             }).finally(() => {
-                EventBus.$emit('mnk:stop-loading', 'getEventsBySectorId');
+                this.$store.dispatch(STOP_LOADING, 'getEventsBySectorId');
             });
         },
         selectRandomSector: (id) => {
@@ -392,7 +393,7 @@ export default {
             var apiSector = this.geoJsonSectorToApiSector(this.selectedSector);
             this.stateEditOpen = false;
 
-            EventBus.$emit('mnk:start-loading', 'updateSector');
+            this.$store.dispatch(START_LOADING, 'updateSector');
             MapApiService.updateSector({
                 sector: apiSector,
                 comment: comment || '',
@@ -407,12 +408,12 @@ export default {
                 this.newComment = '';
                 this.newState = this.selectedSector.properties.state._id;
 
-                EventBus.$emit('mnk:message-success', this.$t('request.sector_updated'));
+                EventBus.$emit(MESSAGE_SUCCESS, this.$t('request.sector_updated'));
                 EventBus.$emit('mnk:update-sector', this.selectedSector);
             }).catch(() => {
-                EventBus.$emit('mnk:message-error', this.$t('request.sector_update'));
+                EventBus.$emit(MESSAGE_ERROR, this.$t('request.sector_update'));
             }).finally(() => {
-                EventBus.$emit('mnk:stop-loading', 'updateSector');
+                this.$store.dispatch(STOP_LOADING, 'updateSector');
             });
         },
         mapSectorInJOSM () {
@@ -424,18 +425,19 @@ export default {
                 changeset_comment: encodeURIComponent('MappingNorthKorea.com sector ' + this.selectedSector.properties._id)
             };
 
-            EventBus.$emit('mnk:start-loading', 'sendJOSMCommand');
+            this.$store.dispatch(START_LOADING, 'sendJOSMCommand');
             JOSMService.sendJOSMCommand('http://127.0.0.1:8111/load_and_zoom', loadAndZoomParams).catch(() => {
-                EventBus.$emit('mnk:message-error', this.$t('request.josm_failed'));
+                EventBus.$emit(MESSAGE_ERROR, this.$t('request.josm_failed'));
             }).finally(() => {
-                EventBus.$emit('mnk:stop-loading', 'sendJOSMCommand');
+                this.$store.dispatch(STOP_LOADING, 'sendJOSMCommand');
             });
-            EventBus.$emit('mnk:start-loading', 'sendJOSMImageryCommand');
+
+            this.$store.dispatch(START_LOADING, 'sendJOSMImageryCommand');
             JOSMService.sendJOSMCommand('http://127.0.0.1:8111/imagery', {
                 type: 'bing',
                 url: 'https://www.bing.com/maps/'
             }).finally(() => {
-                EventBus.$emit('mnk:stop-loading', 'sendJOSMImageryCommand');
+                this.$store.dispatch(STOP_LOADING, 'sendJOSMImageryCommand');
             });
         },
         cancelDialog: function () {
@@ -484,36 +486,39 @@ export default {
         },
         deleteSector: function () {
             if (confirm(this.$t('request.confirm_deletion'))) {
-                EventBus.$emit('mnk:start-loading', 'deleteSectorById');
+                this.$store.dispatch(START_LOADING, 'deleteSectorById');
                 MapApiService.deleteSectorById(this.selectedSector.properties._id).then(function () {
                     location.reload();
                 }).catch(() => {
-                    EventBus.$emit('mnk:message-error', this.$t('request.deletion'));
+                    EventBus.$emit(MESSAGE_ERROR, this.$t('request.deletion'));
                 }).finally(() => {
-                    EventBus.$emit('mnk:stop-loading', 'deleteSectorById');
+                    this.$store.dispatch(STOP_LOADING, 'deleteSectorById');
                 });
             }
         },
         splitSector: function () {
             if (confirm(this.$t('request.confirm_split'))) {
-                EventBus.$emit('mnk:start-loading', 'splitSectorById');
+                this.$store.dispatch(START_LOADING, 'splitSectorById');
                 MapApiService.splitSectorById(this.selectedSector.properties._id).then(function () {
                     location.reload();
                 }).catch(() => {
-                    EventBus.$emit('mnk:message-error', this.$t('request.split'));
+                    EventBus.$emit(MESSAGE_ERROR, this.$t('request.split'));
                 }).finally(() => {
-                    EventBus.$emit('mnk:stop-loading', 'splitSectorById');
+                    this.$store.dispatch(STOP_LOADING, 'splitSectorById');
                 });
             }
         }
     },
     computed: {
-        adminLoggedIn: function () {
+        adminLoggedIn () {
             if (this.$root.loggedInUser && document.getElementById('logged-in-user-name')) {
                 return document.getElementById('logged-in-user-name').innerText === 'Artemis64' || document.getElementById('logged-in-user-name').innerText === 'Artemis64dev';
             } else {
                 return false;
             }
+        },
+        drawerRight () {
+            return this.$store.state.drawerRight;
         }
     }
 };

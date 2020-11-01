@@ -25,6 +25,8 @@
 import MapApiService from '@/services/MapApiService';
 import EventBus from '@/events/EventBus';
 import * as L from 'leaflet/src/Leaflet';
+import { MESSAGE_ERROR, MESSAGE_INFO } from '@/events/eventTypes';
+import { START_LOADING, STOP_LOADING } from "@/store/mutationTypes";
 
 const defaultStyle = {
     weight: 1,
@@ -42,6 +44,22 @@ export default {
             lightTileLayer: null,
             darkTileLayer: null
         };
+    },
+    computed: {
+        darkMode () {
+            return this.$store.state.darkMode;
+        }
+    },
+    watch: {
+        darkMode (newThemeIsDark) {
+            if (newThemeIsDark) {
+                this.map.removeLayer(this.lightTileLayer);
+                this.map.addLayer(this.darkTileLayer);
+            } else {
+                this.map.removeLayer(this.darkTileLayer);
+                this.map.addLayer(this.lightTileLayer);
+            }
+        }
     },
     mounted () {
         this.initMap();
@@ -76,16 +94,7 @@ export default {
                 this.setSectorSelected(sectorsByStateId[Math.floor(Math.random() * sectorsByStateId.length)], true);
                 this.flyToSectorByPolygonCoordinates(this.selectedSector.feature.geometry.coordinates[0]);
             } else {
-                EventBus.$emit('mnk:message-info', this.$t('no_sectors_with_state'));
-            }
-        });
-        EventBus.$on('mnk:toggle-dark-theme', (newThemeIsDark) => {
-            if (newThemeIsDark) {
-                this.map.removeLayer(this.lightTileLayer);
-                this.map.addLayer(this.darkTileLayer);
-            } else {
-                this.map.removeLayer(this.darkTileLayer);
-                this.map.addLayer(this.lightTileLayer);
+                EventBus.$emit(MESSAGE_INFO, this.$t('no_sectors_with_state'));
             }
         });
     },
@@ -108,7 +117,7 @@ export default {
                 this.lightTileLayer.addTo(this.map);
             }
 
-            EventBus.$emit('mnk:start-loading', 'loadingsectors');
+            this.$store.dispatch(START_LOADING, 'loadingsectors');
             MapApiService.getAllSectors().then((res) => {
                 this.sectors = this.sectorsToGeoJson(res.data);
 
@@ -131,9 +140,9 @@ export default {
                     this.flyToSectorByPolygonCoordinates(this.selectedSector.feature.geometry.coordinates[0]);
                 }
             }).catch(() => {
-                EventBus.$emit('mnk:message-error', this.$t('request.load_sectors'));
+                EventBus.$emit(MESSAGE_ERROR, this.$t('request.load_sectors'));
             }).finally(() => {
-                EventBus.$emit('mnk:stop-loading', 'loadingsectors');
+                this.$store.dispatch(STOP_LOADING, 'loadingsectors');
             });
         },
         setSectorSelected: function (layer, select) {

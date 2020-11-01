@@ -10,7 +10,7 @@ export default new Vuex.Store({
         darkMode: false,
         locale: `en`,
         loggedInUser: null,
-        logInLink: null,
+        loginLink: null,
         drawerLeft: false,
         drawerRight: true,
         processesWorking: []
@@ -25,8 +25,8 @@ export default new Vuex.Store({
         [mt.SET_LOGGED_IN_USER] (state, loggedInUser) {
             state.loggedInUser = loggedInUser;
         },
-        [mt.SET_LOG_IN_LINK] (state, logInLink) {
-            state.logInLink = logInLink;
+        [mt.SET_LOGIN_LINK] (state, loginLink) {
+            state.loginLink = loginLink;
         },
         [mt.TOGGLE_DRAWER_LEFT] (state) {
             state.drawerLeft = !state.drawerLeft;
@@ -51,8 +51,8 @@ export default new Vuex.Store({
         [mt.SET_LOGGED_IN_USER] ({ commit }, loggedInUser) {
             commit(mt.SET_LOGGED_IN_USER, loggedInUser);
         },
-        [mt.SET_LOG_IN_LINK] ({ commit }, logInLink) {
-            commit(mt.SET_LOG_IN_LINK, logInLink);
+        [mt.SET_LOGIN_LINK] ({ commit }, loginLink) {
+            commit(mt.SET_LOGIN_LINK, loginLink);
         },
         [mt.TOGGLE_DRAWER_LEFT] ({ commit }) {
             commit(mt.TOGGLE_DRAWER_LEFT);

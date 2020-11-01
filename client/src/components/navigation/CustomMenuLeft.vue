@@ -103,56 +103,52 @@
 <script>
 import MapApiService from '@/services/MapApiService';
 import EventBus from '@/events/EventBus';
+import { MESSAGE_ERROR } from '@/events/eventTypes';
+import { START_LOADING, STOP_LOADING } from "@/store/mutationTypes";
 
 export default {
     name: 'CustomMenuLeft',
     data () {
         return {
-            drawerLeft: false,
-            loginLink: '',
             currentIteration: null,
             sectorTotalCount: 0,
             sectorDoneCount: 0
         };
     },
     mounted () {
-        EventBus.$on('mnk:toggle-drawer-left', () => {
-            this.drawerLeft = !this.drawerLeft;
-        });
-        EventBus.$on('mnk:oauth-request-token-received', (link) => {
-            this.loginLink = link;
-        });
         EventBus.$on('mnk:update-sector', (sector) => {
             if (sector.properties.state.title === 'Completed') {
                 this.sectorDoneCount++;
             }
         });
 
-        EventBus.$emit('mnk:start-loading', 'getCompletedSectorCountByIterationId');
+        this.$store.dispatch(START_LOADING, 'getCompletedSectorCountByIterationId');
         MapApiService.getLatestIteration().then((res) => {
             this.currentIteration = res.data;
             MapApiService.getCompletedSectorCountByIterationId(this.currentIteration._id).then((res) => {
                 this.sectorTotalCount = res.data.totalCount;
                 this.sectorDoneCount = res.data.doneCount;
             }).catch(() => {
-                EventBus.$emit('mnk:message-error', this.$t('request.completed_sector_count'));
+                EventBus.$emit(MESSAGE_ERROR, this.$t('request.completed_sector_count'));
             }).finally(() => {
-                EventBus.$emit('mnk:stop-loading', 'getCompletedSectorCountByIterationId');
+                this.$store.dispatch(STOP_LOADING, 'getCompletedSectorCountByIterationId');
             });
         }).catch(() => {
-            EventBus.$emit('mnk:message-error', this.$t('request.current_iteration'));
-            EventBus.$emit('mnk:stop-loading', 'getCompletedSectorCountByIterationId');
+            EventBus.$emit(MESSAGE_ERROR, this.$t('request.current_iteration'));
+            this.$store.dispatch(STOP_LOADING, 'getCompletedSectorCountByIterationId');
         });
     },
     computed: {
-        valueDeterminate: function () {
+        valueDeterminate () {
             var percentageDone = (this.sectorDoneCount * 100) / this.sectorTotalCount;
             return percentageDone < 1 ? 1 : percentageDone;
+        },
+        drawerLeft () {
+            return this.$store.state.drawerLeft;
+        },
+        loginLink () {
+            return this.$store.state.loginLink;
         }
     }
 };
 </script>
-
-<style scoped>
-
-</style>

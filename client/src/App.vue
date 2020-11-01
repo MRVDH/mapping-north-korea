@@ -41,7 +41,7 @@ import CustomFooter from '@/components/navigation/CustomFooter';
 import OAuthService from '@/services/OAuthService';
 import EventBus from '@/events/EventBus';
 import { MESSAGE_ERROR, MESSAGE_SUCCESS, MESSAGE_INFO } from '@/events/eventTypes';
-import { SET_LOGGED_IN_USER, SET_LOG_IN_LINK, START_LOADING, STOP_LOADING } from "@/store/mutationTypes";
+import { SET_LOGGED_IN_USER, SET_LOGIN_LINK, START_LOADING, STOP_LOADING } from "@/store/mutationTypes";
 
 export default {
     name: 'App',
@@ -81,7 +81,7 @@ export default {
             if (!res.data || !res.data.isAuthenticated) {
                 this.$store.dispatch(START_LOADING, 'getrequesttoken');
                 OAuthService.getRequestToken().then((res) => {
-                    this.$store.dispatch(SET_LOG_IN_LINK, res.data);
+                    this.$store.dispatch(SET_LOGIN_LINK, res.data);
                 }).catch(() => {
                     EventBus.$emit(MESSAGE_ERROR, this.$t('request.oauth_token'));
                 }).finally(() => {
