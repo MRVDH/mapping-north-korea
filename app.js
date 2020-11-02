@@ -61,7 +61,7 @@ if (process.argv.includes("dev")) {
     global.osm.api_version = process.env.OSM_DEV_API_VERSION;
 } else {
     log.alt("Production mode");
-    global.localurl = "https://mappingnorthkorea.com";
+    global.localurl = "https://www.mappingnorthkorea.com";
     global.devMode = false;
     mongodbConnection = process.env.MONGODB_CONNECTION;
     global.osm.endpoint = process.env.OSM_ENDPOINT;
