@@ -511,9 +511,9 @@ export default {
             this.idUrl = 'https://www.openstreetmap.org/edit?editor=id' +
                 '&#map=13/' + (coords[1][1] + coords[2][1]) / 2 + '/' + (coords[0][0] + coords[1][0]) / 2 +
                 '&comment=MappingNorthKorea.com%20sector%20' + this.selectedSector.properties._id +
-                '&gpx=https://mappingnorthkorea.com/api/sector/generate/' + this.selectedSector.properties._id + '.gpx';
+                '&gpx=https://www.mappingnorthkorea.com/api/sector/generate/' + this.selectedSector.properties._id + '.gpx';
             this.rapidUrl = 'https://www.mapwith.ai/rapid?#' +
-                'gpx=https://mappingnorthkorea.com/api/sector/generate/' + this.selectedSector.properties._id + '.gpx' +
+                'gpx=https://www.mappingnorthkorea.com/api/sector/generate/' + this.selectedSector.properties._id + '.gpx' +
                 '&map=13/' + (coords[1][1] + coords[2][1]) / 2 + '/' + (coords[0][0] + coords[1][0]) / 2 +
                 '&comment=MappingNorthKorea.com%20sector%20' + this.selectedSector.properties._id;
 
