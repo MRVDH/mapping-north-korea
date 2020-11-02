@@ -85,7 +85,7 @@ db.once("open", function() {
 
 // enable CORS
 app.use(function(req, res, next) {
-    var allowedOrigins = ['https://mappingnorthkorea.com', 'https://www.openstreetmap.org', 'https://www.mapwith.ai'];
+    var allowedOrigins = ['https://www.mappingnorthkorea.com', 'https://mappingnorthkorea.com', 'https://www.openstreetmap.org', 'https://www.mapwith.ai'];
     
     if (global.devMode) {
         allowedOrigins = allowedOrigins.concat(['http://127.0.0.1:8080', 'http://localhost:8080', 'http://127.0.0.1:8081', 'http://localhost:8081']);
