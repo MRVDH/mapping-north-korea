@@ -14,7 +14,7 @@
 </i18n>
 
 <template>
-    <v-app id="app" v-bind:dark="darkTheme" v-cloak>
+    <v-app id="app" v-cloak>
         <CustomMenuLeft/>
         <CustomHeader/>
         <router-view/>
@@ -26,7 +26,7 @@
             :timeout="snackbarOptions.timeout">
             {{ snackbarOptions.text }}
             <v-btn
-                flat
+                text
                 @click="snackbar = false">
                 {{ $t('dismiss') }}
             </v-btn>
@@ -39,13 +39,14 @@ import CustomMenuLeft from '@/components/navigation/CustomMenuLeft';
 import CustomHeader from '@/components/navigation/CustomHeader';
 import CustomFooter from '@/components/navigation/CustomFooter';
 import OAuthService from '@/services/OAuthService';
-import EventBus from '@/services/EventBus';
+import EventBus from '@/events/EventBus';
+import { MESSAGE_ERROR, MESSAGE_SUCCESS, MESSAGE_INFO } from '@/events/eventTypes';
+import { SET_LOGGED_IN_USER, SET_LOGIN_LINK, START_LOADING, STOP_LOADING } from "@/store/mutationTypes";
 
 export default {
     name: 'App',
     data: () => {
         return {
-            darkTheme: false,
             snackbar: false,
             snackbarOptions: {
                 color: '',
@@ -54,79 +55,73 @@ export default {
             }
         };
     },
+    computed: {
+        locale () {
+            return this.$store.state.locale;
+        },
+        darkMode () {
+            return this.$store.state.darkMode;
+        }
+    },
+    watch: {
+        locale (newValue) {
+            this.$i18n.locale = newValue;
+        },
+        darkMode (newValue) {
+            this.$vuetify.theme.dark = newValue;
+        }
+    },
     mounted () {
-        this.$root.loggedInUser = null;
+        this.$i18n.locale = this.locale;
+        this.$vuetify.theme.dark = this.darkMode;
 
-        if (localStorage.darkTheme) {
-            this.darkTheme = localStorage.darkTheme === 'true';
-        } else {
-            localStorage.darkTheme = false;
-            this.darkTheme = false;
-        }
-        if (localStorage.locale) {
-            this.$i18n.locale = localStorage.locale;
-            EventBus.$emit('mnk:set-locale', localStorage.locale);
-        } else {
-            localStorage.locale = this.$i18n.locale;
-        }
-
-        EventBus.$on('mnk:set-locale', (localeCode) => {
-            this.$i18n.locale = localeCode;
-            localStorage.locale = localeCode;
-        });
-
+        // Remove the loading screen.
         document.getElementById('loading-text').remove();
 
-        EventBus.$emit('mnk:start-loading', 'isuserloggedin');
+        // Check if user is logged in and if so, get details. If not, get the request token.
+        this.$store.dispatch(START_LOADING, 'isuserloggedin');
         OAuthService.isUserLoggedIn().then((res) => {
-            if (!res.data.isAuthenticated) {
-                EventBus.$emit('mnk:start-loading', 'getrequesttoken');
+            if (!res.data || !res.data.isAuthenticated) {
+                this.$store.dispatch(START_LOADING, 'getrequesttoken');
                 OAuthService.getRequestToken().then((res) => {
-                    EventBus.$emit('mnk:oauth-request-token-received', res.data);
+                    this.$store.dispatch(SET_LOGIN_LINK, res.data);
                 }).catch(() => {
-                    EventBus.$emit('mnk:message-error', this.$t('request.oauth_token'));
+                    EventBus.$emit(MESSAGE_ERROR, this.$t('request.oauth_token'));
                 }).finally(() => {
-                    EventBus.$emit('mnk:stop-loading', 'getrequesttoken');
+                    this.$store.dispatch(STOP_LOADING, 'getrequesttoken');
                 });
             } else {
-                EventBus.$emit('mnk:start-loading', 'getUserDetails');
+                this.$store.dispatch(START_LOADING, 'getUserDetails');
                 OAuthService.getUserDetails().then((res) => {
-                    this.$root.loggedInUser = res.data;
+                    this.$store.dispatch(SET_LOGGED_IN_USER, res.data);
                 }).catch(() => {
-                    EventBus.$emit('mnk:message-error', this.$t('request.user_details'));
+                    EventBus.$emit(MESSAGE_ERROR, this.$t('request.user_details'));
                 }).finally(() => {
-                    EventBus.$emit('mnk:stop-loading', 'getUserDetails');
+                    this.$store.dispatch(STOP_LOADING, 'getUserDetails');
                 });
             }
         }).catch(() => {
-            EventBus.$emit('mnk:message-error', this.$t('request.logged_in'));
+            EventBus.$emit(MESSAGE_ERROR, this.$t('request.logged_in'));
         }).finally(() => {
-            EventBus.$emit('mnk:stop-loading', 'isuserloggedin');
+            this.$store.dispatch(STOP_LOADING, 'isuserloggedin');
         });
 
-        EventBus.$on('mnk:toggle-dark-theme', () => {
-            this.darkTheme = !this.darkTheme;
-        });
-        EventBus.$on('mnk:message-success', (text) => {
+        // Set the toast event listeners.
+        EventBus.$on(MESSAGE_SUCCESS, (text) => {
             this.snackbar = true;
             this.snackbarOptions.color = 'success';
             this.snackbarOptions.text = text;
         });
-        EventBus.$on('mnk:message-info', (text) => {
+        EventBus.$on(MESSAGE_INFO, (text) => {
             this.snackbar = true;
             this.snackbarOptions.color = 'info';
             this.snackbarOptions.text = text;
         });
-        EventBus.$on('mnk:message-error', (text) => {
+        EventBus.$on(MESSAGE_ERROR, (text) => {
             this.snackbar = true;
             this.snackbarOptions.color = 'error';
             this.snackbarOptions.text = text;
         });
-    },
-    watch: {
-        darkTheme (newSetting) {
-            localStorage.darkTheme = newSetting;
-        }
     },
     components: {
         CustomMenuLeft,
@@ -137,5 +132,7 @@ export default {
 </script>
 
 <style scoped>
-    [v-cloak] { display:none; }
+[v-cloak] {
+    display: none;
+}
 </style>

@@ -84,27 +84,28 @@
         v-model="drawerRight"
         right
         clipped
-        mobile-break-point="0"
-        app>
+        mobile-breakpoint="0"
+        app
+        class="drawer">
         <v-list v-if="!selectedSector">
             <v-container
-                text-xs-center
+                text-center
                 grid-list-xs
                 style="padding: 16px;">
                 <v-layout>
                     <v-flex>{{ $t('help.select_sector') }}</v-flex>
                 </v-layout>
             </v-container>
-            <v-list-tile v-for="(state, index) in states" :key="index">
-                <v-list-tile-content>
-                    <v-list-tile-title><span :style="{ color: state.color }">■</span> {{ state.title }}</v-list-tile-title>
-                </v-list-tile-content>
-                <v-list-tile-action>
+            <v-list-item v-for="(state, index) in states" :key="index">
+                <v-list-item-content class="pa-0">
+                    <v-list-item-title><span :style="{ color: state.color }">■</span> {{ state.title }}</v-list-item-title>
+                </v-list-item-content>
+                <v-list-item-action class="ma-0">
                     <v-btn icon @click.stop="selectRandomSector(state._id)">
                         <v-icon>forward</v-icon>
                     </v-btn>
-                </v-list-tile-action>
-            </v-list-tile>
+                </v-list-item-action>
+            </v-list-item>
             <v-divider v-if="allEvents.length > 0"></v-divider>
             <v-container
                 grid-list-xs
@@ -115,11 +116,11 @@
                     </v-flex>
                 </v-layout>
             </v-container>
-            <v-container grid-list-md text-xs-center style="padding: 16px;">
-                <v-layout row v-for="(event, index) in allEvents" :key="index">
+            <v-container grid-list-md text-center style="padding: 16px;">
+                <v-layout class="row" v-for="(event, index) in allEvents" :key="index">
                     <v-flex xs12>
-                        <div class="text-xs-left" @click.stop="selectSectorById(event.sector)" style="cursor: pointer;">{{ event.description }}</div>
-                        <div class="text-xs-right grey--text text--lighten-1 caption">{{ event.osmUserName }}
+                        <div class="text-left" @click.stop="selectSectorById(event.sector)" style="cursor: pointer;">{{ event.description }}</div>
+                        <div class="text-right grey--text text--lighten-1 caption">{{ event.osmUserName }}
                             <a
                                 :href="'https://www.openstreetmap.org/user/' + event.osmUserName"
                                 target="_blank"
@@ -132,46 +133,45 @@
             </v-container>
         </v-list>
         <v-list v-else>
-            <v-list-tile>
-                <v-list-tile-content>
-                    <v-list-tile-title>{{ $t('sector.id') }}</v-list-tile-title>
-                </v-list-tile-content>
-                <v-list-tile-action>
-                    <v-list-tile-title class="text-xs-right">{{ selectedSector.properties._id }}</v-list-tile-title>
-                </v-list-tile-action>
-            </v-list-tile>
-            <v-list-tile>
-                <v-list-tile-content>
-                    <v-list-tile-title>{{ $t('sector.state') }}</v-list-tile-title>
-                </v-list-tile-content>
-                <v-list-tile-action>
-                    <v-list-tile-title class="text-xs-right">{{ selectedSector.properties.state.title }}</v-list-tile-title>
+            <v-list-item>
+                <v-list-item-content>
+                    <v-list-item-title>{{ $t('sector.id') }}</v-list-item-title>
+                </v-list-item-content>
+                <v-list-item-action>
+                    <v-list-item-title class="text-right">{{ selectedSector.properties._id }}</v-list-item-title>
+                </v-list-item-action>
+            </v-list-item>
+            <v-list-item>
+                <v-list-item-content>
+                    <v-list-item-title>{{ $t('sector.state') }}</v-list-item-title>
+                </v-list-item-content>
+                <v-list-item-action>
                     <v-menu offset-y v-model="stateEditOpen">
                         <template v-slot:activator="{ on }">
                             <v-btn
-                                outline
+                                outlined
                                 v-on="on"
                                 class="no-margin-button"
                                 :disabled="!$root.loggedInUser"
                                 >{{ selectedSector.properties.state.title }}</v-btn>
                         </template>
                         <v-list>
-                            <v-list-tile
+                            <v-list-item
                                 v-for="(state, index) in states"
                                 :key="index"
                                 @click.stop="updateSector(state, null)"
                                 >
-                                <v-list-tile-title>
+                                <v-list-item-title>
                                     <span :style="{ color: state.color, 'vertical-align': 'text-bottom' }">■</span> {{ state.title }}
-                                </v-list-tile-title>
-                            </v-list-tile>
+                                </v-list-item-title>
+                            </v-list-item>
                         </v-list>
                     </v-menu>
-                </v-list-tile-action>
-            </v-list-tile>
+                </v-list-item-action>
+            </v-list-item>
             <div>
                 <v-container
-                    text-xs-center
+                    text-center
                     grid-list-xs
                     style="padding: 0 16px;"
                     v-if="!$root.loggedInUser">
@@ -182,7 +182,7 @@
                     </v-layout>
                 </v-container>
                 <v-container
-                    text-xs-center
+                    text-center
                     grid-list-xs
                     style="padding: 0 16px;"
                     v-if="selectedSector.properties.state.title === 'Open' && $root.loggedInUser">
@@ -193,7 +193,7 @@
                     </v-layout>
                 </v-container>
                 <v-container
-                    text-xs-center
+                    text-center
                     grid-list-xs
                     style="padding: 0 16px;"
                     v-if="selectedSector.properties.state.title === 'Review needed' && $root.loggedInUser">
@@ -204,7 +204,7 @@
                     </v-layout>
                 </v-container>
                 <v-container
-                    text-xs-center
+                    text-center
                     grid-list-xs
                     style="padding: 0 16px;"
                     v-if="selectedSector.properties.state.title === 'Completed' && $root.loggedInUser">
@@ -228,15 +228,15 @@
                                     >{{ $t('sector.button.map') }}</v-btn>
                             </template>
                             <v-list>
-                                <v-list-tile :href="idUrl" target="_blank">
-                                    <v-list-tile-title>iD</v-list-tile-title>
-                                </v-list-tile>
-                                <v-list-tile :href="rapidUrl" target="_blank">
-                                    <v-list-tile-title>RapiD</v-list-tile-title>
-                                </v-list-tile>
-                                <v-list-tile @click.stop="mapSectorInJOSM(); mappingMenuOpen = false;">
-                                        <v-list-tile-title>JOSM</v-list-tile-title>
-                                </v-list-tile>
+                                <v-list-item :href="idUrl" target="_blank">
+                                    <v-list-item-title>iD</v-list-item-title>
+                                </v-list-item>
+                                <v-list-item :href="rapidUrl" target="_blank">
+                                    <v-list-item-title>RapiD</v-list-item-title>
+                                </v-list-item>
+                                <v-list-item @click.stop="mapSectorInJOSM(); mappingMenuOpen = false;">
+                                        <v-list-item-title>JOSM</v-list-item-title>
+                                </v-list-item>
                             </v-list>
                         </v-menu>
                         <v-btn
@@ -268,11 +268,11 @@
             </v-container>
             <v-divider></v-divider>
             <v-container
-                text-xs-center
+                text-center
                 grid-list-xs
                 style="padding: 0 16px;"
                 v-if="$root.loggedInUser">
-                <v-layout row wrap>
+                <v-layout class="row" wrap>
                     <v-flex xs12>
                         <v-textarea
                             v-model="newComment"
@@ -285,11 +285,11 @@
                     </v-flex>
                 </v-layout>
             </v-container>
-            <v-container grid-list-md text-xs-center style="padding: 16px;">
-                <v-layout row v-for="(event, index) in events" :key="index">
+            <v-container grid-list-md text-center style="padding: 16px;">
+                <v-layout class="row" v-for="(event, index) in events" :key="index">
                     <v-flex xs12>
-                        <div class="text-xs-left">{{ event.description }}</div>
-                        <div class="text-xs-right grey--text text--lighten-1 caption">{{ event.osmUserName }}
+                        <div class="text-left">{{ event.description }}</div>
+                        <div class="text-right grey--text text--lighten-1 caption">{{ event.osmUserName }}
                             <a
                                 :href="'https://www.openstreetmap.org/user/' + event.osmUserName"
                                 target="_blank"
@@ -307,14 +307,14 @@
 <script>
 import MapApiService from '@/services/MapApiService';
 import JOSMService from '@/services/JOSMService';
-import EventBus from '@/services/EventBus';
+import EventBus from '@/events/EventBus';
+import { MESSAGE_ERROR, MESSAGE_SUCCESS } from '@/events/eventTypes';
+import { START_LOADING, STOP_LOADING, SET_DRAWER_RIGHT } from "@/store/mutationTypes";
 
 export default {
     name: 'CustomMenuRight',
     data () {
         return {
-            drawerRight: !this.$vuetify.breakpoint.xs,
-            selectedSector: null,
             idUrl: '',
             rapidUrl: '',
             valid: true,
@@ -327,62 +327,50 @@ export default {
             stateEditOpen: false
         };
     },
+    computed: {
+        adminLoggedIn () {
+            if (this.$root.loggedInUser && document.getElementById('logged-in-user-name')) {
+                return document.getElementById('logged-in-user-name').innerText === 'Artemis64' || document.getElementById('logged-in-user-name').innerText === 'Artemis64dev';
+            } else {
+                return false;
+            }
+        },
+        drawerRight: {
+            set (newValue) {
+                this.$store.commit(SET_DRAWER_RIGHT, newValue);
+            },
+            get () {
+                return this.$store.state.drawerRight;
+            }
+        },
+        selectedSector () {
+            return this.$store.state.selectedSector;
+        }
+    },
     mounted () {
-        EventBus.$on('mnk:toggle-drawer-right', () => {
-            this.drawerRight = !this.drawerRight;
-        });
-        EventBus.$on('mnk:select-sector', this.selectSector);
-        EventBus.$on('mnk:deselect-sector', () => {
-            this.selectedSector = null;
-        });
-        EventBus.$on('mnk:set-locale', (localeCode) => {
-            this.$i18n.locale = localeCode;
-        });
+        this.$store.dispatch(SET_DRAWER_RIGHT, !this.$vuetify.breakpoint.xs);
 
-        EventBus.$emit('mnk:start-loading', 'getAllStates');
+        this.$store.dispatch(START_LOADING, 'getAllStates');
         MapApiService.getAllStates().then((res) => {
             this.states = res.data;
         }).catch(() => {
-            EventBus.$emit('mnk:message-error', this.$t('request.get_sector_states'));
+            EventBus.$emit(MESSAGE_ERROR, this.$t('request.get_sector_states'));
         }).finally(() => {
-            EventBus.$emit('mnk:stop-loading', 'getAllStates');
+            this.$store.dispatch(STOP_LOADING, 'getAllStates');
         });
-        EventBus.$emit('mnk:start-loading', 'getAllEvents');
+        
+        this.$store.dispatch(START_LOADING, 'getAllEvents');
         MapApiService.getAllEvents(25).then((res) => {
             this.allEvents = res.data;
         }).catch(() => {
-            EventBus.$emit('mnk:message-error', this.$t('request.recent_events'));
+            EventBus.$emit(MESSAGE_ERROR, this.$t('request.recent_events'));
         }).finally(() => {
-            EventBus.$emit('mnk:stop-loading', 'getAllEvents');
+            this.$store.dispatch(STOP_LOADING, 'getAllEvents');
         });
     },
     methods: {
         selectSectorById: (id) => {
             EventBus.$emit('mnk:go-to-sector', id);
-        },
-        selectSector: function (selectedSect) {
-            this.selectedSector = selectedSect;
-            this.newState = this.selectedSector.properties.state._id;
-
-            var coords = this.selectedSector.geometry.coordinates[0];
-            this.idUrl = 'https://www.openstreetmap.org/edit?editor=id' +
-                '&#map=13/' + (coords[1][1] + coords[2][1]) / 2 + '/' + (coords[0][0] + coords[1][0]) / 2 +
-                '&comment=MappingNorthKorea.com%20sector%20' + this.selectedSector.properties._id +
-                '&gpx=https://mappingnorthkorea.com/api/sector/generate/' + this.selectedSector.properties._id + '.gpx';
-            this.rapidUrl = 'https://www.mapwith.ai/rapid?#' +
-                'gpx=https://mappingnorthkorea.com/api/sector/generate/' + this.selectedSector.properties._id + '.gpx' +
-                '&map=13/' + (coords[1][1] + coords[2][1]) / 2 + '/' + (coords[0][0] + coords[1][0]) / 2 +
-                '&comment=MappingNorthKorea.com%20sector%20' + this.selectedSector.properties._id;
-
-            EventBus.$emit('mnk:start-loading', 'getEventsBySectorId');
-            MapApiService.getEventsBySectorId(this.selectedSector.properties._id).then((res) => {
-                if (!res.data.length) return;
-                this.events = res.data.sort(function (a, b) { return new Date(b.time.date) - new Date(a.time.date); }).reverse();
-            }).catch(() => {
-                EventBus.$emit('mnk:message-error', this.$t('request.sector_events'));
-            }).finally(() => {
-                EventBus.$emit('mnk:stop-loading', 'getEventsBySectorId');
-            });
         },
         selectRandomSector: (id) => {
             EventBus.$emit('mnk:select-random-sector-by-state-id', id);
@@ -395,7 +383,7 @@ export default {
             var apiSector = this.geoJsonSectorToApiSector(this.selectedSector);
             this.stateEditOpen = false;
 
-            EventBus.$emit('mnk:start-loading', 'updateSector');
+            this.$store.dispatch(START_LOADING, 'updateSector');
             MapApiService.updateSector({
                 sector: apiSector,
                 comment: comment || '',
@@ -410,12 +398,12 @@ export default {
                 this.newComment = '';
                 this.newState = this.selectedSector.properties.state._id;
 
-                EventBus.$emit('mnk:message-success', this.$t('request.sector_updated'));
+                EventBus.$emit(MESSAGE_SUCCESS, this.$t('request.sector_updated'));
                 EventBus.$emit('mnk:update-sector', this.selectedSector);
             }).catch(() => {
-                EventBus.$emit('mnk:message-error', this.$t('request.sector_update'));
+                EventBus.$emit(MESSAGE_ERROR, this.$t('request.sector_update'));
             }).finally(() => {
-                EventBus.$emit('mnk:stop-loading', 'updateSector');
+                this.$store.dispatch(STOP_LOADING, 'updateSector');
             });
         },
         mapSectorInJOSM () {
@@ -427,18 +415,19 @@ export default {
                 changeset_comment: encodeURIComponent('MappingNorthKorea.com sector ' + this.selectedSector.properties._id)
             };
 
-            EventBus.$emit('mnk:start-loading', 'sendJOSMCommand');
+            this.$store.dispatch(START_LOADING, 'sendJOSMCommand');
             JOSMService.sendJOSMCommand('http://127.0.0.1:8111/load_and_zoom', loadAndZoomParams).catch(() => {
-                EventBus.$emit('mnk:message-error', this.$t('request.josm_failed'));
+                EventBus.$emit(MESSAGE_ERROR, this.$t('request.josm_failed'));
             }).finally(() => {
-                EventBus.$emit('mnk:stop-loading', 'sendJOSMCommand');
+                this.$store.dispatch(STOP_LOADING, 'sendJOSMCommand');
             });
-            EventBus.$emit('mnk:start-loading', 'sendJOSMImageryCommand');
+
+            this.$store.dispatch(START_LOADING, 'sendJOSMImageryCommand');
             JOSMService.sendJOSMCommand('http://127.0.0.1:8111/imagery', {
                 type: 'bing',
                 url: 'https://www.bing.com/maps/'
             }).finally(() => {
-                EventBus.$emit('mnk:stop-loading', 'sendJOSMImageryCommand');
+                this.$store.dispatch(STOP_LOADING, 'sendJOSMImageryCommand');
             });
         },
         cancelDialog: function () {
@@ -487,42 +476,62 @@ export default {
         },
         deleteSector: function () {
             if (confirm(this.$t('request.confirm_deletion'))) {
-                EventBus.$emit('mnk:start-loading', 'deleteSectorById');
+                this.$store.dispatch(START_LOADING, 'deleteSectorById');
                 MapApiService.deleteSectorById(this.selectedSector.properties._id).then(function () {
                     location.reload();
                 }).catch(() => {
-                    EventBus.$emit('mnk:message-error', this.$t('request.deletion'));
+                    EventBus.$emit(MESSAGE_ERROR, this.$t('request.deletion'));
                 }).finally(() => {
-                    EventBus.$emit('mnk:stop-loading', 'deleteSectorById');
+                    this.$store.dispatch(STOP_LOADING, 'deleteSectorById');
                 });
             }
         },
         splitSector: function () {
             if (confirm(this.$t('request.confirm_split'))) {
-                EventBus.$emit('mnk:start-loading', 'splitSectorById');
+                this.$store.dispatch(START_LOADING, 'splitSectorById');
                 MapApiService.splitSectorById(this.selectedSector.properties._id).then(function () {
                     location.reload();
                 }).catch(() => {
-                    EventBus.$emit('mnk:message-error', this.$t('request.split'));
+                    EventBus.$emit(MESSAGE_ERROR, this.$t('request.split'));
                 }).finally(() => {
-                    EventBus.$emit('mnk:stop-loading', 'splitSectorById');
+                    this.$store.dispatch(STOP_LOADING, 'splitSectorById');
                 });
             }
         }
     },
-    computed: {
-        adminLoggedIn: function () {
-            if (this.$root.loggedInUser && document.getElementById('logged-in-user-name')) {
-                return document.getElementById('logged-in-user-name').innerText === 'Artemis64' || document.getElementById('logged-in-user-name').innerText === 'Artemis64dev';
-            } else {
-                return false;
+    watch: {
+        selectedSector () {
+            if (!this.selectedSector) {
+                return;
             }
+
+            this.newState = this.selectedSector.properties.state._id;
+
+            var coords = this.selectedSector.geometry.coordinates[0];
+            this.idUrl = 'https://www.openstreetmap.org/edit?editor=id' +
+                '&#map=13/' + (coords[1][1] + coords[2][1]) / 2 + '/' + (coords[0][0] + coords[1][0]) / 2 +
+                '&comment=MappingNorthKorea.com%20sector%20' + this.selectedSector.properties._id +
+                '&gpx=https://mappingnorthkorea.com/api/sector/generate/' + this.selectedSector.properties._id + '.gpx';
+            this.rapidUrl = 'https://www.mapwith.ai/rapid?#' +
+                'gpx=https://mappingnorthkorea.com/api/sector/generate/' + this.selectedSector.properties._id + '.gpx' +
+                '&map=13/' + (coords[1][1] + coords[2][1]) / 2 + '/' + (coords[0][0] + coords[1][0]) / 2 +
+                '&comment=MappingNorthKorea.com%20sector%20' + this.selectedSector.properties._id;
+
+            this.$store.dispatch(START_LOADING, 'getEventsBySectorId');
+            MapApiService.getEventsBySectorId(this.selectedSector.properties._id).then((res) => {
+                if (!res.data.length) return;
+                this.events = res.data.sort(function (a, b) { return new Date(b.time.date) - new Date(a.time.date); }).reverse();
+            }).catch(() => {
+                EventBus.$emit(MESSAGE_ERROR, this.$t('request.sector_events'));
+            }).finally(() => {
+                this.$store.dispatch(STOP_LOADING, 'getEventsBySectorId');
+            });
         }
     }
 };
 </script>
 
-<style scope>
+<style scoped>
 .no-margin-button {
     margin: 0 !important;
     margin-bottom: 4px !important;

@@ -23,8 +23,10 @@
 
 <script>
 import MapApiService from '@/services/MapApiService';
-import EventBus from '@/services/EventBus';
+import EventBus from '@/events/EventBus';
 import * as L from 'leaflet/src/Leaflet';
+import { MESSAGE_ERROR, MESSAGE_INFO } from '@/events/eventTypes';
+import { START_LOADING, STOP_LOADING, SELECT_SECTOR } from "@/store/mutationTypes";
 
 const defaultStyle = {
     weight: 1,
@@ -43,12 +45,21 @@ export default {
             darkTileLayer: null
         };
     },
+    computed: {
+        darkMode () {
+            return this.$store.state.darkMode;
+        }
+    },
+    watch: {
+        darkMode (newThemeIsDark) {
+            this.setDarkMode(newThemeIsDark);
+        }
+    },
     mounted () {
         this.initMap();
+        
+        this.setDarkMode(this.darkMode);
 
-        EventBus.$on('mnk:set-locale', (localeCode) => {
-            this.$i18n.locale = localeCode;
-        });
         EventBus.$on('mnk:update-sector', (sector) => {
             // find and update the sector in the sector list.
             this.sectors.features[this.sectors.features.findIndex(x => x.properties._id === sector.properties._id)] = sector;
@@ -79,16 +90,7 @@ export default {
                 this.setSectorSelected(sectorsByStateId[Math.floor(Math.random() * sectorsByStateId.length)], true);
                 this.flyToSectorByPolygonCoordinates(this.selectedSector.feature.geometry.coordinates[0]);
             } else {
-                EventBus.$emit('mnk:message-info', this.$t('no_sectors_with_state'));
-            }
-        });
-        EventBus.$on('mnk:toggle-dark-theme', (newThemeIsDark) => {
-            if (newThemeIsDark) {
-                this.map.removeLayer(this.lightTileLayer);
-                this.map.addLayer(this.darkTileLayer);
-            } else {
-                this.map.removeLayer(this.darkTileLayer);
-                this.map.addLayer(this.lightTileLayer);
+                EventBus.$emit(MESSAGE_INFO, this.$t('no_sectors_with_state'));
             }
         });
     },
@@ -111,7 +113,7 @@ export default {
                 this.lightTileLayer.addTo(this.map);
             }
 
-            EventBus.$emit('mnk:start-loading', 'loadingsectors');
+            this.$store.dispatch(START_LOADING, 'loadingsectors');
             MapApiService.getAllSectors().then((res) => {
                 this.sectors = this.sectorsToGeoJson(res.data);
 
@@ -134,14 +136,14 @@ export default {
                     this.flyToSectorByPolygonCoordinates(this.selectedSector.feature.geometry.coordinates[0]);
                 }
             }).catch(() => {
-                EventBus.$emit('mnk:message-error', this.$t('request.load_sectors'));
+                EventBus.$emit(MESSAGE_ERROR, this.$t('request.load_sectors'));
             }).finally(() => {
-                EventBus.$emit('mnk:stop-loading', 'loadingsectors');
+                this.$store.dispatch(STOP_LOADING, 'loadingsectors');
             });
         },
         setSectorSelected: function (layer, select) {
             if (select) {
-                EventBus.$emit('mnk:select-sector', layer.toGeoJSON());
+                this.$store.dispatch(SELECT_SECTOR, layer.toGeoJSON());
                 this.$router.push({ name: 'MapPage', params: { sectorId: layer.feature.properties._id } });
                 layer.bringToFront();
                 layer.setStyle({
@@ -160,7 +162,7 @@ export default {
                 }
                 this.selectedSector = layer;
             } else {
-                EventBus.$emit('mnk:deselect-sector');
+                this.$store.dispatch(SELECT_SECTOR, null);
                 this.$router.push({ name: 'MapPage', params: { sectorId: null } });
                 layer.setStyle({
                     color: this.selectedSector.feature.properties.state.color,
@@ -180,7 +182,7 @@ export default {
         },
         clickMapEvent: function () {
             if (this.selectedSector) {
-                EventBus.$emit('mnk:deselect-sector');
+                this.$store.dispatch(SELECT_SECTOR, null);
                 for (var layerIndex in this.geoJsonLayer._layers) {
                     if (this.geoJsonLayer._layers[layerIndex].feature.properties._id === this.selectedSector.feature.properties._id) {
                         this.setSectorSelected(this.geoJsonLayer._layers[layerIndex], false);
@@ -219,6 +221,15 @@ export default {
         },
         flyToSectorByPolygonCoordinates: function (coordinates) {
             this.map.flyTo([(coordinates[2][1] + coordinates[0][1]) / 2, (coordinates[1][0] + coordinates[0][0]) / 2], 13);
+        },
+        setDarkMode(newThemeIsDark) {
+            if (newThemeIsDark) {
+                this.map.removeLayer(this.lightTileLayer);
+                this.map.addLayer(this.darkTileLayer);
+            } else {
+                this.map.removeLayer(this.darkTileLayer);
+                this.map.addLayer(this.lightTileLayer);
+            }
         }
     }
 };
