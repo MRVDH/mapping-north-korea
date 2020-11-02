@@ -12,23 +12,27 @@ const fs = require("fs");
 const exec = require("child_process").exec;
 
 // check for an environment variable
-if (!fs.existsSync(".env")) {
-    log.err("Error loading configuration: .env file not found. Please use the following markup:",
-    'SESSION_SECRET="secret here"\n\r' +
-    'MONGODB_CONNECTION="connection string"\n\r' +
-    'MONGODB_CONNECTION_DEV="connection string dev db"\n\r' +
-    'OSM_ADMIN_NAME="name of osm account that is the admin for this app"\n\r' +
-    'OSM_ENDPOINT="https://www.openstreetmap.org"\n\r' +
-    'OSM_CONSUMER_SECRET="secret here"\n\r' +
-    'OSM_CONSUMER_KEY="key here"\n\r' +
-    'OSM_API_VERSION="/api/0.6"\n\r' +
-    'OSM_DEV_ENDPOINT="https://master.apis.dev.openstreetmap.org"\n\r' +
-    'OSM_DEV_CONSUMER_SECRET="dev secret here"\n\r' +
-    'OSM_DEV_CONSUMER_KEY="dev key here"\n\r' +
-    'OSM_DEV_API_VERSION="/api/0.6"');
-    return;
+if (!process.env || !process.env.SESSION_SECRET || !process.env.MONGODB_CONNECTION) {
+    // For development environments it could be easier to use a file (gitignored)
+    if (!fs.existsSync(".env")) {
+        log.err("Error loading configuration: Create an .env file with the following values or add them to your environment variables:",
+        'SESSION_SECRET="secret here"\n\r' +
+        'MONGODB_CONNECTION="connection string"\n\r' +
+        'MONGODB_CONNECTION_DEV="connection string dev db"\n\r' +
+        'OSM_ADMIN_NAME="name of osm account that is the admin for this app"\n\r' +
+        'OSM_ENDPOINT="https://www.openstreetmap.org"\n\r' +
+        'OSM_CONSUMER_SECRET="secret here"\n\r' +
+        'OSM_CONSUMER_KEY="key here"\n\r' +
+        'OSM_API_VERSION="/api/0.6"\n\r' +
+        'OSM_DEV_ENDPOINT="https://master.apis.dev.openstreetmap.org"\n\r' +
+        'OSM_DEV_CONSUMER_SECRET="dev secret here"\n\r' +
+        'OSM_DEV_CONSUMER_KEY="dev key here"\n\r' +
+        'OSM_DEV_API_VERSION="/api/0.6"');
+        return;
+    } else {
+        require('dotenv').config();
+    }
 }
-require('dotenv').config();
 
 const routeMain = require("./routes/main");
 const routeOsm = require("./routes/osm");
