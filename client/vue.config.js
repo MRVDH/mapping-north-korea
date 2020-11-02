@@ -1,7 +1,7 @@
 const path = require('path');
 
 module.exports = {
-    outputDir: path.resolve(__dirname, '../server/dist'),
+    outputDir: path.resolve(__dirname, '../dist'),
 
     pluginOptions: {
         i18n: {
