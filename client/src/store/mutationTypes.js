@@ -5,6 +5,7 @@ export const SET_LOGIN_LINK = 'setLogInLink';
 export const TOGGLE_DRAWER_LEFT = 'toggleDrawerLeft';
 export const TOGGLE_DRAWER_RIGHT = 'toggleDrawerRight';
 export const SET_DRAWER_RIGHT = 'setDrawerRight';
+export const SET_DRAWER_LEFT = 'setDrawerLeft';
 export const START_LOADING = 'startLoading';
 export const STOP_LOADING = 'stopLoading';
 export const SELECT_SECTOR = 'selectSector';

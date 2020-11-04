@@ -42,9 +42,9 @@
             flat
             class="transparent">
             <v-list class="pa-0">
-                <v-list-item class="pa-0" v-if="$root.loggedInUser" :href="'https://www.openstreetmap.org/user/' + $root.loggedInUser.name" target="_blank">
+                <v-list-item class="pa-0" v-if="loggedInUser" :href="'https://www.openstreetmap.org/user/' + loggedInUser.name" target="_blank">
                     <v-list-item-content>
-                        <v-list-item-title id="logged-in-user-name">{{ $root.loggedInUser.name }}</v-list-item-title>
+                        <v-list-item-title id="logged-in-user-name">{{ loggedInUser.name }}</v-list-item-title>
                     </v-list-item-content>
                 </v-list-item>
                 <v-list-item class="pa-0" v-else>
@@ -104,7 +104,7 @@
 import MapApiService from '@/services/MapApiService';
 import EventBus from '@/events/EventBus';
 import { MESSAGE_ERROR } from '@/events/eventTypes';
-import { START_LOADING, STOP_LOADING } from "@/store/mutationTypes";
+import { START_LOADING, STOP_LOADING, SET_DRAWER_LEFT } from "@/store/mutationTypes";
 
 export default {
     name: 'CustomMenuLeft',
@@ -139,15 +139,23 @@ export default {
         });
     },
     computed: {
-        valueDeterminate () {
-            var percentageDone = (this.sectorDoneCount * 100) / this.sectorTotalCount;
-            return percentageDone < 1 ? 1 : percentageDone;
-        },
-        drawerLeft () {
-            return this.$store.state.drawerLeft;
+        drawerLeft: {
+            set (newValue) {
+                this.$store.commit(SET_DRAWER_LEFT, newValue);
+            },
+            get () {
+                return this.$store.state.drawerLeft;
+            }
         },
         loginLink () {
             return this.$store.state.loginLink;
+        },
+        loggedInUser () {
+            return this.$store.state.loggedInUser;
+        },
+        valueDeterminate () {
+            var percentageDone = (this.sectorDoneCount * 100) / this.sectorTotalCount;
+            return percentageDone < 1 ? 1 : percentageDone;
         }
     }
 };
