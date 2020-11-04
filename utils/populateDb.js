@@ -39,8 +39,6 @@ module.exports = {
             stateEditing = await stateEditing.save();
             var stateReview = new State({ title: "Review needed", color: "#FFC60C" });
             stateReview = await stateReview.save();
-            var stateReviewing = new State({ title: "Being reviewed", color: "#145AF0" });
-            stateReviewing = await stateReviewing.save();
             var stateCompleted = new State({ title: "Completed", color: "#008000" });
             stateCompleted = await stateCompleted.save();
 

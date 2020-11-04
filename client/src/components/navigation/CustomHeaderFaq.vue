@@ -17,7 +17,7 @@
             },
             "q3": {
                 "question": "Why is the Map button disabled?",
-                "answer": "The sector that you selected is probably not in an editable state. Use the Edit button to switch the sector to either Being edited or Being reviewed. If the edit button is disabled then you are probably not logged in yet. Check the question above."
+                "answer": "The sector that you selected is probably not in an editable state. Use the Edit button to switch the sector to Being edited. If the edit button is disabled then you are probably not logged in yet. Check the question above."
             },
             "q4": {
                 "question": "The sector I am editing is too much work or too big. How do I split a sector into smaller sectors?",

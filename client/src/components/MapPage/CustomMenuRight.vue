@@ -4,9 +4,7 @@
         "help": {
             "select_sector": "Select a sector on the map to start mapping or select a random sector by state.",
             "login": "Please log in to map or edit this sector.",
-            "change_being_edited": "Please change the state to 'Being edited' to map this sector.",
-            "change_being_reviewed": "Please change the state to 'Being reviewed' to review or back to 'Being edited' to edit this sector.",
-            "change_back": "Please change the state back to 'Being edited' or 'Being reviewed' to edit or review this sector."
+            "change_back": "Please change the state to 'Being edited' to edit or review this sector."
         },
 
         "recent_events": "Recent events",
@@ -42,8 +40,6 @@
         "help": {
             "select_sector": "지도를 만들 부분을 선택하세요. 상태 옆의 화살표를 누르면 임의의 작업이 선택됩니다.",
             "login": "이 부분의 지도를 제작하거나 편집하려면 로그인하세요.",
-            "change_being_edited": null,
-            "change_being_reviewed": null,
             "change_back": null
         },
 
@@ -152,7 +148,7 @@
                                 outlined
                                 v-on="on"
                                 class="no-margin-button"
-                                :disabled="!$root.loggedInUser"
+                                :disabled="!loggedInUser"
                                 >{{ selectedSector.properties.state.title }}</v-btn>
                         </template>
                         <v-list>
@@ -174,7 +170,7 @@
                     text-center
                     grid-list-xs
                     style="padding: 0 16px;"
-                    v-if="!$root.loggedInUser">
+                    v-if="!loggedInUser">
                     <v-layout>
                         <v-flex>
                             <span class="orange--text">{{ $t('help.login') }}</span>
@@ -185,10 +181,10 @@
                     text-center
                     grid-list-xs
                     style="padding: 0 16px;"
-                    v-if="selectedSector.properties.state.title === 'Open' && $root.loggedInUser">
+                    v-if="selectedSector.properties.state.title === 'Open' && loggedInUser">
                     <v-layout>
                         <v-flex>
-                            <span class="orange--text">{{ $t('help.change_being_edited') }}</span>
+                            <span class="orange--text">{{ $t('help.change_back') }}</span>
                         </v-flex>
                     </v-layout>
                 </v-container>
@@ -196,10 +192,10 @@
                     text-center
                     grid-list-xs
                     style="padding: 0 16px;"
-                    v-if="selectedSector.properties.state.title === 'Review needed' && $root.loggedInUser">
+                    v-if="selectedSector.properties.state.title === 'Review needed' && loggedInUser">
                     <v-layout>
                         <v-flex>
-                            <span class="orange--text">{{ $t('help.change_being_reviewed') }}</span>
+                            <span class="orange--text">{{ $t('help.change_back') }}</span>
                         </v-flex>
                     </v-layout>
                 </v-container>
@@ -207,7 +203,7 @@
                     text-center
                     grid-list-xs
                     style="padding: 0 16px;"
-                    v-if="selectedSector.properties.state.title === 'Completed' && $root.loggedInUser">
+                    v-if="selectedSector.properties.state.title === 'Completed' && loggedInUser">
                     <v-layout>
                         <v-flex>
                             <span class="orange--text">{{ $t('help.change_back') }}</span>
@@ -224,7 +220,7 @@
                                     color="success"
                                     v-on="on"
                                     class="no-margin-button"
-                                    :disabled="!$root.loggedInUser || selectedSector.properties.state.title === 'Open' || selectedSector.properties.state.title === 'Review needed' || selectedSector.properties.state.title === 'Completed'"
+                                    :disabled="!loggedInUser || selectedSector.properties.state.title === 'Open' || selectedSector.properties.state.title === 'Review needed' || selectedSector.properties.state.title === 'Completed'"
                                     >{{ $t('sector.button.map') }}</v-btn>
                             </template>
                             <v-list>
@@ -254,14 +250,14 @@
                             class="left-margin-button"
                             color="warning"
                             @click.stop="splitSector()"
-                            :disabled="!$root.loggedInUser"
+                            :disabled="!loggedInUser"
                             >{{ $t('sector.button.split') }}</v-btn>
                         <v-btn
                             v-if="adminLoggedIn"
                             class="left-margin-button"
                             color="error"
                             @click.stop="deleteSector()"
-                            :disabled="!$root.loggedInUser"
+                            :disabled="!loggedInUser"
                             >{{ $t('sector.button.delete') }}</v-btn>
                     </v-flex>
                 </v-layout>
@@ -271,7 +267,7 @@
                 text-center
                 grid-list-xs
                 style="padding: 0 16px;"
-                v-if="$root.loggedInUser">
+                v-if="loggedInUser">
                 <v-layout class="row" wrap>
                     <v-flex xs12>
                         <v-textarea
@@ -328,13 +324,6 @@ export default {
         };
     },
     computed: {
-        adminLoggedIn () {
-            if (this.$root.loggedInUser && document.getElementById('logged-in-user-name')) {
-                return document.getElementById('logged-in-user-name').innerText === 'Artemis64' || document.getElementById('logged-in-user-name').innerText === 'Artemis64dev';
-            } else {
-                return false;
-            }
-        },
         drawerRight: {
             set (newValue) {
                 this.$store.commit(SET_DRAWER_RIGHT, newValue);
@@ -345,6 +334,16 @@ export default {
         },
         selectedSector () {
             return this.$store.state.selectedSector;
+        },
+        loggedInUser () {
+            return this.$store.state.loggedInUser;
+        },
+        adminLoggedIn () {
+            if (this.loggedInUser && document.getElementById('logged-in-user-name')) {
+                return document.getElementById('logged-in-user-name').innerText === 'Artemis64' || document.getElementById('logged-in-user-name').innerText === 'Artemis64dev';
+            } else {
+                return false;
+            }
         }
     },
     mounted () {
