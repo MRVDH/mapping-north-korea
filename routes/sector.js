@@ -1,13 +1,11 @@
-const mongoose = require("mongoose");
-const log = require("../utils/log.js");
+import log from "../utils/log.js";
 
-const Iteration = require("../models/Iteration.js");
-const SectorSet = require("../models/SectorSet.js");
-const State = require("../models/State.js");
-const Sector = require("../models/Sector.js");
-const Event = require("../models/Event.js");
+import SectorSet from "../models/SectorSet.js";
+import State from "../models/State.js";
+import Sector from "../models/Sector.js";
+import Event from "../models/Event.js";
 
-module.exports = {
+export default {
     getAll: (req, res) => {
         Sector.find({})
             .populate({

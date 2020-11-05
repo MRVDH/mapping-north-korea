@@ -1,13 +1,8 @@
-const mongoose = require("mongoose");
-const log = require("../utils/log.js");
+import log from "../utils/log.js";
 
-const Iteration = require("../models/Iteration.js");
-const SectorSet = require("../models/SectorSet.js");
-const State = require("../models/State.js");
-const Sector = require("../models/Sector.js");
-const Event = require("../models/Event.js");
+import Event from "../models/Event.js";
 
-module.exports = {
+export default {
     getAll: (req, res) => {
         if (req.params.amount === "" || req.params.amount === null || req.params.amount === undefined) {
             log.err(" <= RES /event/all/:amount invalid or no req param amount.", req.params);

@@ -1,14 +1,14 @@
-const mongoose = require("mongoose");
+import mongoose from "mongoose";
 
-const sectorImport = require("../static/sectors-import.js");
+import sectorImport from "../static/sectors-import.js";
 
-const Iteration = require("../models/Iteration.js");
-const SectorSet = require("../models/SectorSet.js");
-const State = require("../models/State.js");
-const Sector = require("../models/Sector.js");
-const Event = require("../models/Event.js");
+import Iteration from "../models/Iteration.js";
+import SectorSet from "../models/SectorSet.js";
+import State from "../models/State.js";
+import Sector from "../models/Sector.js";
+import Event from "../models/Event.js";
 
-module.exports = {
+export default {
     run: async function (options) {
         try {
             if (options && options.removeCollections) {

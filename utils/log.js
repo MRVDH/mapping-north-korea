@@ -1,7 +1,7 @@
-const fs = require("fs");
-const utils = require("./utils.js");
+import fs from "fs";
+import utils from "./utils.js";
 
-module.exports = {
+export default {
     inf: (msg) => {
         console.log(utils.getTime() + ": %s", msg);
         fs.appendFile("log.txt", utils.getTime() + ": " + msg + "\r\n", (err) => { if (err) throw err; });

@@ -1,13 +1,8 @@
-const mongoose = require("mongoose");
-const log = require("../utils/log.js");
+import log from "../utils/log.js";
 
-const Iteration = require("../models/Iteration.js");
-const SectorSet = require("../models/SectorSet.js");
-const State = require("../models/State.js");
-const Sector = require("../models/Sector.js");
-const Event = require("../models/Event.js");
+import Iteration from "../models/Iteration.js";
 
-module.exports = {
+export default {
     getLatestIteration: (req, res) => {
         Iteration.find({}).sort('-start').exec(function (err, iterations) { 
             if (err) {

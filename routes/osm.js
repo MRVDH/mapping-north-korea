@@ -1,12 +1,21 @@
-const request = require("request");
-const fxp = require("fast-xml-parser");
-const qs = require("querystring");
+import request from "request";
+import fxp from "fast-xml-parser";
+import qs from "querystring";
 
-const utils = require("../utils/utils.js");
-const log = require("../utils/log.js");
+import log from "../utils/log.js";
 
-module.exports = {
+export default {
     getUserDetails: (req, res) => {
+        if (global.testUserMode) {
+            req.session.osmUserName = "testuser";
+            req.session.osmUserId = 1234;
+            res.send({
+                id: 1234,
+                name: "testuser"
+            });
+            return;
+        }
+
         request({
             url: global.osm.endpoint + global.osm.api_version + "/user/details",
             method: "GET",
@@ -90,7 +99,7 @@ module.exports = {
         });
     },
     getIsAuthenticated: (req, res) => {
-        if (req.session.access_token && req.session.access_token_secret) {
+        if ((req.session.access_token && req.session.access_token_secret) || global.testUserMode) {
             res.send({ isAuthenticated: true });
         } else {
             res.send({ isAuthenticated: false });

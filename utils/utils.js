@@ -1,6 +1,6 @@
-const fxp = require("fast-xml-parser");
+import fxp from "fast-xml-parser";
 
-module.exports = {
+export default {
     getTime: () => {
         var datenow = new Date();
         return String(datenow.getHours()).padStart(2, "0") + ":" + String(datenow.getMinutes()).padStart(2, "0") + ":" + String(datenow.getSeconds()).padStart(2, "0") + "." + String(datenow.getMilliseconds()).padStart(3, "0");
