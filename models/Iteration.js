@@ -1,6 +1,6 @@
-var mongoose = require("mongoose");
+import mongoose from "mongoose";
 
-module.exports = mongoose.model("Iteration", new mongoose.Schema({
+export default mongoose.model("Iteration", new mongoose.Schema({
     title: { type: String, required: true },
     start: { type: Date, required: true },
 }));
