@@ -8,28 +8,30 @@ import database from "./middleware/database.js";
 import request from "./middleware/request.js";
 import routing from "./middleware/routes.js";
 
-log.inf("Configuring middleware...");
+(async () => {
+    log.inf("Configuring middleware...");
 
-const __dirname = await environment.getDirName();
+    const __dirname = await environment.getDirName();
 
-await environment.validateEnvironmentVariables();
-await environment.setGlobalVariables(__dirname);
-await database.setUpDatabaseConnection();
+    await environment.validateEnvironmentVariables();
+    await environment.setGlobalVariables(__dirname);
+    await database.setUpDatabaseConnection();
 
-const app = express();
+    const app = express();
 
-app.use(request.cors);
-app.enable("trust proxy");
-app.use("/api/", request.rateLimit());
-app.use(request.session());
-app.use(express.static(__dirname + "/dist"));
-app.use(bodyParser.urlencoded({ extended: true }));
-app.use(bodyParser.json());
-app.use(request.filterNonApiRequests(__dirname));
-app.use(request.log);
+    app.use(request.cors);
+    app.enable("trust proxy");
+    app.use("/api/", request.rateLimit());
+    app.use(request.session());
+    app.use(express.static(__dirname + "/dist"));
+    app.use(bodyParser.urlencoded({ extended: true }));
+    app.use(bodyParser.json());
+    app.use(request.filterNonApiRequests(__dirname));
+    app.use(request.log);
 
-log.inf("Setting up routing...");
-await routing.setUpRouting(app);
+    log.inf("Setting up routing...");
+    await routing.setUpRouting(app);
 
-log.inf("App setup finish. Starting server...");
-app.listen(global.port, _ => log.suc("Server running on port " + port));
+    log.inf("App setup finish. Starting server...");
+    app.listen(global.port, _ => log.suc("Server running on port " + port));
+})();
