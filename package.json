@@ -4,6 +4,9 @@
   "description": "Community effort for mapping North Korea.",
   "main": "app.js",
   "type": "module",
+  "engines" : { 
+    "node" : ">=14.15.0" 
+  },
   "dependencies": {
     "body-parser": "^1.19.0",
     "child_process": "^1.0.2",
