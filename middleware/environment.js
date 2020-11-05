@@ -1,8 +1,6 @@
 import fs from "fs";
 import dotenv from 'dotenv';
 import path from "path";
-import { dirname } from 'path';
-import { fileURLToPath } from 'url';
 import log from "../utils/log.js";
 
 export default {
@@ -29,9 +27,6 @@ export default {
             'OSM_DEV_CONSUMER_KEY="dev key here"\n\r' +
             'OSM_DEV_API_VERSION="/api/0.6"';
         }
-    },
-    async getDirName () {
-        return dirname(fileURLToPath(import.meta.url));
     },
     async setGlobalVariables(dirname) {
         global.port = 8081;
