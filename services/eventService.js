@@ -1,14 +1,28 @@
 import Event from "../models/Event.js";
 
 export default {
-    getAll: (req, res) => {
-        Event.find({}).sort('-time').limit(parseInt(req.params.amount)).exec(function (err, events) {
-            if (err) {
-                log.err(" <= RES /event/all/:amount ERROR db error.", err);
-                res.sendStatus(500);
-                return;
-            }
-            res.send(events);
+    getAll (amount) {
+        return new Promise((resolve, reject) => {
+            Event.find({}).sort('-time').limit(parseInt(amount)).exec((err, events) => {
+                if (err) {
+                    reject(err);
+                    return;
+                }
+
+                resolve(events);
+            });
         });
     },
+    getBySectorId (sectorId) {
+        return new Promise((resolve, reject) => {
+            Event.find({ sector: sectorId }, (err, events) => {
+                if (err) {
+                    reject(err);
+                    return;
+                }
+
+                resolve(events);
+            });
+        });
+    }
 }

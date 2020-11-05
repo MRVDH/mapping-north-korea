@@ -6,7 +6,7 @@ import bodyParser from "body-parser";
 import environment from "./middleware/environment.js";
 import database from "./middleware/database.js";
 import request from "./middleware/request.js";
-import routing from "./middleware/routing.js";
+import routing from "./middleware/routes.js";
 
 log.inf("Configuring middleware...");
 

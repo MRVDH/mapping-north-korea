@@ -12,7 +12,7 @@ export default {
         }
 
         // For development environments it could be easier to use a file (gitignored)
-        if (fs.existsSync("../.env")) {
+        if (fs.existsSync(".env")) {
             dotenv.config();
         } else {
             throw "Error loading configuration: Create an .env file with the following values or add them to your environment variables:",
