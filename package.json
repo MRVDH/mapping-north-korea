@@ -4,8 +4,8 @@
   "description": "Community effort for mapping North Korea.",
   "main": "app.js",
   "type": "module",
-  "engines" : { 
-    "node" : ">=14.15.0" 
+  "engines": {
+    "node": ">=14.15.0"
   },
   "dependencies": {
     "body-parser": "^1.19.0",
