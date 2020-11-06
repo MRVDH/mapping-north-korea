@@ -35,9 +35,9 @@
 </template>
 
 <script>
-import CustomMenuLeft from '@/components/navigation/CustomMenuLeft';
-import CustomHeader from '@/components/navigation/CustomHeader';
-import CustomFooter from '@/components/navigation/CustomFooter';
+import CustomMenuLeft from '@/components/Navigation/CustomMenuLeft';
+import CustomHeader from '@/components/Navigation/CustomHeader';
+import CustomFooter from '@/components/Navigation/CustomFooter';
 import OAuthService from '@/services/OAuthService';
 import EventBus from '@/events/EventBus';
 import { MESSAGE_ERROR, MESSAGE_SUCCESS, MESSAGE_INFO } from '@/events/eventTypes';

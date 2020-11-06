@@ -34,7 +34,14 @@ export default {
         
         if (process.argv.includes("dev")) {
             global.testUserMode = process.argv.includes("testuser");
+            
             log.alt("Dev mode " + (global.testUserMode ? "+ test user mode" : ""));
+
+            if (global.testUserMode) {
+                global.osmUserId = 1234;
+                global.osmUserName = "testuser";
+            }
+
             global.localurl = "http://localhost";
             global.devMode = true;
             global.mongodbConnection = process.env.MONGODB_CONNECTION_DEV;

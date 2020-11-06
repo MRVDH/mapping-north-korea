@@ -1,34 +1,18 @@
-# client
+# Frontend
+Vue.js setup with Vue CLI using Vuex, vue-router and more.
 
-## Project setup
+## Running the frontend
+First install all dependencies
 ```
 npm install
 ```
 
-### Compiles and hot-reloads for development
+Compiles and hot-reloads for development
 ```
 npm run serve
 ```
 
-### Compiles and minifies for production
+Compiles and minifies for production (deployment triggers this, so no need to do this yourself)
 ```
 npm run build
 ```
-
-### Run your tests
-```
-npm run test
-```
-
-### Lints and fixes files
-```
-npm run lint
-```
-
-### Run your unit tests
-```
-npm run test:unit
-```
-
-### Customize configuration
-See [Configuration Reference](https://cli.vuejs.org/config/).

@@ -17,7 +17,7 @@ export default {
         });
     },
     async update (req, res) {
-        if (req.session.osmUserId === "" || req.session.osmUserId === null || req.session.osmUserId === undefined) {
+        if ((req.session.osmUserId === "" || req.session.osmUserId === null || req.session.osmUserId === undefined) && !global.testUserMode) {
             log.err(" <= RES /sector/:id unauthorized.", req.params);
             res.sendStatus(401);
             return;
@@ -48,7 +48,7 @@ export default {
             return;
         }
 
-        sectorService.update(req.params.id, req.body.sector, req.body.state, req.body.comment, req.session.osmUserId, req.session.osmUserName).then((result) => {
+        sectorService.update(req.params.id, req.body.sector, req.body.state, req.body.comment, global.testUserMode ? global.osmUserId : req.session.osmUserId, global.testUserMode ? global.osmUserName : req.session.osmUserName).then((result) => {
             res.send(result);
         }).catch((err) => {
             log.err(" <= RES /sector/:id db update error.", err);
