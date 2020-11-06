@@ -31,7 +31,7 @@
 </template>
 
 <script>
-import CustomHeaderFaq from '@/components/navigation/CustomHeaderFaq';
+import CustomHeaderFaq from '@/components/Navigation/CustomHeaderFaq';
 import { SET_LOCALE, TOGGLE_DARK_MODE, TOGGLE_DRAWER_LEFT, TOGGLE_DRAWER_RIGHT } from "@/store/mutationTypes";
 
 export default {

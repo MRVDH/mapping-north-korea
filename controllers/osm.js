@@ -7,11 +7,9 @@ import log from "../utils/log.js";
 export default {
     getUserDetails: (req, res) => {
         if (global.testUserMode) {
-            req.session.osmUserName = "testuser";
-            req.session.osmUserId = 1234;
             res.send({
-                id: 1234,
-                name: "testuser"
+                id: global.osmUserId,
+                name: global.osmUserName
             });
             return;
         }

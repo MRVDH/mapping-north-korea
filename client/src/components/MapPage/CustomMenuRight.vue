@@ -305,7 +305,7 @@ import MapApiService from '@/services/MapApiService';
 import JOSMService from '@/services/JOSMService';
 import EventBus from '@/events/EventBus';
 import { MESSAGE_ERROR, MESSAGE_SUCCESS } from '@/events/eventTypes';
-import { START_LOADING, STOP_LOADING, SET_DRAWER_RIGHT } from "@/store/mutationTypes";
+import { START_LOADING, STOP_LOADING, SET_DRAWER_RIGHT, SELECT_SECTOR } from "@/store/mutationTypes";
 
 export default {
     name: 'CustomMenuRight',
@@ -332,8 +332,13 @@ export default {
                 return this.$store.state.drawerRight;
             }
         },
-        selectedSector () {
-            return this.$store.state.selectedSector;
+        selectedSector: {
+            set (newValue) {
+                this.$store.commit(SELECT_SECTOR, newValue);
+            },
+            get () {
+                return this.$store.state.selectedSector;
+            }
         },
         loggedInUser () {
             return this.$store.state.loggedInUser;
@@ -398,7 +403,6 @@ export default {
                 this.newState = this.selectedSector.properties.state._id;
 
                 EventBus.$emit(MESSAGE_SUCCESS, this.$t('request.sector_updated'));
-                EventBus.$emit('mnk:update-sector', this.selectedSector);
             }).catch(() => {
                 EventBus.$emit(MESSAGE_ERROR, this.$t('request.sector_update'));
             }).finally(() => {

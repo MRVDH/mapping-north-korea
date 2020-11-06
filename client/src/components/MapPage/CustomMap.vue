@@ -48,19 +48,20 @@ export default {
     computed: {
         darkMode () {
             return this.$store.state.darkMode;
+        },
+        updatedSector () {
+            return this.$store.state.selectedSector;
         }
     },
     watch: {
         darkMode (newThemeIsDark) {
             this.setDarkMode(newThemeIsDark);
-        }
-    },
-    mounted () {
-        this.initMap();
-        
-        this.setDarkMode(this.darkMode);
+        },
+        updatedSector (sector) {
+            if (!sector) {
+                return;
+            }
 
-        EventBus.$on('mnk:update-sector', (sector) => {
             // find and update the sector in the sector list.
             this.sectors.features[this.sectors.features.findIndex(x => x.properties._id === sector.properties._id)] = sector;
 
@@ -74,7 +75,13 @@ export default {
                     break;
                 }
             }
-        });
+        }
+    },
+    mounted () {
+        this.initMap();
+        
+        this.setDarkMode(this.darkMode);
+
         EventBus.$on('mnk:go-to-sector', (sectorId) => {
             this.setSectorSelected(this.getSectorLayerById(sectorId), true);
             this.flyToSectorByPolygonCoordinates(this.selectedSector.feature.geometry.coordinates[0]);

@@ -7,30 +7,20 @@ For bug fixes and new features please open an issue and then create a pull reque
 ## Making changes in the front end
 See the readme in the client folder and make sure to run the build command.
 
-## Running the backend
-Dev mode:
+## Preparing the backend
+First install all dependencies
 ``` bash
-node app.js dev
+npm install
 ```
 
-Production mode:
-``` bash
-node app.js
-```
-
-Populate database:
-```
-See the app.js code for the command to populate the db.
-```
-
-Make sure this folder has a .env file with the following contents.
+Either add environment variables, or create an .env file with the following content:
 ```
 SESSION_SECRET="secret here"
 
 MONGODB_CONNECTION="connection string"
 MONGODB_CONNECTION_DEV="connection string dev db"
 
-OSM_ADMIN_NAME="name of osm account that is the admin for this app"
+OSM_ADMIN_NAME="name of osm account that is the admin for this app. Useful for testing admin priviliges."
 
 OSM_ENDPOINT="https://www.openstreetmap.org"
 OSM_CONSUMER_SECRET="secret here"
@@ -41,4 +31,25 @@ OSM_DEV_ENDPOINT="https://master.apis.dev.openstreetmap.org"
 OSM_DEV_CONSUMER_SECRET="dev secret here"
 OSM_DEV_CONSUMER_KEY="dev key here"
 OSM_DEV_API_VERSION="/api/0.6"
+```
+
+Populate database:
+```
+See the middleware/environment.js code for the command to populate the db.
+```
+
+## Running the backend
+Dev mode
+``` bash
+node app.js dev
+```
+
+Dev mode with test user enabled ('logged in', bypassing OAuth). If you need to test the OAuth process then build the client using `npm run build` in the client directory, start the server with `node app.js dev` and navigate to localhost:8081 instead of :8080
+``` bash
+node app.js dev testuser
+```
+
+Production mode. Though you'll not need this during development. This is just for deployments.
+``` bash
+node app.js
 ```

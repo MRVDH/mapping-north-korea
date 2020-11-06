@@ -115,30 +115,10 @@ export default {
             sectorDoneCount: 0
         };
     },
-    mounted () {
-        EventBus.$on('mnk:update-sector', (sector) => {
-            if (sector.properties.state.title === 'Completed') {
-                this.sectorDoneCount++;
-            }
-        });
-
-        this.$store.dispatch(START_LOADING, 'getCompletedSectorCountByIterationId');
-        MapApiService.getLatestIteration().then((res) => {
-            this.currentIteration = res.data;
-            MapApiService.getCompletedSectorCountByIterationId(this.currentIteration._id).then((res) => {
-                this.sectorTotalCount = res.data.totalCount;
-                this.sectorDoneCount = res.data.doneCount;
-            }).catch(() => {
-                EventBus.$emit(MESSAGE_ERROR, this.$t('request.completed_sector_count'));
-            }).finally(() => {
-                this.$store.dispatch(STOP_LOADING, 'getCompletedSectorCountByIterationId');
-            });
-        }).catch(() => {
-            EventBus.$emit(MESSAGE_ERROR, this.$t('request.current_iteration'));
-            this.$store.dispatch(STOP_LOADING, 'getCompletedSectorCountByIterationId');
-        });
-    },
     computed: {
+        updatedSector () {
+            return this.$store.state.selectedSector;
+        },
         drawerLeft: {
             set (newValue) {
                 this.$store.commit(SET_DRAWER_LEFT, newValue);
@@ -157,6 +137,30 @@ export default {
             var percentageDone = (this.sectorDoneCount * 100) / this.sectorTotalCount;
             return percentageDone < 1 ? 1 : percentageDone;
         }
+    },
+    watch: {
+        updatedSector (sector) {
+            if (sector && sector.properties.state.title === 'Completed') {
+                this.sectorDoneCount++;
+            }
+        }
+    },
+    mounted () {
+        this.$store.dispatch(START_LOADING, 'getCompletedSectorCountByIterationId');
+        MapApiService.getLatestIteration().then((res) => {
+            this.currentIteration = res.data;
+            MapApiService.getCompletedSectorCountByIterationId(this.currentIteration._id).then((res) => {
+                this.sectorTotalCount = res.data.totalCount;
+                this.sectorDoneCount = res.data.doneCount;
+            }).catch(() => {
+                EventBus.$emit(MESSAGE_ERROR, this.$t('request.completed_sector_count'));
+            }).finally(() => {
+                this.$store.dispatch(STOP_LOADING, 'getCompletedSectorCountByIterationId');
+            });
+        }).catch(() => {
+            EventBus.$emit(MESSAGE_ERROR, this.$t('request.current_iteration'));
+            this.$store.dispatch(STOP_LOADING, 'getCompletedSectorCountByIterationId');
+        });
     }
 };
 </script>
