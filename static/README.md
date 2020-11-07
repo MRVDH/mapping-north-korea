@@ -6,11 +6,23 @@ These are the administrative regions of North Korea.
 | 6 | county |
 | 7 | pyongyang regions |
 
-Run this overpass query for both North Korean counties and pyongyang inner regions.
+Run this overpass query for North Korean counties, pyongyang inner regions, the special administrative region of kaesong and the Rason area.
 ```
 [out:json][timeout:25];
 {{geocodeArea:"North Korea"}}->.searchArea;
 (
+  relation
+  	["type"="boundary"]
+  	["boundary"="administrative"]
+  	["admin_level"="4"]
+  	["name:en"="Kaesong"]
+  	(area.searchArea);
+  relation
+  	["type"="boundary"]
+  	["boundary"="administrative"]
+  	["admin_level"="4"]
+  	["name:en"="Rason"]
+  	(area.searchArea);
   relation
   	["type"="boundary"]
   	["boundary"="administrative"]
@@ -27,9 +39,9 @@ out body;
 out skel qt;
 ```
 
-Install the mapshaper npm package and run this command in the folder of the geojson. The first parameter, `nk_admin_level_6-7.geojson`, is the name of the input file, so make sure the name is correct.
+Install the mapshaper npm package and run this command in the folder of the geojson. The first parameter, `nk_regions.geojson`, is the name of the input file, so make sure the name is correct.
 ```
-mapshaper nk_admin_level_6-7.geojson -simplify dp keep-shapes 20% -o format=geojson
+mapshaper nk_regions.geojson -simplify dp keep-shapes 20% -o format=geojson
 ```
 
 This will generate three files. One with all the ways, another with some linestrings, maybe incorrect data? And a third with admin_centre points. We only need the first (also largest) file.

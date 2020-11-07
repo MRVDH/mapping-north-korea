@@ -1,4 +1,0 @@
-{"type":"FeatureCollection", "features": [
-{"type":"Feature","geometry":{"type":"LineString","coordinates":[[125.7500071,37.7147092],[126.016671,37.6583268]]},"properties":{"@id":"way/861129204","@relations":[{"role":"","rel":5469279,"reltags":{"admin_level":"6","boundary":"administrative","name":"청단군","name:en":"Chongdan County","name:ja":"青丹郡","name:ko":"청단군","name:ko_hanja":"靑丹郡","name:ru":"уезд Чхондан","name:zh":"青丹郡","type":"boundary","wikidata":"Q27245972"}}]},"id":"way/861129204"},
-{"type":"Feature","geometry":{"type":"LineString","coordinates":[[126.016671,37.6583268],[126.1027612,37.7077024]]},"properties":{"@id":"way/861129205","@relations":[{"role":"","rel":5469278,"reltags":{"admin_level":"6","boundary":"administrative","name":"연안군","name:en":"Yonan County","name:ja":"延安郡","name:ko":"연안군","name:ko_hanja":"延安郡","name:ru":"уезд Йонан","name:zh":"延安郡","type":"boundary","wikidata":"Q213173"}}]},"id":"way/861129205"}
-]}
