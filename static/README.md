@@ -46,4 +46,4 @@ mapshaper nk_regions.geojson -simplify dp keep-shapes 20% -o format=geojson
 
 This will generate three files. One with all the ways, another with some linestrings, maybe incorrect data? And a third with admin_centre points. We only need the first (also largest) file.
 
-You can test the quality of the geojson here: https://geojson.io/#map=2/20.0/0.0
+You can test the quality of the geojson here: https://geojson.io
