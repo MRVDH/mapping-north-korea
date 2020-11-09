@@ -1,10 +1,5 @@
 import log from "../utils/log.js";
 
-import SectorSet from "../models/SectorSet.js";
-import State from "../models/State.js";
-import Sector from "../models/Sector.js";
-import Event from "../models/Event.js";
-
 import sectorService from "../services/sectorService.js";
 
 export default {

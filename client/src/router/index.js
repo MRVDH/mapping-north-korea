@@ -15,8 +15,18 @@ export default new Router({
             redirect: { name: 'MapPage' }
         },
         {
-            path: '/map/:sectorId?',
+            path: '/map',
             name: 'MapPage',
+            component: MapPage
+        },
+        {
+            path: '/map/sector/:sectorId',
+            name: 'MapPageSector',
+            component: MapPage
+        },
+        {
+            path: '/map/sectorset/:sectorSetId',
+            name: 'MapPageSectorSet',
             component: MapPage
         },
         {

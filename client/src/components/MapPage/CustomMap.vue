@@ -26,7 +26,7 @@ import MapApiService from '@/services/MapApiService';
 import EventBus from '@/events/EventBus';
 import * as L from 'leaflet/src/Leaflet';
 import { MESSAGE_ERROR, MESSAGE_INFO } from '@/events/eventTypes';
-import { START_LOADING, STOP_LOADING, SELECT_SECTOR } from "@/store/mutationTypes";
+import { START_LOADING, STOP_LOADING, SELECT_SECTOR, SET_SECTOR_SETS } from "@/store/mutationTypes";
 
 const defaultStyle = {
     weight: 1,
@@ -51,6 +51,9 @@ export default {
         },
         updatedSector () {
             return this.$store.state.selectedSector;
+        },
+        currentIteration () {
+            return this.$store.state.currentIteration;
         }
     },
     watch: {
@@ -75,6 +78,34 @@ export default {
                     break;
                 }
             }
+        },
+        currentIteration (newIteration) {
+            if (!newIteration) {
+                return;
+            }
+
+            this.$store.dispatch(START_LOADING, 'loadingsectors');
+            MapApiService.getAllSectorSetsByIterationId(newIteration._id).then((res) => {
+                let sectorSets = res.data;
+
+                this.$store.dispatch(SET_SECTOR_SETS, sectorSets);
+                let geoJsonSectorSets = this.sectorSetsToGeoJson(sectorSets);
+
+                this.geoJsonLayer = L.geoJSON(geoJsonSectorSets, {
+                    style: (feature) => {
+                        return {
+                            color: feature.properties._color,
+                            fillColor: feature.properties._color,
+                            weight: defaultStyle.weight,
+                            opacity: defaultStyle.opacity
+                        };
+                    }
+                }).addTo(this.map);
+            }).catch(() => {
+                EventBus.$emit(MESSAGE_ERROR, this.$t('request.load_sectors'));
+            }).finally(() => {
+                this.$store.dispatch(STOP_LOADING, 'loadingsectors');
+            });
         }
     },
     mounted () {
@@ -120,38 +151,38 @@ export default {
                 this.lightTileLayer.addTo(this.map);
             }
 
-            this.$store.dispatch(START_LOADING, 'loadingsectors');
-            MapApiService.getAllSectors().then((res) => {
-                this.sectors = this.sectorsToGeoJson(res.data);
+            // this.$store.dispatch(START_LOADING, 'loadingsectors');
+            // MapApiService.getAllSectors().then((res) => {
+            //     this.sectors = this.sectorsToGeoJson(res.data);
 
-                this.geoJsonLayer = L.geoJSON(this.sectors, {
-                    style: (feature) => {
-                        return {
-                            color: feature.properties.state.color,
-                            fillColor: feature.properties.state.color,
-                            weight: defaultStyle.weight,
-                            opacity: defaultStyle.opacity
-                        };
-                    }
-                }).on('click', this.clickSectorEvent).on('dblclick', function (event) {
-                    L.DomEvent.stopPropagation(event);
-                    return false;
-                }).addTo(this.map);
+            //     this.geoJsonLayer = L.geoJSON(this.sectors, {
+            //         style: (feature) => {
+            //             return {
+            //                 color: feature.properties.state.color,
+            //                 fillColor: feature.properties.state.color,
+            //                 weight: defaultStyle.weight,
+            //                 opacity: defaultStyle.opacity
+            //             };
+            //         }
+            //     }).on('click', this.clickSectorEvent).on('dblclick', function (event) {
+            //         L.DomEvent.stopPropagation(event);
+            //         return false;
+            //     }).addTo(this.map);
 
-                if (this.$route.params.sectorId) {
-                    this.setSectorSelected(this.getSectorLayerById(this.$route.params.sectorId), true);
-                    this.flyToSectorByPolygonCoordinates(this.selectedSector.feature.geometry.coordinates[0]);
-                }
-            }).catch(() => {
-                EventBus.$emit(MESSAGE_ERROR, this.$t('request.load_sectors'));
-            }).finally(() => {
-                this.$store.dispatch(STOP_LOADING, 'loadingsectors');
-            });
+            //     if (this.$route.params.sectorId) {
+            //         this.setSectorSelected(this.getSectorLayerById(this.$route.params.sectorId), true);
+            //         this.flyToSectorByPolygonCoordinates(this.selectedSector.feature.geometry.coordinates[0]);
+            //     }
+            // }).catch(() => {
+            //     EventBus.$emit(MESSAGE_ERROR, this.$t('request.load_sectors'));
+            // }).finally(() => {
+            //     this.$store.dispatch(STOP_LOADING, 'loadingsectors');
+            // });
         },
         setSectorSelected: function (layer, select) {
             if (select) {
                 this.$store.dispatch(SELECT_SECTOR, layer.toGeoJSON());
-                this.$router.push({ name: 'MapPage', params: { sectorId: layer.feature.properties._id } });
+                this.$router.push({ name: 'MapPageSector', params: { sectorId: layer.feature.properties._id } });
                 layer.bringToFront();
                 layer.setStyle({
                     color: '#FFFF00',
@@ -224,6 +255,18 @@ export default {
                     }
                 });
             }
+            return geoJson;
+        },
+        sectorSetsToGeoJson: function (sectorSets) {
+            var geoJson = {
+                features: [],
+                type: 'FeatureCollection'
+            };
+
+            for (var sectorSet of sectorSets) {
+                geoJson.features.push(sectorSet.feature);
+            }
+
             return geoJson;
         },
         flyToSectorByPolygonCoordinates: function (coordinates) {

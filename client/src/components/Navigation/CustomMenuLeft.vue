@@ -8,10 +8,6 @@
             "map": "Map",
             "about": "About"
         },
-        "request": {
-            "completed_sector_count": "Something went wrong while trying to get the completed sector count.",
-            "current_iteration": "Something went wrong while trying to get the current iteration."
-        },
         "iteration": "Iteration: {iterationTitle}"
     },
     "ko": {
@@ -21,10 +17,6 @@
         "menu": {
             "map": "지도",
             "about": "정보"
-        },
-        "request": {
-            "completed_sector_count": null,
-            "current_iteration": null
         },
         "iteration": "반복: {iterationTitle}"
     }
@@ -37,7 +29,7 @@
         temporary
         clipped
         v-model="drawerLeft"
-        class="drawer">
+        width="300">
         <v-toolbar
             flat
             class="transparent">
@@ -102,15 +94,12 @@
 
 <script>
 import MapApiService from '@/services/MapApiService';
-import EventBus from '@/events/EventBus';
-import { MESSAGE_ERROR } from '@/events/eventTypes';
-import { START_LOADING, STOP_LOADING, SET_DRAWER_LEFT } from "@/store/mutationTypes";
+import { SET_DRAWER_LEFT } from "@/store/mutationTypes";
 
 export default {
     name: 'CustomMenuLeft',
     data () {
         return {
-            currentIteration: null,
             sectorTotalCount: 0,
             sectorDoneCount: 0
         };
@@ -133,6 +122,9 @@ export default {
         loggedInUser () {
             return this.$store.state.loggedInUser;
         },
+        currentIteration () {
+            return this.$store.state.currentIteration;
+        },
         valueDeterminate () {
             var percentageDone = (this.sectorDoneCount * 100) / this.sectorTotalCount;
             return percentageDone < 1 ? 1 : percentageDone;
@@ -143,24 +135,17 @@ export default {
             if (sector && sector.properties.state.title === 'Completed') {
                 this.sectorDoneCount++;
             }
-        }
-    },
-    mounted () {
-        this.$store.dispatch(START_LOADING, 'getCompletedSectorCountByIterationId');
-        MapApiService.getLatestIteration().then((res) => {
-            this.currentIteration = res.data;
-            MapApiService.getCompletedSectorCountByIterationId(this.currentIteration._id).then((res) => {
+        },
+        currentIteration (newIteration) {
+            if (!newIteration) {
+                return;
+            }
+
+            MapApiService.getCompletedSectorCountByIterationId(newIteration._id).then((res) => {
                 this.sectorTotalCount = res.data.totalCount;
                 this.sectorDoneCount = res.data.doneCount;
-            }).catch(() => {
-                EventBus.$emit(MESSAGE_ERROR, this.$t('request.completed_sector_count'));
-            }).finally(() => {
-                this.$store.dispatch(STOP_LOADING, 'getCompletedSectorCountByIterationId');
             });
-        }).catch(() => {
-            EventBus.$emit(MESSAGE_ERROR, this.$t('request.current_iteration'));
-            this.$store.dispatch(STOP_LOADING, 'getCompletedSectorCountByIterationId');
-        });
+        }
     }
 };
 </script>

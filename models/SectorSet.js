@@ -3,5 +3,7 @@ import mongoose from "mongoose";
 export default mongoose.model("SectorSet", new mongoose.Schema({
     title: { type: String, required: true },
     iteration: { type: mongoose.Schema.Types.ObjectId, ref: "Iteration", required: true },
-    feature: { type: Object, required: false }
+    feature: { type: Object, required: false },
+    totalCount: { type: Number, required: false },
+    completedCount: { type: Number, required: false }
 }));

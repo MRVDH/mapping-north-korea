@@ -2,12 +2,9 @@
 {
     "en": {
         "help": {
-            "select_sector": "Select a sector on the map to start mapping or select a random sector by state.",
             "login": "Please log in to map or edit this sector.",
             "change_back": "Please change the state to 'Being edited' to edit or review this sector."
         },
-
-        "recent_events": "Recent events",
 
         "sector": {
             "id": "Sector id",
@@ -20,13 +17,8 @@
             }
         },
 
-        "comment_less_than": "Comment must be less than 500 characters.",
-        "comment": "Comment",
-
         "request": {
             "get_sector_states": "Something went wrong while trying to get all possible sector states.",
-            "recent_events": "Something went wrong while trying to get recent events.",
-            "sector_events": "Something went wrong while trying to get the events of a sector.",
             "sector_updated": "Sector updated.",
             "sector_update": "Something went wrong while trying to update the sector.",
             "josm_failed": "Failed to load data into JOSM. See the FAQ for more information.",
@@ -38,12 +30,9 @@
     },
     "ko": {
         "help": {
-            "select_sector": "지도를 만들 부분을 선택하세요. 상태 옆의 화살표를 누르면 임의의 작업이 선택됩니다.",
             "login": "이 부분의 지도를 제작하거나 편집하려면 로그인하세요.",
             "change_back": null
         },
-
-        "recent_events": "최근 내역",
 
         "sector": {
             "id": "이 부분의 id",
@@ -56,13 +45,8 @@
             }
         },
 
-        "comment_less_than": null,
-        "comment": null,
-
         "request": {
             "get_sector_states": null,
-            "recent_events": null,
-            "sector_events": null,
             "sector_updated": null,
             "sector_update": null,
             "josm_failed": null,
@@ -82,51 +66,11 @@
         clipped
         mobile-breakpoint="0"
         app
-        class="drawer">
+        width="300">
         <v-list v-if="!selectedSector">
-            <v-container
-                text-center
-                grid-list-xs
-                style="padding: 16px;">
-                <v-layout>
-                    <v-flex>{{ $t('help.select_sector') }}</v-flex>
-                </v-layout>
-            </v-container>
-            <v-list-item v-for="(state, index) in states" :key="index">
-                <v-list-item-content class="pa-0">
-                    <v-list-item-title><span :style="{ color: state.color }">■</span> {{ state.title }}</v-list-item-title>
-                </v-list-item-content>
-                <v-list-item-action class="ma-0">
-                    <v-btn icon @click.stop="selectRandomSector(state._id)">
-                        <v-icon>forward</v-icon>
-                    </v-btn>
-                </v-list-item-action>
-            </v-list-item>
-            <v-divider v-if="allEvents.length > 0"></v-divider>
-            <v-container
-                grid-list-xs
-                style="padding: 16px 16px 0 16px;">
-                <v-layout>
-                    <v-flex>
-                        <span class="font-weight-bold">{{ $t('recent_events') }}</span>
-                    </v-flex>
-                </v-layout>
-            </v-container>
-            <v-container grid-list-md text-center style="padding: 16px;">
-                <v-layout class="row" v-for="(event, index) in allEvents" :key="index">
-                    <v-flex xs12>
-                        <div class="text-left" @click.stop="selectSectorById(event.sector)" style="cursor: pointer;">{{ event.description }}</div>
-                        <div class="text-right grey--text text--lighten-1 caption">{{ event.osmUserName }}
-                            <a
-                                :href="'https://www.openstreetmap.org/user/' + event.osmUserName"
-                                target="_blank"
-                                style="text-decoration: none;">
-                                <v-icon small style="font-size: 10px; vertical-align: initial;">launch</v-icon>
-                            </a> - <span :title="new Date(event.time)">{{ calculateDateOutput(new Date(event.time)) }}</span>
-                        </div>
-                    </v-flex>
-                </v-layout>
-            </v-container>
+            <CustomMenuRightRegions/>
+            <v-divider v-if="recentEvents.length > 0"></v-divider>
+            <CustomMenuRightRecentEvents/>
         </v-list>
         <v-list v-else>
             <v-list-item>
@@ -155,7 +99,7 @@
                             <v-list-item
                                 v-for="(state, index) in states"
                                 :key="index"
-                                @click.stop="updateSector(state, null)"
+                                @click.stop="updateSector(state)"
                                 >
                                 <v-list-item-title>
                                     <span :style="{ color: state.color, 'vertical-align': 'text-bottom' }">■</span> {{ state.title }}
@@ -263,62 +207,31 @@
                 </v-layout>
             </v-container>
             <v-divider></v-divider>
-            <v-container
-                text-center
-                grid-list-xs
-                style="padding: 0 16px;"
-                v-if="loggedInUser">
-                <v-layout class="row" wrap>
-                    <v-flex xs12>
-                        <v-textarea
-                            v-model="newComment"
-                            append-outer-icon="send"
-                            @click:append-outer="postComment();"
-                            :counter="500"
-                            :rules="[v => v.length <= 500 || $t('comment_less_than')]"
-                            :label="$t('comment')"
-                        ></v-textarea>
-                    </v-flex>
-                </v-layout>
-            </v-container>
-            <v-container grid-list-md text-center style="padding: 16px;">
-                <v-layout class="row" v-for="(event, index) in events" :key="index">
-                    <v-flex xs12>
-                        <div class="text-left">{{ event.description }}</div>
-                        <div class="text-right grey--text text--lighten-1 caption">{{ event.osmUserName }}
-                            <a
-                                :href="'https://www.openstreetmap.org/user/' + event.osmUserName"
-                                target="_blank"
-                                style="text-decoration: none;">
-                                <v-icon small style="font-size: 10px; vertical-align: initial;">launch</v-icon>
-                            </a> - <span :title="new Date(event.time)">{{ calculateDateOutput(new Date(event.time)) }}</span>
-                        </div>
-                    </v-flex>
-                </v-layout>
-            </v-container>
+            <CustomMenuRightSectorEvents/>
         </v-list>
     </v-navigation-drawer>
 </template>
 
 <script>
+import CustomMenuRightRegions from './MenuRightRegions';
+import CustomMenuRightRecentEvents from './MenuRightRecentEvents';
+import CustomMenuRightSectorEvents from './MenuRightSectorEvents';
+
 import MapApiService from '@/services/MapApiService';
 import JOSMService from '@/services/JOSMService';
 import EventBus from '@/events/EventBus';
 import { MESSAGE_ERROR, MESSAGE_SUCCESS } from '@/events/eventTypes';
-import { START_LOADING, STOP_LOADING, SET_DRAWER_RIGHT, SELECT_SECTOR } from "@/store/mutationTypes";
+import { START_LOADING, STOP_LOADING, SET_DRAWER_RIGHT, SELECT_SECTOR, ADD_TO_RECENT_EVENTS } from "@/store/mutationTypes";
 
 export default {
-    name: 'CustomMenuRight',
+    name: 'MenuRight',
     data () {
         return {
             idUrl: '',
             rapidUrl: '',
             valid: true,
-            newComment: '',
             newState: null,
             states: null,
-            events: [],
-            allEvents: [],
             mappingMenuOpen: false,
             stateEditOpen: false
         };
@@ -349,6 +262,28 @@ export default {
             } else {
                 return false;
             }
+        },
+        recentEvents () {
+            return this.$store.state.recentEvents;
+        }
+    },
+    watch: {
+        selectedSector () {
+            if (!this.selectedSector) {
+                return;
+            }
+
+            this.newState = this.selectedSector.properties.state._id;
+
+            var coords = this.selectedSector.geometry.coordinates[0];
+            this.idUrl = 'https://www.openstreetmap.org/edit?editor=id' +
+                '&#map=13/' + (coords[1][1] + coords[2][1]) / 2 + '/' + (coords[0][0] + coords[1][0]) / 2 +
+                '&comment=MappingNorthKorea.com%20sector%20' + this.selectedSector.properties._id +
+                '&gpx=https://www.mappingnorthkorea.com/api/sector/generate/' + this.selectedSector.properties._id + '.gpx';
+            this.rapidUrl = 'https://www.mapwith.ai/rapid?#' +
+                'gpx=https://www.mappingnorthkorea.com/api/sector/generate/' + this.selectedSector.properties._id + '.gpx' +
+                '&map=13/' + (coords[1][1] + coords[2][1]) / 2 + '/' + (coords[0][0] + coords[1][0]) / 2 +
+                '&comment=MappingNorthKorea.com%20sector%20' + this.selectedSector.properties._id;
         }
     },
     mounted () {
@@ -362,15 +297,6 @@ export default {
         }).finally(() => {
             this.$store.dispatch(STOP_LOADING, 'getAllStates');
         });
-        
-        this.$store.dispatch(START_LOADING, 'getAllEvents');
-        MapApiService.getAllEvents(25).then((res) => {
-            this.allEvents = res.data;
-        }).catch(() => {
-            EventBus.$emit(MESSAGE_ERROR, this.$t('request.recent_events'));
-        }).finally(() => {
-            this.$store.dispatch(STOP_LOADING, 'getAllEvents');
-        });
     },
     methods: {
         selectSectorById: (id) => {
@@ -379,27 +305,21 @@ export default {
         selectRandomSector: (id) => {
             EventBus.$emit('mnk:select-random-sector-by-state-id', id);
         },
-        postComment: function () {
-            if (this.newComment === '' || this.newComment === null || this.newComment === undefined) return;
-            this.updateSector(this.selectedSector.properties.state, this.newComment);
-        },
-        updateSector: function (state, comment) {
+        updateSector: function (state) {
             var apiSector = this.geoJsonSectorToApiSector(this.selectedSector);
             this.stateEditOpen = false;
 
             this.$store.dispatch(START_LOADING, 'updateSector');
             MapApiService.updateSector({
                 sector: apiSector,
-                comment: comment || '',
                 state: state
             }).then((res) => {
                 for (var event of res.data.events) {
                     this.events.unshift(event);
-                    this.allEvents.unshift(event);
+                    this.$store.dispatch(ADD_TO_RECENT_EVENTS, event);
                 }
 
                 this.selectedSector = this.sectorToGeoJson(res.data.sector);
-                this.newComment = '';
                 this.newState = this.selectedSector.properties.state._id;
 
                 EventBus.$emit(MESSAGE_SUCCESS, this.$t('request.sector_updated'));
@@ -435,7 +355,6 @@ export default {
         },
         cancelDialog: function () {
             this.updateSectorDialog = false;
-            this.newComment = '';
             this.newState = this.selectedSector.properties.state._id;
         },
         geoJsonSectorToApiSector: (sect) => {
@@ -502,34 +421,10 @@ export default {
             }
         }
     },
-    watch: {
-        selectedSector () {
-            if (!this.selectedSector) {
-                return;
-            }
-
-            this.newState = this.selectedSector.properties.state._id;
-
-            var coords = this.selectedSector.geometry.coordinates[0];
-            this.idUrl = 'https://www.openstreetmap.org/edit?editor=id' +
-                '&#map=13/' + (coords[1][1] + coords[2][1]) / 2 + '/' + (coords[0][0] + coords[1][0]) / 2 +
-                '&comment=MappingNorthKorea.com%20sector%20' + this.selectedSector.properties._id +
-                '&gpx=https://www.mappingnorthkorea.com/api/sector/generate/' + this.selectedSector.properties._id + '.gpx';
-            this.rapidUrl = 'https://www.mapwith.ai/rapid?#' +
-                'gpx=https://www.mappingnorthkorea.com/api/sector/generate/' + this.selectedSector.properties._id + '.gpx' +
-                '&map=13/' + (coords[1][1] + coords[2][1]) / 2 + '/' + (coords[0][0] + coords[1][0]) / 2 +
-                '&comment=MappingNorthKorea.com%20sector%20' + this.selectedSector.properties._id;
-
-            this.$store.dispatch(START_LOADING, 'getEventsBySectorId');
-            MapApiService.getEventsBySectorId(this.selectedSector.properties._id).then((res) => {
-                if (!res.data.length) return;
-                this.events = res.data.sort(function (a, b) { return new Date(b.time.date) - new Date(a.time.date); }).reverse();
-            }).catch(() => {
-                EventBus.$emit(MESSAGE_ERROR, this.$t('request.sector_events'));
-            }).finally(() => {
-                this.$store.dispatch(STOP_LOADING, 'getEventsBySectorId');
-            });
-        }
+    components: {
+        CustomMenuRightRegions,
+        CustomMenuRightRecentEvents,
+        CustomMenuRightSectorEvents
     }
 };
 </script>

@@ -9,3 +9,7 @@ export const SET_DRAWER_LEFT = 'setDrawerLeft';
 export const START_LOADING = 'startLoading';
 export const STOP_LOADING = 'stopLoading';
 export const SELECT_SECTOR = 'selectSector';
+export const SET_CURRENT_ITERATION = 'setCurrentIteration';
+export const SET_SECTOR_SETS = 'setSectorSets';
+export const SET_RECENT_EVENTS = 'setRecentEvents';
+export const ADD_TO_RECENT_EVENTS = 'addToRecentEvents';
