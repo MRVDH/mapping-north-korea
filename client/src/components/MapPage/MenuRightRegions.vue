@@ -17,7 +17,7 @@
     <div>
         <v-container
             grid-list-xs
-            class="pa-3">
+            class="pa-3 pt-4">
             <v-layout>
                 <v-flex>
                     <span class="font-weight-bold">{{ $t('regions') }}</span>

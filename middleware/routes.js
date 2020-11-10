@@ -15,6 +15,7 @@ export default {
 
         app.get("/api/sector", sectorController.getAll);
         app.put("/api/sector/:id", sectorController.update);
+        app.get("/api/sector/sectorset/:sectorSetId", sectorController.getBySectorSetId);
         app.get("/api/sector/generate/:id", sectorController.generateGpxBySectorId);
         app.get('/api/sector/completed/count/:id', sectorController.getCompletedSectorCountByIterationId);
         app.get('/api/sector/split/:id', sectorController.splitSectorBySectorId);

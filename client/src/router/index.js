@@ -20,13 +20,13 @@ export default new Router({
             component: MapPage
         },
         {
-            path: '/map/sector/:sectorId',
-            name: 'MapPageSector',
+            path: '/map/sectorset/:sectorSetId',
+            name: 'MapPageSectorSet',
             component: MapPage
         },
         {
-            path: '/map/sectorset/:sectorSetId',
-            name: 'MapPageSectorSet',
+            path: '/map/sectorset/:sectorSetId/sector/:sectorId',
+            name: 'MapPageSector',
             component: MapPage
         },
         {

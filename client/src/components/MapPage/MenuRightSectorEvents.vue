@@ -65,7 +65,7 @@
 import MapApiService from '@/services/MapApiService';
 import UtilService from '@/services/UtilService';
 import EventBus from '@/events/EventBus';
-import { MESSAGE_ERROR } from '@/events/eventTypes';
+import { MESSAGE_ERROR, MESSAGE_SUCCESS } from '@/events/eventTypes';
 import { START_LOADING, STOP_LOADING, ADD_TO_RECENT_EVENTS } from "@/store/mutationTypes";
 
 export default {
@@ -87,26 +87,19 @@ export default {
             return this.$store.state.selectedSector;
         }
     },
-    watch: {
-        selectedSector (newSector) {
-            if (!newSector) {
-                this.events = [];
+    mounted () {
+        this.$store.dispatch(START_LOADING, 'getEventsBySectorId');
+        MapApiService.getEventsBySectorId(this.selectedSector.properties._id).then((res) => {
+            if (!res.data.length) {
                 return;
             }
 
-            this.$store.dispatch(START_LOADING, 'getEventsBySectorId');
-            MapApiService.getEventsBySectorId(newSector.properties._id).then((res) => {
-                if (!res.data.length) {
-                    return;
-                }
-
-                this.events = res.data.sort(function (a, b) { return new Date(b.time.date) - new Date(a.time.date); }).reverse();
-            }).catch(() => {
-                EventBus.$emit(MESSAGE_ERROR, this.$t('request.sector_events'));
-            }).finally(() => {
-                this.$store.dispatch(STOP_LOADING, 'getEventsBySectorId');
-            });
-        }
+            this.events = res.data.sort(function (a, b) { return new Date(b.time.date) - new Date(a.time.date); }).reverse();
+        }).catch(() => {
+            EventBus.$emit(MESSAGE_ERROR, this.$t('request.sector_events'));
+        }).finally(() => {
+            this.$store.dispatch(STOP_LOADING, 'getEventsBySectorId');
+        });
     },
     methods: {
         calculateDateOutput (time) {
@@ -119,7 +112,7 @@ export default {
             
             this.$store.dispatch(START_LOADING, 'addEvent');
             MapApiService.addEvent({
-                sectorId: this.selectedSector._id.toString(),
+                sectorId: this.selectedSector.properties._id,
                 description: this.newComment
             }).then((res) => {
                 this.events.unshift(res.data);
@@ -127,7 +120,7 @@ export default {
 
                 this.newComment = '';
 
-                EventBus.$emit(MESSAGE_ERROR, this.$t('request.new_comment_success'));
+                EventBus.$emit(MESSAGE_SUCCESS, this.$t('request.new_comment_success'));
             }).catch(() => {
                 EventBus.$emit(MESSAGE_ERROR, this.$t('request.new_comment_failed'));
             }).finally(() => {

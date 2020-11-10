@@ -6,6 +6,9 @@ export default {
     getAllSectors () {
         return axios.get(host + '/api/sector');
     },
+    getSectorsBySectorSetId (sectorSetId) {
+        return axios.get(host + '/api/sector/sectorset/' + sectorSetId);
+    },
     getAllSectorSetsByIterationId (iterationId) {
         return axios.get(host + '/api/sectorset/iteration/' + iterationId);
     },

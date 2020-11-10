@@ -26,6 +26,8 @@ export default {
 
                     set.feature.properties._percentage = percentage;
                     set.feature.properties._color = color;
+                    set.feature.properties._title = set.title;
+                    set.feature.properties._id = set._id;
                 }
 
                 sectorSets.sort((a, b) => b._percentage - a._percentage);

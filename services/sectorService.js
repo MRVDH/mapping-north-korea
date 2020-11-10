@@ -23,6 +23,20 @@ export default {
             });
         });
     },
+    getBySectorSetId (sectorSetId) {
+        return new Promise((resolve, reject) => {
+            Sector.find({ sectorSet: sectorSetId }).populate({
+                path: "state"
+            }).exec((err, sectors) => {
+                if (err) {
+                    reject(err);
+                    return;
+                }
+
+                resolve(sectors);
+            });
+        });
+    },
     async update (id, sector, state, comment, osmUserId, osmUserName) {
         return new Promise(async (resolve, reject) => {
             var newEventComment = null;

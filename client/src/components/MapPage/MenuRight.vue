@@ -67,12 +67,27 @@
         mobile-breakpoint="0"
         app
         width="300">
-        <v-list v-if="!selectedSector">
+        <v-list
+            v-if="!selectedSector"
+            class="pt-0 pb-0">
             <CustomMenuRightRegions/>
             <v-divider v-if="recentEvents.length > 0"></v-divider>
             <CustomMenuRightRecentEvents/>
         </v-list>
-        <v-list v-else>
+        <v-list
+            v-else
+            class="pt-0 pb-0">
+            <v-list-item
+                @click="backToRegions()">
+                <v-list-item-icon>
+                    <v-icon>mdi-arrow-left</v-icon>
+                </v-list-item-icon>
+                <v-list-item-content>
+                    <v-list-item-title>
+                        Back to regions
+                    </v-list-item-title>
+                </v-list-item-content>
+            </v-list-item>
             <v-list-item>
                 <v-list-item-content>
                     <v-list-item-title>{{ $t('sector.id') }}</v-list-item-title>
@@ -302,9 +317,6 @@ export default {
         selectSectorById: (id) => {
             EventBus.$emit('mnk:go-to-sector', id);
         },
-        selectRandomSector: (id) => {
-            EventBus.$emit('mnk:select-random-sector-by-state-id', id);
-        },
         updateSector: function (state) {
             var apiSector = this.geoJsonSectorToApiSector(this.selectedSector);
             this.stateEditOpen = false;
@@ -419,6 +431,9 @@ export default {
                     this.$store.dispatch(STOP_LOADING, 'splitSectorById');
                 });
             }
+        },
+        backToRegions () {
+
         }
     },
     components: {

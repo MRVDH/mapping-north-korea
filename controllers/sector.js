@@ -11,6 +11,20 @@ export default {
             res.sendStatus(500);
         });
     },
+    getBySectorSetId (req, res) {
+        if (req.params.sectorSetId === "" || req.params.sectorSetId === null || req.params.sectorSetId === undefined) {
+            log.err(" <= RES /sector/sectorset/:sectorSetId invalid or no req param id.", req.params);
+            res.sendStatus(400);
+            return;
+        }
+
+        sectorService.getBySectorSetId(req.params.sectorSetId).then((sectors) => {
+            res.send(sectors);
+        }).catch((err) => {
+            log.err(" <= RES /sector/sectorset/:sectorSetId ERROR db error.", err);
+            res.sendStatus(500);
+        });
+    },
     async update (req, res) {
         if ((req.session.osmUserId === "" || req.session.osmUserId === null || req.session.osmUserId === undefined) && !global.testUserMode) {
             log.err(" <= RES /sector/:id unauthorized.", req.params);
