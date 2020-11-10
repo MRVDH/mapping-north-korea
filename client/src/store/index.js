@@ -18,7 +18,8 @@ export default new Vuex.Store({
         currentIteration: null,
         sectorSets: [],
         recentEvents: [],
-        selectedSectorSet: null
+        selectedSectorSet: null,
+        sectorEvents: []
     },
     mutations: {
         [mt.TOGGLE_DARK_MODE] (state) {
@@ -68,6 +69,9 @@ export default new Vuex.Store({
         },
         [mt.SELECT_SECTOR_SET] (state, sectorSet) {
             state.selectedSectorSet = sectorSet;
+        },
+        [mt.SET_SECTOR_EVENTS] (state, sectorEvents) {
+            state.sectorEvents = sectorEvents;
         }
     },
     actions: {
@@ -118,6 +122,9 @@ export default new Vuex.Store({
         },
         [mt.SELECT_SECTOR_SET] ({ commit }, sectorSet) {
             commit(mt.SELECT_SECTOR_SET, sectorSet);
+        },
+        [mt.SET_SECTOR_EVENTS] ({ commit }, sectorEvents) {
+            commit(mt.SET_SECTOR_EVENTS, sectorEvents);
         }
     },
     plugins: [new VuexPersistence({

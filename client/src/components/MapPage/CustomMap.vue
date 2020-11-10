@@ -56,6 +56,9 @@ export default {
         },
         sectorSets () {
             return this.$store.state.sectorSets;
+        },
+        selectedSectorSet () {
+            return this.$store.state.selectedSectorSet;
         }
     },
     watch: {
@@ -111,6 +114,15 @@ export default {
             }).finally(() => {
                 this.$store.dispatch(STOP_LOADING, 'loadingsectors');
             });
+        },
+        selectedSectorSet (newValue) {
+            if (newValue) {
+                return;
+            }
+
+            this.$router.push({ name: 'MapPage' });
+            this.map.removeLayer(this.sectorLayer);
+            this.map.addLayer(this.sectorSetLayer);
         }
     },
     mounted () {

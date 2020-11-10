@@ -1,9 +1,9 @@
-import osmController from "../controllers/osm.js";
-import sectorController from "../controllers/sector.js";
-import sectorSetController from "../controllers/sectorSet.js";
-import stateController from "../controllers/state.js";
-import eventController from "../controllers/event.js";
-import iterationController from "../controllers/iteration.js";
+import osmController from "../controllers/osmController.js";
+import sectorController from "../controllers/sectorController.js";
+import sectorSetController from "../controllers/sectorSetController.js";
+import stateController from "../controllers/stateController.js";
+import eventController from "../controllers/eventController.js";
+import iterationController from "../controllers/iterationController.js";
 
 export default {
     async setUpRouting(app) {
@@ -22,6 +22,7 @@ export default {
         app.delete('/api/sector/:id', sectorController.delete);
 
         app.get("/api/sectorset/iteration/:id", sectorSetController.getAllSectorSetsByIterationId);
+        app.put("/api/sectorset/recount/:id", sectorSetController.recountSectorSetCounts);
 
         app.get("/api/state", stateController.getAll);
 

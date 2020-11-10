@@ -1,5 +1,6 @@
 import SectorSet from "../models/SectorSet.js";
 import Sector from "../models/Sector.js";
+import State from "../models/State.js";
 
 export default {
     getAllSectorSetsByIterationId (iterationId) {
@@ -30,10 +31,25 @@ export default {
                     set.feature.properties._id = set._id;
                 }
 
-                sectorSets.sort((a, b) => b._percentage - a._percentage);
+                sectorSets.sort((a, b) => b.feature.properties._percentage - a.feature.properties._percentage);
 
                 resolve(sectorSets);
             });
+        });
+    },
+    recountSectorSetCounts (id) {
+        return new Promise(async (resolve, reject) => {
+            try {
+                var doneState = await State.find({ title: 'Completed' });
+
+                let amountOfCompletedSectors = await Sector.countDocuments({ sectorSet: id, state: doneState }).exec();
+
+                SectorSet.update({ _id: id }, { completedCount: amountOfCompletedSectors }).exec();
+
+                resolve();
+            } catch (err) {
+                reject(err);
+            }
         });
     }
 }

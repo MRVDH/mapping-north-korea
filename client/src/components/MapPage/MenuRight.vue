@@ -7,8 +7,8 @@
         },
 
         "sector": {
-            "id": "Sector id",
             "state": "State",
+            "back_to_regions": "Back to regions",
             "button": {
                 "map": "Map",
                 "view": "View",
@@ -35,8 +35,8 @@
         },
 
         "sector": {
-            "id": "이 부분의 id",
             "state": "상태",
+            "back_to_regions": null,
             "button": {
                 "map": "매핑",
                 "view": null,
@@ -68,14 +68,14 @@
         app
         width="300">
         <v-list
-            v-if="!selectedSector"
+            v-if="!selectedSector && !selectedSectorSet"
             class="pt-0 pb-0">
             <CustomMenuRightRegions/>
             <v-divider v-if="recentEvents.length > 0"></v-divider>
             <CustomMenuRightRecentEvents/>
         </v-list>
         <v-list
-            v-else
+            v-if="!selectedSector && selectedSectorSet"
             class="pt-0 pb-0">
             <v-list-item
                 @click="backToRegions()">
@@ -83,19 +83,13 @@
                     <v-icon>mdi-arrow-left</v-icon>
                 </v-list-item-icon>
                 <v-list-item-content>
-                    <v-list-item-title>
-                        Back to regions
-                    </v-list-item-title>
+                    <v-list-item-title>{{ $t('sector.back_to_regions') }}</v-list-item-title>
                 </v-list-item-content>
             </v-list-item>
-            <v-list-item>
-                <v-list-item-content>
-                    <v-list-item-title>{{ $t('sector.id') }}</v-list-item-title>
-                </v-list-item-content>
-                <v-list-item-action>
-                    <v-list-item-title class="text-right">{{ selectedSector.properties._id }}</v-list-item-title>
-                </v-list-item-action>
-            </v-list-item>
+        </v-list>
+        <v-list
+            v-if="selectedSector"
+            class="pt-0 pb-0">
             <v-list-item>
                 <v-list-item-content>
                     <v-list-item-title>{{ $t('sector.state') }}</v-list-item-title>
@@ -236,7 +230,7 @@ import MapApiService from '@/services/MapApiService';
 import JOSMService from '@/services/JOSMService';
 import EventBus from '@/events/EventBus';
 import { MESSAGE_ERROR, MESSAGE_SUCCESS } from '@/events/eventTypes';
-import { START_LOADING, STOP_LOADING, SET_DRAWER_RIGHT, SELECT_SECTOR, ADD_TO_RECENT_EVENTS } from "@/store/mutationTypes";
+import { START_LOADING, STOP_LOADING, SET_DRAWER_RIGHT, SELECT_SECTOR, ADD_TO_RECENT_EVENTS, SET_SECTOR_EVENTS, SELECT_SECTOR_SET } from "@/store/mutationTypes";
 
 export default {
     name: 'MenuRight',
@@ -280,6 +274,12 @@ export default {
         },
         recentEvents () {
             return this.$store.state.recentEvents;
+        },
+        sectorEvents () {
+            return this.$store.state.sectorEvents;
+        },
+        selectedSectorSet () {
+            return this.$store.state.selectedSectorSet;
         }
     },
     watch: {
@@ -326,13 +326,18 @@ export default {
                 sector: apiSector,
                 state: state
             }).then((res) => {
-                for (var event of res.data.events) {
-                    this.events.unshift(event);
-                    this.$store.dispatch(ADD_TO_RECENT_EVENTS, event);
-                }
+                let newEvents = [
+                    res.data.event,
+                    ...this.sectorEvents
+                ];
+
+                this.$store.dispatch(SET_SECTOR_EVENTS, newEvents);
+                this.$store.dispatch(ADD_TO_RECENT_EVENTS, event);
 
                 this.selectedSector = this.sectorToGeoJson(res.data.sector);
                 this.newState = this.selectedSector.properties.state._id;
+
+                MapApiService.recountSectorSetCounts(res.data.sector.sectorSet);
 
                 EventBus.$emit(MESSAGE_SUCCESS, this.$t('request.sector_updated'));
             }).catch(() => {
@@ -433,7 +438,7 @@ export default {
             }
         },
         backToRegions () {
-
+            this.$store.dispatch(SELECT_SECTOR_SET, null);
         }
     },
     components: {

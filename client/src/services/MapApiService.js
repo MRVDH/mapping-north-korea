@@ -12,6 +12,9 @@ export default {
     getAllSectorSetsByIterationId (iterationId) {
         return axios.get(host + '/api/sectorset/iteration/' + iterationId);
     },
+    recountSectorSetCounts (sectorSetId) {
+        return axios.put(host + '/api/sectorset/recount/' + sectorSetId);
+    },
     getAllStates () {
         return axios.get(host + '/api/state');
     },

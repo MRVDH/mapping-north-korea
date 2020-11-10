@@ -14,3 +14,4 @@ export const SET_SECTOR_SETS = 'setSectorSets';
 export const SET_RECENT_EVENTS = 'setRecentEvents';
 export const ADD_TO_RECENT_EVENTS = 'addToRecentEvents';
 export const SELECT_SECTOR_SET = 'selectSectorSet';
+export const SET_SECTOR_EVENTS = 'setSectorEvents';

@@ -44,7 +44,7 @@
             </v-layout>
         </v-container>
         <v-container grid-list-md text-center style="padding: 16px;">
-            <v-layout class="row" v-for="(event, index) in events" :key="index">
+            <v-layout class="row" v-for="(event, index) in sectorEvents" :key="index">
                 <v-flex xs12>
                     <div class="text-left">{{ event.description }}</div>
                     <div class="text-right grey--text text--lighten-1 caption">{{ event.osmUserName }}
@@ -66,19 +66,21 @@ import MapApiService from '@/services/MapApiService';
 import UtilService from '@/services/UtilService';
 import EventBus from '@/events/EventBus';
 import { MESSAGE_ERROR, MESSAGE_SUCCESS } from '@/events/eventTypes';
-import { START_LOADING, STOP_LOADING, ADD_TO_RECENT_EVENTS } from "@/store/mutationTypes";
+import { START_LOADING, STOP_LOADING, ADD_TO_RECENT_EVENTS, SET_SECTOR_EVENTS } from "@/store/mutationTypes";
 
 export default {
     name: 'MenuRightRecentEvents',
     data () {
         return {
-            events: [],
             newComment: ''
         };
     },
     computed: {
         recentEvents () {
             return this.$store.state.recentEvents;
+        },
+        sectorEvents () {
+            return this.$store.state.sectorEvents;
         },
         loggedInUser () {
             return this.$store.state.loggedInUser;
@@ -94,7 +96,9 @@ export default {
                 return;
             }
 
-            this.events = res.data.sort(function (a, b) { return new Date(b.time.date) - new Date(a.time.date); }).reverse();
+            let events = res.data.sort(function (a, b) { return new Date(b.time.date) - new Date(a.time.date); }).reverse();
+
+            this.$store.dispatch(SET_SECTOR_EVENTS, events);
         }).catch(() => {
             EventBus.$emit(MESSAGE_ERROR, this.$t('request.sector_events'));
         }).finally(() => {
@@ -115,7 +119,12 @@ export default {
                 sectorId: this.selectedSector.properties._id,
                 description: this.newComment
             }).then((res) => {
-                this.events.unshift(res.data);
+                let newEvents = [
+                    res.data,
+                    ...this.sectorEvents
+                ];
+
+                this.$store.dispatch(SET_SECTOR_EVENTS, newEvents);
                 this.$store.dispatch(ADD_TO_RECENT_EVENTS, res.data);
 
                 this.newComment = '';

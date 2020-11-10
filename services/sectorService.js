@@ -37,26 +37,11 @@ export default {
             });
         });
     },
-    async update (id, sector, state, comment, osmUserId, osmUserName) {
+    async update (id, sector, state, osmUserId, osmUserName) {
         return new Promise(async (resolve, reject) => {
-            var newEventComment = null;
-
-            // Check if a comment was added.
-            if (comment.length) {
-                newEventComment = new Event({
-                    description: comment,
-                    sector: sector,
-                    time: new Date(),
-                    osmUserId: osmUserId,
-                    osmUserName: osmUserName
-                });
-
-                newEventComment = await newEventComment.save();
-            }
-
             let responseObject = {
-                sector: sector,
-                events: newEventComment ? [ newEventComment ] : [ ]
+                sector,
+                event: null
             };
 
             // Don't do anything if there is no new state.
@@ -76,15 +61,15 @@ export default {
 
                 var newEventState = new Event({
                     description: "State changed to " + sector.state.title,
-                    sector: sector,
+                    sector,
                     time: new Date(),
-                    osmUserId: osmUserId,
-                    osmUserName: osmUserName
+                    osmUserId,
+                    osmUserName
                 });
 
                 newEventState = await newEventState.save();
 
-                responseObject.events.push(newEventState);
+                responseObject.event = newEventState;
 
                 resolve(responseObject);
             });

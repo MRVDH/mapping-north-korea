@@ -51,13 +51,8 @@ export default {
             res.sendStatus(400);
             return;
         }
-        if (req.body.comment.length > 500) {
-            log.err(" <= RES /sector/:id comment too long.", req.body);
-            res.sendStatus(400);
-            return;
-        }
 
-        sectorService.update(req.params.id, req.body.sector, req.body.state, req.body.comment, global.testUserMode ? global.osmUserId : req.session.osmUserId, global.testUserMode ? global.osmUserName : req.session.osmUserName).then((result) => {
+        sectorService.update(req.params.id, req.body.sector, req.body.state, global.testUserMode ? global.osmUserId : req.session.osmUserId, global.testUserMode ? global.osmUserName : req.session.osmUserName).then((result) => {
             res.send(result);
         }).catch((err) => {
             log.err(" <= RES /sector/:id db update error.", err);
