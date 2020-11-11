@@ -1,0 +1,59 @@
+<i18n>
+{
+    "en": {
+        "help": {
+            "login": "Please log in to map or edit this sector.",
+            "change_back": "Please change the state to 'Being edited' to edit or review this sector."
+        }
+    },
+    "ko": {
+        "help": {
+            "login": "이 부분의 지도를 제작하거나 편집하려면 로그인하세요.",
+            "change_back": null
+        }
+    }
+}
+</i18n>
+
+<template>
+    <v-container
+        text-center
+        grid-list-xs
+        class="py-0 px-4">
+        <v-layout>
+            <v-flex>
+                <span
+                    class="orange--text"
+                    v-if="!loggedInUser">
+                    {{ $t('help.login') }}
+                </span>
+                <span
+                    class="orange--text"
+                    v-if="loggedInUser && (selectedSector.properties.state.title === 'Open' || selectedSector.properties.state.title === 'Review needed' || selectedSector.properties.state.title === 'Completed')">
+                    {{ $t('help.change_back') }}
+                </span>
+            </v-flex>
+        </v-layout>
+    </v-container>
+</template>
+
+<script>
+export default {
+    name: 'MenuRightSectorHelp',
+    data () {
+        return { };
+    },
+    computed: {
+        selectedSector () {
+            return this.$store.state.selectedSector;
+        },
+        loggedInUser () {
+            return this.$store.state.loggedInUser;
+        }
+    }
+};
+</script>
+
+<style scoped>
+
+</style>

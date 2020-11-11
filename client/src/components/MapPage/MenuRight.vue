@@ -1,64 +1,3 @@
-<i18n>
-{
-    "en": {
-        "help": {
-            "login": "Please log in to map or edit this sector.",
-            "change_back": "Please change the state to 'Being edited' to edit or review this sector."
-        },
-
-        "sector": {
-            "state": "State",
-            "back_to_regions": "Back to regions",
-            "button": {
-                "map": "Map",
-                "view": "View",
-                "split": "Split",
-                "delete": "Delete"
-            }
-        },
-
-        "request": {
-            "get_sector_states": "Something went wrong while trying to get all possible sector states.",
-            "sector_updated": "Sector updated.",
-            "sector_update": "Something went wrong while trying to update the sector.",
-            "josm_failed": "Failed to load data into JOSM. See the FAQ for more information.",
-            "confirm_deletion": "Are you sure you want to delete this sector?",
-            "deletion": "Something went wrong while trying to delete the sector.",
-            "confirm_split": "Are you sure you want to split this sector?",
-            "split": "Something went wrong while trying to split the sector."
-        }
-    },
-    "ko": {
-        "help": {
-            "login": "이 부분의 지도를 제작하거나 편집하려면 로그인하세요.",
-            "change_back": null
-        },
-
-        "sector": {
-            "state": "상태",
-            "back_to_regions": null,
-            "button": {
-                "map": "매핑",
-                "view": null,
-                "split": null,
-                "delete": null
-            }
-        },
-
-        "request": {
-            "get_sector_states": null,
-            "sector_updated": null,
-            "sector_update": null,
-            "josm_failed": null,
-            "confirm_deletion": null,
-            "deletion": null,
-            "confirm_split": null,
-            "split": null
-        }
-    }
-}
-</i18n>
-
 <template>
     <v-navigation-drawer
         v-model="drawerRight"
@@ -74,176 +13,23 @@
             <v-divider v-if="recentEvents.length > 0"></v-divider>
             <CustomMenuRightRecentEvents/>
         </v-list>
-        <v-list
-            v-if="!selectedSector && selectedSectorSet"
-            class="pt-0 pb-0">
-            <v-list-item
-                @click="backToRegions()">
-                <v-list-item-icon>
-                    <v-icon>mdi-arrow-left</v-icon>
-                </v-list-item-icon>
-                <v-list-item-content>
-                    <v-list-item-title>{{ $t('sector.back_to_regions') }}</v-list-item-title>
-                </v-list-item-content>
-            </v-list-item>
-        </v-list>
-        <v-list
-            v-if="selectedSector"
-            class="pt-0 pb-0">
-            <v-list-item>
-                <v-list-item-content>
-                    <v-list-item-title>{{ $t('sector.state') }}</v-list-item-title>
-                </v-list-item-content>
-                <v-list-item-action>
-                    <v-menu offset-y v-model="stateEditOpen">
-                        <template v-slot:activator="{ on }">
-                            <v-btn
-                                outlined
-                                v-on="on"
-                                class="no-margin-button"
-                                :disabled="!loggedInUser"
-                                >{{ selectedSector.properties.state.title }}</v-btn>
-                        </template>
-                        <v-list>
-                            <v-list-item
-                                v-for="(state, index) in states"
-                                :key="index"
-                                @click.stop="updateSector(state)"
-                                >
-                                <v-list-item-title>
-                                    <span :style="{ color: state.color, 'vertical-align': 'text-bottom' }">■</span> {{ state.title }}
-                                </v-list-item-title>
-                            </v-list-item>
-                        </v-list>
-                    </v-menu>
-                </v-list-item-action>
-            </v-list-item>
-            <div>
-                <v-container
-                    text-center
-                    grid-list-xs
-                    style="padding: 0 16px;"
-                    v-if="!loggedInUser">
-                    <v-layout>
-                        <v-flex>
-                            <span class="orange--text">{{ $t('help.login') }}</span>
-                        </v-flex>
-                    </v-layout>
-                </v-container>
-                <v-container
-                    text-center
-                    grid-list-xs
-                    style="padding: 0 16px;"
-                    v-if="selectedSector.properties.state.title === 'Open' && loggedInUser">
-                    <v-layout>
-                        <v-flex>
-                            <span class="orange--text">{{ $t('help.change_back') }}</span>
-                        </v-flex>
-                    </v-layout>
-                </v-container>
-                <v-container
-                    text-center
-                    grid-list-xs
-                    style="padding: 0 16px;"
-                    v-if="selectedSector.properties.state.title === 'Review needed' && loggedInUser">
-                    <v-layout>
-                        <v-flex>
-                            <span class="orange--text">{{ $t('help.change_back') }}</span>
-                        </v-flex>
-                    </v-layout>
-                </v-container>
-                <v-container
-                    text-center
-                    grid-list-xs
-                    style="padding: 0 16px;"
-                    v-if="selectedSector.properties.state.title === 'Completed' && loggedInUser">
-                    <v-layout>
-                        <v-flex>
-                            <span class="orange--text">{{ $t('help.change_back') }}</span>
-                        </v-flex>
-                    </v-layout>
-                </v-container>
-            </div>
-            <v-container grid-list-xs style="padding: 16px;">
-                <v-layout>
-                    <v-flex>
-                        <v-menu offset-y v-model="mappingMenuOpen">
-                            <template v-slot:activator="{ on }">
-                                <v-btn
-                                    color="success"
-                                    v-on="on"
-                                    class="no-margin-button"
-                                    :disabled="!loggedInUser || selectedSector.properties.state.title === 'Open' || selectedSector.properties.state.title === 'Review needed' || selectedSector.properties.state.title === 'Completed'"
-                                    >{{ $t('sector.button.map') }}</v-btn>
-                            </template>
-                            <v-list>
-                                <v-list-item :href="idUrl" target="_blank">
-                                    <v-list-item-title>iD</v-list-item-title>
-                                </v-list-item>
-                                <v-list-item :href="rapidUrl" target="_blank">
-                                    <v-list-item-title>RapiD</v-list-item-title>
-                                </v-list-item>
-                                <v-list-item @click.stop="mapSectorInJOSM(); mappingMenuOpen = false;">
-                                        <v-list-item-title>JOSM</v-list-item-title>
-                                </v-list-item>
-                            </v-list>
-                        </v-menu>
-                        <v-btn
-                            class="left-margin-button"
-                            color="success"
-                            target="_blank"
-                            :href="'https://www.openstreetmap.org/#map=13/' +
-                                (this.selectedSector.geometry.coordinates[0][1][1] +
-                                this.selectedSector.geometry.coordinates[0][2][1]) / 2 + '/' +
-                                (this.selectedSector.geometry.coordinates[0][0][0] +
-                                this.selectedSector.geometry.coordinates[0][1][0]) / 2"
-                            >{{ $t('sector.button.view') }}</v-btn>
-                        <v-btn
-                            v-if="adminLoggedIn"
-                            class="left-margin-button"
-                            color="warning"
-                            @click.stop="splitSector()"
-                            :disabled="!loggedInUser"
-                            >{{ $t('sector.button.split') }}</v-btn>
-                        <v-btn
-                            v-if="adminLoggedIn"
-                            class="left-margin-button"
-                            color="error"
-                            @click.stop="deleteSector()"
-                            :disabled="!loggedInUser"
-                            >{{ $t('sector.button.delete') }}</v-btn>
-                    </v-flex>
-                </v-layout>
-            </v-container>
-            <v-divider></v-divider>
-            <CustomMenuRightSectorEvents/>
-        </v-list>
+        <CustomMenuRightButtonBack v-if="selectedSectorSet"/>
+        <CustomMenuRightSector v-if="selectedSector"/>
     </v-navigation-drawer>
 </template>
 
 <script>
 import CustomMenuRightRegions from './MenuRightRegions';
+import CustomMenuRightSector from './MenuRightSector';
 import CustomMenuRightRecentEvents from './MenuRightRecentEvents';
-import CustomMenuRightSectorEvents from './MenuRightSectorEvents';
+import CustomMenuRightButtonBack from './MenuRightButtonBack';
 
-import MapApiService from '@/services/MapApiService';
-import JOSMService from '@/services/JOSMService';
-import EventBus from '@/events/EventBus';
-import { MESSAGE_ERROR, MESSAGE_SUCCESS } from '@/events/eventTypes';
-import { START_LOADING, STOP_LOADING, SET_DRAWER_RIGHT, SELECT_SECTOR, ADD_TO_RECENT_EVENTS, SET_SECTOR_EVENTS, SELECT_SECTOR_SET } from "@/store/mutationTypes";
+import { SET_DRAWER_RIGHT } from "@/store/mutationTypes";
 
 export default {
     name: 'MenuRight',
     data () {
-        return {
-            idUrl: '',
-            rapidUrl: '',
-            valid: true,
-            newState: null,
-            states: null,
-            mappingMenuOpen: false,
-            stateEditOpen: false
-        };
+        return { };
     },
     computed: {
         drawerRight: {
@@ -254,215 +40,28 @@ export default {
                 return this.$store.state.drawerRight;
             }
         },
-        selectedSector: {
-            set (newValue) {
-                this.$store.commit(SELECT_SECTOR, newValue);
-            },
-            get () {
-                return this.$store.state.selectedSector;
-            }
-        },
-        loggedInUser () {
-            return this.$store.state.loggedInUser;
-        },
-        adminLoggedIn () {
-            if (this.loggedInUser && document.getElementById('logged-in-user-name')) {
-                return document.getElementById('logged-in-user-name').innerText === 'Artemis64' || document.getElementById('logged-in-user-name').innerText === 'Artemis64dev';
-            } else {
-                return false;
-            }
+        selectedSector () {
+            return this.$store.state.selectedSector;
         },
         recentEvents () {
             return this.$store.state.recentEvents;
-        },
-        sectorEvents () {
-            return this.$store.state.sectorEvents;
         },
         selectedSectorSet () {
             return this.$store.state.selectedSectorSet;
         }
     },
-    watch: {
-        selectedSector () {
-            if (!this.selectedSector) {
-                return;
-            }
-
-            this.newState = this.selectedSector.properties.state._id;
-
-            var coords = this.selectedSector.geometry.coordinates[0];
-            this.idUrl = 'https://www.openstreetmap.org/edit?editor=id' +
-                '&#map=13/' + (coords[1][1] + coords[2][1]) / 2 + '/' + (coords[0][0] + coords[1][0]) / 2 +
-                '&comment=MappingNorthKorea.com%20sector%20' + this.selectedSector.properties._id +
-                '&gpx=https://www.mappingnorthkorea.com/api/sector/generate/' + this.selectedSector.properties._id + '.gpx';
-            this.rapidUrl = 'https://www.mapwith.ai/rapid?#' +
-                'gpx=https://www.mappingnorthkorea.com/api/sector/generate/' + this.selectedSector.properties._id + '.gpx' +
-                '&map=13/' + (coords[1][1] + coords[2][1]) / 2 + '/' + (coords[0][0] + coords[1][0]) / 2 +
-                '&comment=MappingNorthKorea.com%20sector%20' + this.selectedSector.properties._id;
-        }
-    },
     mounted () {
         this.$store.dispatch(SET_DRAWER_RIGHT, !this.$vuetify.breakpoint.xs);
-
-        this.$store.dispatch(START_LOADING, 'getAllStates');
-        MapApiService.getAllStates().then((res) => {
-            this.states = res.data;
-        }).catch(() => {
-            EventBus.$emit(MESSAGE_ERROR, this.$t('request.get_sector_states'));
-        }).finally(() => {
-            this.$store.dispatch(STOP_LOADING, 'getAllStates');
-        });
-    },
-    methods: {
-        selectSectorById: (id) => {
-            EventBus.$emit('mnk:go-to-sector', id);
-        },
-        updateSector: function (state) {
-            var apiSector = this.geoJsonSectorToApiSector(this.selectedSector);
-            this.stateEditOpen = false;
-
-            this.$store.dispatch(START_LOADING, 'updateSector');
-            MapApiService.updateSector({
-                sector: apiSector,
-                state: state
-            }).then((res) => {
-                let newEvents = [
-                    res.data.event,
-                    ...this.sectorEvents
-                ];
-
-                this.$store.dispatch(SET_SECTOR_EVENTS, newEvents);
-                this.$store.dispatch(ADD_TO_RECENT_EVENTS, event);
-
-                this.selectedSector = this.sectorToGeoJson(res.data.sector);
-                this.newState = this.selectedSector.properties.state._id;
-
-                MapApiService.recountSectorSetCounts(res.data.sector.sectorSet);
-
-                EventBus.$emit(MESSAGE_SUCCESS, this.$t('request.sector_updated'));
-            }).catch(() => {
-                EventBus.$emit(MESSAGE_ERROR, this.$t('request.sector_update'));
-            }).finally(() => {
-                this.$store.dispatch(STOP_LOADING, 'updateSector');
-            });
-        },
-        mapSectorInJOSM () {
-            var loadAndZoomParams = {
-                left: this.selectedSector.geometry.coordinates[0][0][0],
-                bottom: this.selectedSector.geometry.coordinates[0][2][1],
-                right: this.selectedSector.geometry.coordinates[0][1][0],
-                top: this.selectedSector.geometry.coordinates[0][0][1],
-                changeset_comment: encodeURIComponent('MappingNorthKorea.com sector ' + this.selectedSector.properties._id)
-            };
-
-            this.$store.dispatch(START_LOADING, 'sendJOSMCommand');
-            JOSMService.sendJOSMCommand('http://127.0.0.1:8111/load_and_zoom', loadAndZoomParams).catch(() => {
-                EventBus.$emit(MESSAGE_ERROR, this.$t('request.josm_failed'));
-            }).finally(() => {
-                this.$store.dispatch(STOP_LOADING, 'sendJOSMCommand');
-            });
-
-            this.$store.dispatch(START_LOADING, 'sendJOSMImageryCommand');
-            JOSMService.sendJOSMCommand('http://127.0.0.1:8111/imagery', {
-                type: 'bing',
-                url: 'https://www.bing.com/maps/'
-            }).finally(() => {
-                this.$store.dispatch(STOP_LOADING, 'sendJOSMImageryCommand');
-            });
-        },
-        cancelDialog: function () {
-            this.updateSectorDialog = false;
-            this.newState = this.selectedSector.properties.state._id;
-        },
-        geoJsonSectorToApiSector: (sect) => {
-            return {
-                _id: sect.properties._id,
-                sectorSet: sect.properties.sectorSet,
-                state: sect.properties.state,
-                coordinates: sect.geometry.coordinates
-            };
-        },
-        calculateDateOutput: (time) => {
-            const today = new Date();
-            var yesterday = new Date();
-            yesterday.setDate(yesterday.getDate() - 1);
-
-            if (time.getDate() === today.getDate() &&
-                time.getMonth() === today.getMonth() &&
-                time.getFullYear() === today.getFullYear()) {
-                return 'today';
-            } else if (time.getDate() === yesterday.getDate() &&
-                time.getMonth() === yesterday.getMonth() &&
-                time.getFullYear() === yesterday.getFullYear()) {
-                return 'yesterday';
-            } else {
-                return time.toLocaleString('nl-NL', { year: 'numeric', month: 'long', day: 'numeric' });
-            }
-        },
-        sectorToGeoJson: function (sector) {
-            return {
-                type: 'Feature',
-                properties: {
-                    _id: sector._id,
-                    state: sector.state,
-                    sectorSet: sector.sectorSet
-                },
-                geometry: {
-                    type: 'Polygon',
-                    coordinates: sector.coordinates
-                }
-            };
-        },
-        deleteSector: function () {
-            if (confirm(this.$t('request.confirm_deletion'))) {
-                this.$store.dispatch(START_LOADING, 'deleteSectorById');
-                MapApiService.deleteSectorById(this.selectedSector.properties._id).then(function () {
-                    location.reload();
-                }).catch(() => {
-                    EventBus.$emit(MESSAGE_ERROR, this.$t('request.deletion'));
-                }).finally(() => {
-                    this.$store.dispatch(STOP_LOADING, 'deleteSectorById');
-                });
-            }
-        },
-        splitSector: function () {
-            if (confirm(this.$t('request.confirm_split'))) {
-                this.$store.dispatch(START_LOADING, 'splitSectorById');
-                MapApiService.splitSectorById(this.selectedSector.properties._id).then(function () {
-                    location.reload();
-                }).catch(() => {
-                    EventBus.$emit(MESSAGE_ERROR, this.$t('request.split'));
-                }).finally(() => {
-                    this.$store.dispatch(STOP_LOADING, 'splitSectorById');
-                });
-            }
-        },
-        backToRegions () {
-            this.$store.dispatch(SELECT_SECTOR_SET, null);
-        }
     },
     components: {
         CustomMenuRightRegions,
+        CustomMenuRightSector,
         CustomMenuRightRecentEvents,
-        CustomMenuRightSectorEvents
+        CustomMenuRightButtonBack
     }
 };
 </script>
 
 <style scoped>
-.no-margin-button {
-    margin: 0 !important;
-    margin-bottom: 4px !important;
-}
-.left-margin-button {
-    margin: 0 !important;
-    margin-bottom: 4px !important;
-    margin-left: 4px !important;
-}
-.v-btn--depressed .v-btn__content {
-    padding: 0 10px;
-}
-.v-menu {
-    display: inline-block !important;
-}
+
 </style>
