@@ -71,10 +71,11 @@ export default {
         }
     },
     methods: {
-        deleteSector: function () {
+        deleteSector () {
             if (confirm(this.$t('request.confirm_deletion'))) {
                 this.$store.dispatch(START_LOADING, 'deleteSectorById');
                 MapApiService.deleteSectorById(this.selectedSector.properties._id).then(function () {
+                    MapApiService.recountSectorSetCounts(this.selectedSector.properties.sectorSet);
                     location.reload();
                 }).catch(() => {
                     EventBus.$emit(MESSAGE_ERROR, this.$t('request.deletion'));
@@ -83,10 +84,11 @@ export default {
                 });
             }
         },
-        splitSector: function () {
+        splitSector () {
             if (confirm(this.$t('request.confirm_split'))) {
                 this.$store.dispatch(START_LOADING, 'splitSectorById');
-                MapApiService.splitSectorById(this.selectedSector.properties._id).then(function () {
+                MapApiService.splitSectorById(this.selectedSector.properties._id).then(() => {
+                    MapApiService.recountSectorSetCounts(this.selectedSector.properties.sectorSet);
                     location.reload();
                 }).catch(() => {
                     EventBus.$emit(MESSAGE_ERROR, this.$t('request.split'));

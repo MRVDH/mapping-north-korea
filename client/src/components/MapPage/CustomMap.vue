@@ -109,7 +109,12 @@ export default {
                     L.DomEvent.stopPropagation(event);
                     return false;
                 }).addTo(this.map);
-            }).catch(() => {
+
+                if (this.$route.params.sectorSetId) {
+                    this.selectSectorSet(this.getSectorSetLayerById(this.$route.params.sectorSetId));
+                }
+            }).catch((err) => {
+                console.error(err);
                 EventBus.$emit(MESSAGE_ERROR, this.$t('request.load_sector_sets'));
             }).finally(() => {
                 this.$store.dispatch(STOP_LOADING, 'loadingsectors');
@@ -188,7 +193,11 @@ export default {
         selectSectorSet (layer) {
             let selectedSectorSet = this.sectorSets.find(x => x._id === layer.feature.properties._id);
             this.$store.dispatch(SELECT_SECTOR_SET, selectedSectorSet);
-            this.$router.push({ name: 'MapPageSectorSet', params: { sectorSetId: selectedSectorSet._id } });
+
+            if (!this.$route.params.sectorId) {
+                this.$router.push({ name: 'MapPageSectorSet', params: { sectorSetId: selectedSectorSet._id } });
+            }
+
             this.map.flyToBounds(layer.getBounds());
             this.map.removeLayer(this.sectorSetLayer);
             this.loadSectorsBySectorSetId(selectedSectorSet._id);
@@ -212,7 +221,6 @@ export default {
                     return false;
                 }).addTo(this.map);
 
-                // TODO: move to mounted?
                 if (this.$route.params.sectorId) {
                     this.setSectorSelected(this.getSectorLayerById(this.$route.params.sectorId), true);
                     this.flyToSectorByPolygonCoordinates(this.selectedSector.feature.geometry.coordinates[0]);
@@ -252,6 +260,13 @@ export default {
             for (var layerIndex in this.sectorLayer._layers) {
                 if (this.sectorLayer._layers[layerIndex].feature.properties._id === sectorId) {
                     return this.sectorLayer._layers[layerIndex];
+                }
+            }
+        },
+        getSectorSetLayerById (sectorSetId) {
+            for (var layerIndex in this.sectorSetLayer._layers) {
+                if (this.sectorSetLayer._layers[layerIndex].feature && this.sectorSetLayer._layers[layerIndex].feature.properties._id === sectorSetId) {
+                    return this.sectorSetLayer._layers[layerIndex];
                 }
             }
         },
