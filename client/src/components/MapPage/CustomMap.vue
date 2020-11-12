@@ -139,6 +139,10 @@ export default {
             this.setSectorSelected(this.getSectorLayerById(sectorId), true);
             this.flyToSectorByPolygonCoordinates(this.selectedSector.feature.geometry.coordinates[0]);
         });
+
+        EventBus.$on('mnk:go-to-sector-set', (sectorSetId) => {
+            this.selectSectorSet(this.getSectorSetLayerById(sectorSetId));
+        });
     },
     methods: {
         initMap: function () {

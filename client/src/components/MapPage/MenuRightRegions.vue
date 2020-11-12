@@ -26,7 +26,7 @@
         </v-container>
         <v-container>
             <v-row v-for="(sectorSet, index) in limitedSectorSets" :key="index">
-                <v-col class="pt-0">
+                <v-col class="pt-0" @click.stop="selectSectorSetById(sectorSet._id)" style="cursor: pointer;">
                     {{ sectorSet.title }}
                 </v-col>
                 <v-col class="pt-0">
@@ -49,6 +49,8 @@
 </template>
 
 <script>
+import EventBus from '@/events/EventBus';
+
 export default {
     name: 'MenuRightRegions',
     data () {
@@ -62,6 +64,11 @@ export default {
         },
         limitedSectorSets () {
             return this.sectorSetLimit ? this.sectorSets.slice(0, this.sectorSetLimit) : this.sectorSets;
+        }
+    },
+    methods: {
+        selectSectorSetById (id) {
+            EventBus.$emit('mnk:go-to-sector-set', id);
         }
     }
 };
