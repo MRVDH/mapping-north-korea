@@ -32,6 +32,15 @@
             grid-list-md
             text-center
             class="pa-4">
+            <v-row v-if="!recentEvents.length">
+                <v-col class="pt-0 pb-0"><v-skeleton-loader type="list-item"></v-skeleton-loader></v-col>
+            </v-row>
+            <v-row v-if="!recentEvents.length">
+                <v-col class="pt-0 pb-0"><v-skeleton-loader type="list-item"></v-skeleton-loader></v-col>
+            </v-row>
+            <v-row v-if="!recentEvents.length">
+                <v-col class="pt-0 pb-0"><v-skeleton-loader type="list-item"></v-skeleton-loader></v-col>
+            </v-row>
             <v-layout class="row" v-for="(event, index) in recentEvents" :key="index">
                 <v-flex xs12>
                     <div class="text-left" @click.stop="selectSectorById(event.sector)" style="cursor: pointer;">{{ event.description }}</div>

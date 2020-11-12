@@ -16,15 +16,26 @@
 <template>
     <div>
         <v-container
-            grid-list-xs
-            class="pa-3 pt-4">
+            class="pa-3 pt-4 pb-0">
             <v-layout>
                 <v-flex>
                     <span class="font-weight-bold">{{ $t('regions') }}</span>
                 </v-flex>
             </v-layout>
         </v-container>
-        <v-container>
+        <v-container class="pt-4">
+            <v-row v-if="!limitedSectorSets.length">
+                <v-col class="pt-0 pb-0"><v-skeleton-loader type="list-item"></v-skeleton-loader></v-col>
+                <v-col class="pt-0 pb-0"><v-skeleton-loader type="list-item"></v-skeleton-loader></v-col>
+            </v-row>
+            <v-row v-if="!limitedSectorSets.length">
+                <v-col class="pt-0 pb-0"><v-skeleton-loader type="list-item"></v-skeleton-loader></v-col>
+                <v-col class="pt-0 pb-0"><v-skeleton-loader type="list-item"></v-skeleton-loader></v-col>
+            </v-row>
+            <v-row v-if="!limitedSectorSets.length">
+                <v-col class="pt-0 pb-0"><v-skeleton-loader type="list-item"></v-skeleton-loader></v-col>
+                <v-col class="pt-0 pb-0"><v-skeleton-loader type="list-item"></v-skeleton-loader></v-col>
+            </v-row>
             <v-row v-for="(sectorSet, index) in limitedSectorSets" :key="index">
                 <v-col class="pt-0" @click.stop="selectSectorSetById(sectorSet._id)" style="cursor: pointer;">
                     {{ sectorSet.title }}
@@ -74,6 +85,8 @@ export default {
 };
 </script>
 
-<style scoped>
-
+<style>
+.v-skeleton-loader__list-item {
+    padding: 0;
+}
 </style>

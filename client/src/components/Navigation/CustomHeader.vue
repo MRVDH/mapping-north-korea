@@ -1,7 +1,7 @@
 <template>
     <v-app-bar app clipped-right extended extension-height="7">
         <v-app-bar-nav-icon @click.stop="toggleDrawerLeft()"></v-app-bar-nav-icon>
-        <v-toolbar-title>Mapping North Korea <v-icon style="vertical-align: text-bottom">mdi-arrow-right</v-icon> <span style="color: gray">{{ currentIteration.title }}</span></v-toolbar-title>
+        <v-toolbar-title>Mapping North Korea <v-icon v-if="currentIteration" style="vertical-align: text-bottom">mdi-arrow-right</v-icon> <span v-if="currentIteration" style="color: gray">{{ currentIteration.title }}</span></v-toolbar-title>
         <CustomHeaderFaq/>
         <v-spacer></v-spacer>
         <v-btn icon @click.stop="toggleDarkTheme()">
