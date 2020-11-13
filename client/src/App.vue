@@ -6,7 +6,8 @@
         "request": {
             "oauth_token": "Something went wrong while trying to get your OAuth request token.",
             "user_details": "Something went wrong while trying to get your user details.",
-            "logged_in": "Something went wrong while trying to check if you are logged in."
+            "logged_in": "Something went wrong while trying to check if you are logged in.",
+            "current_iteration": "Something went wrong while trying to get the current iteration."
         }
     },
     "ko": { }
@@ -39,9 +40,10 @@ import CustomMenuLeft from '@/components/Navigation/CustomMenuLeft';
 import CustomHeader from '@/components/Navigation/CustomHeader';
 import CustomFooter from '@/components/Navigation/CustomFooter';
 import OAuthService from '@/services/OAuthService';
+import MapApiService from '@/services/MapApiService';
 import EventBus from '@/events/EventBus';
 import { MESSAGE_ERROR, MESSAGE_SUCCESS, MESSAGE_INFO } from '@/events/eventTypes';
-import { SET_LOGGED_IN_USER, SET_LOGIN_LINK, START_LOADING, STOP_LOADING } from "@/store/mutationTypes";
+import { SET_LOGGED_IN_USER, SET_LOGIN_LINK, START_LOADING, STOP_LOADING, SET_CURRENT_ITERATION } from "@/store/mutationTypes";
 
 export default {
     name: 'App',
@@ -104,6 +106,16 @@ export default {
             EventBus.$emit(MESSAGE_ERROR, this.$t('request.logged_in'));
         }).finally(() => {
             this.$store.dispatch(STOP_LOADING, 'isuserloggedin');
+        });
+        
+        // Get the current iteration
+        this.$store.dispatch(START_LOADING, 'getCurrentIteration');
+        MapApiService.getCurrentIteration().then((res) => {
+            this.$store.dispatch(SET_CURRENT_ITERATION, res.data);
+        }).catch(() => {
+            EventBus.$emit(MESSAGE_ERROR, this.$t('request.current_iteration'));
+        }).finally(() => {
+            this.$store.dispatch(STOP_LOADING, 'getCurrentIteration');
         });
 
         // Set the toast event listeners.

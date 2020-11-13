@@ -1,8 +1,9 @@
-import osmController from "../controllers/osm.js";
-import sectorController from "../controllers/sector.js";
-import stateController from "../controllers/state.js";
-import eventController from "../controllers/event.js";
-import iterationController from "../controllers/iteration.js";
+import osmController from "../controllers/osmController.js";
+import sectorController from "../controllers/sectorController.js";
+import sectorSetController from "../controllers/sectorSetController.js";
+import stateController from "../controllers/stateController.js";
+import eventController from "../controllers/eventController.js";
+import iterationController from "../controllers/iterationController.js";
 
 export default {
     async setUpRouting(app) {
@@ -14,16 +15,20 @@ export default {
 
         app.get("/api/sector", sectorController.getAll);
         app.put("/api/sector/:id", sectorController.update);
+        app.get("/api/sector/sectorset/:sectorSetId", sectorController.getBySectorSetId);
         app.get("/api/sector/generate/:id", sectorController.generateGpxBySectorId);
-        app.get('/api/sector/completed/count/:id', sectorController.getCompletedSectorCountByIterationId);
         app.get('/api/sector/split/:id', sectorController.splitSectorBySectorId);
         app.delete('/api/sector/:id', sectorController.delete);
 
+        app.get("/api/sectorset/iteration/:id", sectorSetController.getAllSectorSetsByIterationId);
+        app.put("/api/sectorset/recount/:id", sectorSetController.recountSectorSetCounts);
+
         app.get("/api/state", stateController.getAll);
 
+        app.post("/api/event/add", eventController.add);
         app.get("/api/event/all/:amount", eventController.getAll);
         app.get("/api/event/sectorid/:id", eventController.getBySectorId);
 
-        app.get('/api/iteration/latest', iterationController.getLatestIteration);
+        app.get('/api/iteration/current', iterationController.getCurrentIteration);
     }
 }

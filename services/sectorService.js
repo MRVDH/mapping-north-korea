@@ -23,26 +23,25 @@ export default {
             });
         });
     },
-    async update (id, sector, state, comment, osmUserId, osmUserName) {
+    getBySectorSetId (sectorSetId) {
+        return new Promise((resolve, reject) => {
+            Sector.find({ sectorSet: sectorSetId }).populate({
+                path: "state"
+            }).exec((err, sectors) => {
+                if (err) {
+                    reject(err);
+                    return;
+                }
+
+                resolve(sectors);
+            });
+        });
+    },
+    async update (id, sector, state, osmUserId, osmUserName) {
         return new Promise(async (resolve, reject) => {
-            var newEventComment = null;
-
-            // Check if a comment was added.
-            if (comment.length) {
-                newEventComment = new Event({
-                    description: comment,
-                    sector: sector,
-                    time: new Date(),
-                    osmUserId: osmUserId,
-                    osmUserName: osmUserName
-                });
-
-                newEventComment = await newEventComment.save();
-            }
-
             let responseObject = {
-                sector: sector,
-                events: newEventComment ? [ newEventComment ] : [ ]
+                sector,
+                event: null
             };
 
             // Don't do anything if there is no new state.
@@ -62,15 +61,15 @@ export default {
 
                 var newEventState = new Event({
                     description: "State changed to " + sector.state.title,
-                    sector: sector,
+                    sector,
                     time: new Date(),
-                    osmUserId: osmUserId,
-                    osmUserName: osmUserName
+                    osmUserId,
+                    osmUserName
                 });
 
                 newEventState = await newEventState.save();
 
-                responseObject.events.push(newEventState);
+                responseObject.event = newEventState;
 
                 resolve(responseObject);
             });
@@ -111,31 +110,6 @@ export default {
                     </gpx>`;
 
                 resolve(xmlString);
-            });
-        });
-    },
-    async getCompletedSectorCountByIterationId (id) {
-        return new Promise((resolve, reject) => {
-            SectorSet.find({ iteration: id }, async (err, sectorSets) => {
-                if (err) {
-                    reject(err);
-                    return;
-                }
-    
-                var doneState = await State.find({ title: 'Completed' });
-    
-                var totalCount = 0;
-                var doneCount = 0;
-
-                for (var sectorSet of sectorSets) {
-                    totalCount += await Sector.countDocuments({ sectorSet: sectorSet._id });
-                    doneCount += await Sector.countDocuments({ sectorSet: sectorSet._id, state: doneState[0]._id });
-                }
-
-                resolve({
-                    totalCount,
-                    doneCount
-                });
             });
         });
     },

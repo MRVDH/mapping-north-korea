@@ -8,10 +8,6 @@
             "map": "Map",
             "about": "About"
         },
-        "request": {
-            "completed_sector_count": "Something went wrong while trying to get the completed sector count.",
-            "current_iteration": "Something went wrong while trying to get the current iteration."
-        },
         "iteration": "Iteration: {iterationTitle}"
     },
     "ko": {
@@ -21,10 +17,6 @@
         "menu": {
             "map": "지도",
             "about": "정보"
-        },
-        "request": {
-            "completed_sector_count": null,
-            "current_iteration": null
         },
         "iteration": "반복: {iterationTitle}"
     }
@@ -37,7 +29,7 @@
         temporary
         clipped
         v-model="drawerLeft"
-        class="drawer">
+        width="300">
         <v-toolbar
             flat
             class="transparent">
@@ -90,7 +82,7 @@
             </v-list-item>
             <v-list-item>
                 <v-list-item-content>
-                    <v-progress-linear v-if="sectorTotalCount > 0" v-model="valueDeterminate"></v-progress-linear>
+                    <v-progress-linear v-if="sectorTotalCount > 0" v-model="totalPercentageDone"></v-progress-linear>
                 </v-list-item-content>
                 <v-list-item-action style="padding-left: 10px;">
                     <span>{{ sectorDoneCount }} / {{ sectorTotalCount }}</span>
@@ -101,24 +93,14 @@
 </template>
 
 <script>
-import MapApiService from '@/services/MapApiService';
-import EventBus from '@/events/EventBus';
-import { MESSAGE_ERROR } from '@/events/eventTypes';
-import { START_LOADING, STOP_LOADING, SET_DRAWER_LEFT } from "@/store/mutationTypes";
+import { SET_DRAWER_LEFT } from "@/store/mutationTypes";
 
 export default {
     name: 'CustomMenuLeft',
     data () {
-        return {
-            currentIteration: null,
-            sectorTotalCount: 0,
-            sectorDoneCount: 0
-        };
+        return { };
     },
     computed: {
-        updatedSector () {
-            return this.$store.state.selectedSector;
-        },
         drawerLeft: {
             set (newValue) {
                 this.$store.commit(SET_DRAWER_LEFT, newValue);
@@ -127,40 +109,28 @@ export default {
                 return this.$store.state.drawerLeft;
             }
         },
+        sectorSets () {
+            return this.$store.state.sectorSets;
+        },
         loginLink () {
             return this.$store.state.loginLink;
         },
         loggedInUser () {
             return this.$store.state.loggedInUser;
         },
-        valueDeterminate () {
+        currentIteration () {
+            return this.$store.state.currentIteration;
+        },
+        totalPercentageDone () {
             var percentageDone = (this.sectorDoneCount * 100) / this.sectorTotalCount;
             return percentageDone < 1 ? 1 : percentageDone;
+        },
+        sectorTotalCount () {
+            return this.sectorSets.reduce((prev, curr) => prev + curr.totalCount, 0);
+        },
+        sectorDoneCount () {
+            return this.sectorSets.reduce((prev, curr) => prev + curr.completedCount, 0);
         }
-    },
-    watch: {
-        updatedSector (sector) {
-            if (sector && sector.properties.state.title === 'Completed') {
-                this.sectorDoneCount++;
-            }
-        }
-    },
-    mounted () {
-        this.$store.dispatch(START_LOADING, 'getCompletedSectorCountByIterationId');
-        MapApiService.getLatestIteration().then((res) => {
-            this.currentIteration = res.data;
-            MapApiService.getCompletedSectorCountByIterationId(this.currentIteration._id).then((res) => {
-                this.sectorTotalCount = res.data.totalCount;
-                this.sectorDoneCount = res.data.doneCount;
-            }).catch(() => {
-                EventBus.$emit(MESSAGE_ERROR, this.$t('request.completed_sector_count'));
-            }).finally(() => {
-                this.$store.dispatch(STOP_LOADING, 'getCompletedSectorCountByIterationId');
-            });
-        }).catch(() => {
-            EventBus.$emit(MESSAGE_ERROR, this.$t('request.current_iteration'));
-            this.$store.dispatch(STOP_LOADING, 'getCompletedSectorCountByIterationId');
-        });
     }
 };
 </script>

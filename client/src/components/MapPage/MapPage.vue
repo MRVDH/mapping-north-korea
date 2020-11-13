@@ -13,7 +13,7 @@
 
 <script>
 import CustomMap from '@/components/MapPage/CustomMap';
-import CustomMenuRight from '@/components/MapPage/CustomMenuRight';
+import CustomMenuRight from '@/components/MapPage/MenuRight';
 
 export default {
     name: 'MapPage',

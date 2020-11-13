@@ -14,7 +14,12 @@ export default new Vuex.Store({
         drawerLeft: false,
         drawerRight: true,
         processesWorking: [],
-        selectedSector: null
+        selectedSector: null,
+        currentIteration: null,
+        sectorSets: [],
+        recentEvents: [],
+        selectedSectorSet: null,
+        sectorEvents: []
     },
     mutations: {
         [mt.TOGGLE_DARK_MODE] (state) {
@@ -49,6 +54,24 @@ export default new Vuex.Store({
         },
         [mt.SELECT_SECTOR] (state, sector) {
             state.selectedSector = sector;
+        },
+        [mt.SET_CURRENT_ITERATION] (state, iteration) {
+            state.currentIteration = iteration;
+        },
+        [mt.SET_SECTOR_SETS] (state, sectorSets) {
+            state.sectorSets = sectorSets;
+        },
+        [mt.SET_RECENT_EVENTS] (state, recentEvents) {
+            state.recentEvents = recentEvents;
+        },
+        [mt.ADD_TO_RECENT_EVENTS] (state, recentEvent) {
+            state.recentEvents.unshift(recentEvent);
+        },
+        [mt.SELECT_SECTOR_SET] (state, sectorSet) {
+            state.selectedSectorSet = sectorSet;
+        },
+        [mt.SET_SECTOR_EVENTS] (state, sectorEvents) {
+            state.sectorEvents = sectorEvents;
         }
     },
     actions: {
@@ -84,6 +107,24 @@ export default new Vuex.Store({
         },
         [mt.SELECT_SECTOR] ({ commit }, sector) {
             commit(mt.SELECT_SECTOR, sector);
+        },
+        [mt.SET_CURRENT_ITERATION] ({ commit }, iteration) {
+            commit(mt.SET_CURRENT_ITERATION, iteration);
+        },
+        [mt.SET_SECTOR_SETS] ({ commit }, sectorSets) {
+            commit(mt.SET_SECTOR_SETS, sectorSets);
+        },
+        [mt.SET_RECENT_EVENTS] ({ commit }, recentEvents) {
+            commit(mt.SET_RECENT_EVENTS, recentEvents);
+        },
+        [mt.ADD_TO_RECENT_EVENTS] ({ commit }, recentEvent) {
+            commit(mt.ADD_TO_RECENT_EVENTS, recentEvent);
+        },
+        [mt.SELECT_SECTOR_SET] ({ commit }, sectorSet) {
+            commit(mt.SELECT_SECTOR_SET, sectorSet);
+        },
+        [mt.SET_SECTOR_EVENTS] ({ commit }, sectorEvents) {
+            commit(mt.SET_SECTOR_EVENTS, sectorEvents);
         }
     },
     plugins: [new VuexPersistence({

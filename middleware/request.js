@@ -28,7 +28,7 @@ export default {
     rateLimit () {
         return rateLimit({
             windowMs: 10 /* <= amount of minutes */ * 60 * 1000,
-            max: 100
+            max: 200
         });
     },
     session () {
