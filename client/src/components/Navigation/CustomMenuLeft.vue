@@ -82,7 +82,7 @@
             </v-list-item>
             <v-list-item>
                 <v-list-item-content>
-                    <v-progress-linear v-if="sectorTotalCount > 0" v-model="valueDeterminate"></v-progress-linear>
+                    <v-progress-linear v-if="sectorTotalCount > 0" v-model="totalPercentageDone"></v-progress-linear>
                 </v-list-item-content>
                 <v-list-item-action style="padding-left: 10px;">
                     <span>{{ sectorDoneCount }} / {{ sectorTotalCount }}</span>
@@ -93,21 +93,14 @@
 </template>
 
 <script>
-import MapApiService from '@/services/MapApiService';
 import { SET_DRAWER_LEFT } from "@/store/mutationTypes";
 
 export default {
     name: 'CustomMenuLeft',
     data () {
-        return {
-            sectorTotalCount: 0,
-            sectorDoneCount: 0
-        };
+        return { };
     },
     computed: {
-        updatedSector () {
-            return this.$store.state.selectedSector;
-        },
         drawerLeft: {
             set (newValue) {
                 this.$store.commit(SET_DRAWER_LEFT, newValue);
@@ -115,6 +108,9 @@ export default {
             get () {
                 return this.$store.state.drawerLeft;
             }
+        },
+        sectorSets () {
+            return this.$store.state.sectorSets;
         },
         loginLink () {
             return this.$store.state.loginLink;
@@ -125,26 +121,15 @@ export default {
         currentIteration () {
             return this.$store.state.currentIteration;
         },
-        valueDeterminate () {
+        totalPercentageDone () {
             var percentageDone = (this.sectorDoneCount * 100) / this.sectorTotalCount;
             return percentageDone < 1 ? 1 : percentageDone;
-        }
-    },
-    watch: {
-        updatedSector (sector) {
-            if (sector && sector.properties.state.title === 'Completed') {
-                this.sectorDoneCount++;
-            }
         },
-        currentIteration (newIteration) {
-            if (!newIteration) {
-                return;
-            }
-
-            MapApiService.getCompletedSectorCountByIterationId(newIteration._id).then((res) => {
-                this.sectorTotalCount = res.data.totalCount;
-                this.sectorDoneCount = res.data.doneCount;
-            });
+        sectorTotalCount () {
+            return this.sectorSets.reduce((prev, curr) => prev + curr.totalCount, 0);
+        },
+        sectorDoneCount () {
+            return this.sectorSets.reduce((prev, curr) => prev + curr.completedCount, 0);
         }
     }
 };

@@ -113,31 +113,6 @@ export default {
             });
         });
     },
-    async getCompletedSectorCountByIterationId (id) {
-        return new Promise((resolve, reject) => {
-            SectorSet.find({ iteration: id }, async (err, sectorSets) => {
-                if (err) {
-                    reject(err);
-                    return;
-                }
-    
-                var doneState = await State.find({ title: 'Completed' });
-    
-                var totalCount = 0;
-                var doneCount = 0;
-
-                for (var sectorSet of sectorSets) {
-                    totalCount += await Sector.countDocuments({ sectorSet: sectorSet._id });
-                    doneCount += await Sector.countDocuments({ sectorSet: sectorSet._id, state: doneState[0]._id });
-                }
-
-                resolve({
-                    totalCount,
-                    doneCount
-                });
-            });
-        });
-    },
     delete (id) {
         return new Promise((resolve, reject) => {
             Sector.deleteOne({ _id: id }, (err) => {

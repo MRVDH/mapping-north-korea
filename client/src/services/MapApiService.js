@@ -33,9 +33,6 @@ export default {
     getCurrentIteration () {
         return axios.get(host + '/api/iteration/current');
     },
-    getCompletedSectorCountByIterationId (id) {
-        return axios.get(host + '/api/sector/completed/count/' + id);
-    },
     deleteSectorById (id) {
         return axios.delete(host + '/api/sector/' + id);
     },

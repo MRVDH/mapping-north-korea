@@ -89,21 +89,13 @@ export default {
             return this.$store.state.selectedSector;
         }
     },
+    watch: {
+        selectedSector () {
+            this.getEvents();
+        }
+    },
     mounted () {
-        this.$store.dispatch(START_LOADING, 'getEventsBySectorId');
-        MapApiService.getEventsBySectorId(this.selectedSector.properties._id).then((res) => {
-            if (!res.data.length) {
-                return;
-            }
-
-            let events = res.data.sort(function (a, b) { return new Date(b.time.date) - new Date(a.time.date); }).reverse();
-
-            this.$store.dispatch(SET_SECTOR_EVENTS, events);
-        }).catch(() => {
-            EventBus.$emit(MESSAGE_ERROR, this.$t('request.sector_events'));
-        }).finally(() => {
-            this.$store.dispatch(STOP_LOADING, 'getEventsBySectorId');
-        });
+        this.getEvents();
     },
     methods: {
         calculateDateOutput (time) {
@@ -136,6 +128,26 @@ export default {
                 this.$store.dispatch(STOP_LOADING, 'addEvent');
             });
         },
+        getEvents () {
+            if (!this.selectedSector) {
+                return;
+            }
+
+            this.$store.dispatch(START_LOADING, 'getEventsBySectorId');
+            MapApiService.getEventsBySectorId(this.selectedSector.properties._id).then((res) => {
+                if (!res.data.length) {
+                    return;
+                }
+
+                let events = res.data.sort(function (a, b) { return new Date(b.time.date) - new Date(a.time.date); }).reverse();
+
+                this.$store.dispatch(SET_SECTOR_EVENTS, events);
+            }).catch(() => {
+                EventBus.$emit(MESSAGE_ERROR, this.$t('request.sector_events'));
+            }).finally(() => {
+                this.$store.dispatch(STOP_LOADING, 'getEventsBySectorId');
+            });
+        }
     }
 };
 </script>

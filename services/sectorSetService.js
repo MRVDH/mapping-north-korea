@@ -15,14 +15,16 @@ export default {
                     let percentage = (100 * set.completedCount) / set.totalCount;
                     let color = "";
 
-                    if (percentage < 25) {
-                        color = "#FF0000";
-                    } else if (percentage < 50) {
-                        color = "#FF7F00";
-                    } else if (percentage < 75) {
-                        color = "#145AF0";
-                    } else {
+                    if (percentage === 100) {
                         color = "#008000";
+                    } else {
+                        let end = 100;
+                        let start = 15;
+                        let a = percentage / 100;
+                        let b = (end - start) * a;
+                        let hue = Math.ceil(b + start);
+                  
+                        color = `hsl(${hue}, 100%, 50%)`;
                     }
 
                     set.feature.properties._percentage = percentage;

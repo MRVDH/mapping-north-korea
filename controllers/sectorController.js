@@ -77,20 +77,6 @@ export default {
             res.sendStatus(500);
         });
     },
-    getCompletedSectorCountByIterationId (req, res) {
-        if (req.params.id === "" || req.params.id === null || req.params.id === undefined) {
-            log.err(" <= RES /api/sector/completed/count/:id invalid or no req param id.", req.params);
-            res.sendStatus(400);
-            return;
-        }
-
-        sectorService.getCompletedSectorCountByIterationId(req.params.id).then((result) => {
-            res.send(result);
-        }).catch((err) => {
-            log.err(" <= RES /api/sector/completed/count/:id db update error.", err);
-            res.sendStatus(500);
-        });
-    },
     delete: (req, res) => {
         if (!global.devMode) {
             if (req.session.osmUserName !== process.env.OSM_ADMIN_NAME) {
