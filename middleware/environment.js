@@ -25,7 +25,8 @@ export default {
             'OSM_DEV_ENDPOINT="https://master.apis.dev.openstreetmap.org"\n\r' +
             'OSM_DEV_CONSUMER_SECRET="dev secret here"\n\r' +
             'OSM_DEV_CONSUMER_KEY="dev key here"\n\r' +
-            'OSM_DEV_API_VERSION="/api/0.6"';
+            'OSM_DEV_API_VERSION="/api/0.6"\n\r' +
+            'MAX_REQUESTS="200"';
         }
     },
     async setGlobalVariables(dirname) {
