@@ -1,8 +1,8 @@
 import mongoose from "mongoose";
 import log from "../utils/log.js";
 
-import sectorImport from "../static/new_sectors.js";
-import regionsImport from "../static/nk_regions_simplified.js";
+//import sectorImport from "../static/new_sectors.js";
+//import regionsImport from "../static/nk_regions_simplified.js";
 //import oldSectors from "./oldSectors.js";
 //import oldEvents from "./oldEvents.js";
 
