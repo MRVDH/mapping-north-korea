@@ -113,7 +113,7 @@ export default {
                 if (this.$route.params.sectorSetId) {
                     this.selectSectorSet(this.getSectorSetLayerById(this.$route.params.sectorSetId));
                 }
-            }).catch((err) => {
+            }).catch(() => {
                 EventBus.$emit(MESSAGE_ERROR, this.$t('request.load_sector_sets'));
             }).finally(() => {
                 this.$store.dispatch(STOP_LOADING, 'loadingsectors');
