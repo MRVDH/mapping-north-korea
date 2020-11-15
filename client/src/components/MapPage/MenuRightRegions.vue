@@ -2,11 +2,13 @@
 {
     "en": {
         "regions": "Regions",
+        "hide_completed_regions": "Hide completed regions",
         "show_more": "Show more",
         "show_less": "Show less"
     },
     "ko": {
         "regions": null,
+        "hide_completed_regions": null,
         "show_more": null,
         "show_less": null
     }
@@ -15,32 +17,45 @@
 
 <template>
     <div>
-        <v-container
-            class="pa-3 pt-4 pb-0">
-            <v-layout>
-                <v-flex>
+        <v-container class="pa-4 pb-0">
+            <v-row>
+                <v-col class="pt-0 pb-0">
                     <span class="font-weight-bold">{{ $t('regions') }}</span>
-                </v-flex>
-            </v-layout>
+                </v-col>
+                <v-col v-if="limitedSectorSets.length" class="pt-0 pb-0" id="regions-switch">
+                    <v-tooltip bottom>
+                        <template v-slot:activator="{ on, attrs }">
+                            <div v-bind="attrs" v-on="on" style="height: 24px;">
+                                <v-switch
+                                    v-model="hideCompletedRegions"
+                                    dense
+                                    hide-details
+                                    class="mt-0"></v-switch>
+                            </div>
+                        </template>
+                        <span>{{ $t('hide_completed_regions') }}</span>
+                    </v-tooltip>
+                </v-col>
+            </v-row>
         </v-container>
         <v-container class="pt-4">
             <v-row v-if="!limitedSectorSets.length">
-                <v-col class="pt-0 pb-0"><v-skeleton-loader type="list-item"></v-skeleton-loader></v-col>
-                <v-col class="pt-0 pb-0"><v-skeleton-loader type="list-item"></v-skeleton-loader></v-col>
+                <v-col class="py-0 pl-4"><v-skeleton-loader type="list-item"></v-skeleton-loader></v-col>
+                <v-col class="py-0 pr-4"><v-skeleton-loader type="list-item"></v-skeleton-loader></v-col>
             </v-row>
             <v-row v-if="!limitedSectorSets.length">
-                <v-col class="pt-0 pb-0"><v-skeleton-loader type="list-item"></v-skeleton-loader></v-col>
-                <v-col class="pt-0 pb-0"><v-skeleton-loader type="list-item"></v-skeleton-loader></v-col>
+                <v-col class="py-0 pl-4"><v-skeleton-loader type="list-item"></v-skeleton-loader></v-col>
+                <v-col class="py-0 pr-4"><v-skeleton-loader type="list-item"></v-skeleton-loader></v-col>
             </v-row>
             <v-row v-if="!limitedSectorSets.length">
-                <v-col class="pt-0 pb-0"><v-skeleton-loader type="list-item"></v-skeleton-loader></v-col>
-                <v-col class="pt-0 pb-0"><v-skeleton-loader type="list-item"></v-skeleton-loader></v-col>
+                <v-col class="py-0 pl-4"><v-skeleton-loader type="list-item"></v-skeleton-loader></v-col>
+                <v-col class="py-0 pr-4"><v-skeleton-loader type="list-item"></v-skeleton-loader></v-col>
             </v-row>
             <v-row v-for="(sectorSet, index) in limitedSectorSets" :key="index">
-                <v-col class="pt-0" @click.stop="selectSectorSetById(sectorSet._id)" style="cursor: pointer;">
+                <v-col class="pt-0 pl-4" @click.stop="selectSectorSetById(sectorSet._id)" style="cursor: pointer;">
                     {{ sectorSet.title }}
                 </v-col>
-                <v-col class="pt-0">
+                <v-col class="pt-0 pr-4">
                     <v-progress-linear
                         :value="sectorSet.feature.properties._percentage"
                         height="18"
@@ -50,7 +65,7 @@
                 </v-col>
             </v-row>
             <v-row>
-                <v-col class="pb-0">
+                <v-col class="pb-0 px-4">
                     <a v-if="sectorSetLimit && limitedSectorSets.length" @click="sectorSetLimit = null;">{{ $t('show_more') }}...</a>
                     <a v-if="!sectorSetLimit && limitedSectorSets.length" @click="sectorSetLimit = 6;">{{ $t('show_less') }}...</a>
                 </v-col>
@@ -66,7 +81,8 @@ export default {
     name: 'MenuRightRegions',
     data () {
         return {
-            sectorSetLimit: 6
+            sectorSetLimit: 6,
+            hideCompletedRegions: false
         };
     },
     computed: {
@@ -74,7 +90,9 @@ export default {
             return this.$store.state.sectorSets;
         },
         limitedSectorSets () {
-            return this.sectorSetLimit ? this.sectorSets.slice(0, this.sectorSetLimit) : this.sectorSets;
+            let sectorSetsToReturn = this.hideCompletedRegions ? this.sectorSets.filter(x => x.feature.properties._percentage !== 100) : this.sectorSets;
+            
+            return this.sectorSetLimit ? sectorSetsToReturn.slice(0, this.sectorSetLimit) : sectorSetsToReturn;
         }
     },
     methods: {
@@ -88,5 +106,13 @@ export default {
 <style>
 .v-skeleton-loader__list-item {
     padding: 0;
+}
+
+#regions-switch .v-input--switch {
+    padding-top: 0;
+    float: right;
+}
+#regions-switch .v-input--selection-controls__input {
+    margin-right: 0;
 }
 </style>
