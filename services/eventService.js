@@ -21,7 +21,9 @@ export default {
     },
     getAll (amount) {
         return new Promise((resolve, reject) => {
-            Event.find({}).sort('-time').limit(parseInt(amount)).exec((err, events) => {
+            Event.find({}).populate({
+                path: "sector"
+            }).sort('-time').limit(parseInt(amount)).exec((err, events) => {
                 if (err) {
                     reject(err);
                     return;

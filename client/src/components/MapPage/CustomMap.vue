@@ -134,9 +134,9 @@ export default {
         
         this.setDarkMode(this.darkMode);
 
-        EventBus.$on('mnk:go-to-sector', (sectorId) => {
-            this.setSectorSelected(this.getSectorLayerById(sectorId), true);
-            this.flyToSectorByPolygonCoordinates(this.selectedSector.feature.geometry.coordinates[0]);
+        EventBus.$on('mnk:go-to-sector', (sectorInfo) => {
+            this.$router.push({ name: 'MapPageSector', params: { sectorSetId: sectorInfo.sectorSetId, sectorId: sectorInfo.sectorId } });
+            this.selectSectorSet(this.getSectorSetLayerById(sectorInfo.sectorSetId));
         });
 
         EventBus.$on('mnk:go-to-sector-set', (sectorSetId) => {
