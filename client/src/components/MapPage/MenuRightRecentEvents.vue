@@ -43,7 +43,7 @@
             </v-row>
             <v-layout class="row" v-for="(event, index) in recentEvents" :key="index">
                 <v-flex xs12>
-                    <div class="text-left" @click.stop="selectSectorById(event.sector)" style="cursor: pointer;">{{ event.description }}</div>
+                    <div class="text-left" @click.stop="selectSector(event.sector)" style="cursor: pointer;">{{ event.description }}</div>
                     <div class="text-right grey--text text--lighten-1 caption">{{ event.osmUserName }}
                         <a
                             :href="'https://www.openstreetmap.org/user/' + event.osmUserName"
@@ -86,8 +86,8 @@ export default {
         });
     },
     methods: {
-        selectSectorById (id) {
-            EventBus.$emit('mnk:go-to-sector', id);
+        selectSector (sector) {
+            EventBus.$emit('mnk:go-to-sector', { sectorId: sector._id.toString(), sectorSetId: sector.sectorSet.toString() });
         },
         calculateDateOutput (time) {
             return UtilService.calculateDateOutput(time);
