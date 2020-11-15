@@ -33,6 +33,10 @@
                 "question": "Why does the JOSM map option give an error?",
                 "answer": "For some reason the website can't connect with your JOSM instance. Is JOSM running and is Remote Contol enabled? You can enable this in the settings of JOSM."
             },
+            "q7": {
+                "question": "What should I map?",
+                "answer": "The iteration name in the header will tell you what needs to be mapped in this iteration. At the time of writing it's roads."
+            },
 
             "confirm": "Got it"
         }
@@ -70,6 +74,10 @@
                 "question": null,
                 "answer": null
             },
+            "q7": {
+                "question": null,
+                "answer": null
+            },
 
             "confirm": "알겠습니다"
         }
@@ -89,6 +97,9 @@
                     {{ $t('faq.subtitle') }}
                 </v-card-title>
                 <v-card-text>
+                    <h3>{{ $t('faq.q7.question') }}</h3>
+                    <p>{{ $t('faq.q7.answer') }}</p>
+
                     <h3>{{ $t('faq.q1.question') }}</h3>
                     <i18n path="faq.q1.answer" tag="p">
                         <a href="/about" @click.stop="infoDialog = false" target="_blank">{{ $t('faq.q1.link') }}</a>
