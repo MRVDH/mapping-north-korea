@@ -75,19 +75,36 @@ export default {
                 return;
             }
 
-            var coords = this.selectedSector.geometry.coordinates[0];
-
-            this.idUrl = 'https://www.openstreetmap.org/edit?editor=id' +
-                '&#map=13/' + (coords[1][1] + coords[2][1]) / 2 + '/' + (coords[0][0] + coords[1][0]) / 2 +
-                '&comment=MappingNorthKorea.com%20sector%20' + this.selectedSector.properties._id +
-                '&gpx=https://www.mappingnorthkorea.com/api/sector/generate/' + this.selectedSector.properties._id + '.gpx';
-            this.rapidUrl = 'https://www.mapwith.ai/rapid?#' +
-                'gpx=https://www.mappingnorthkorea.com/api/sector/generate/' + this.selectedSector.properties._id + '.gpx' +
-                '&map=13/' + (coords[1][1] + coords[2][1]) / 2 + '/' + (coords[0][0] + coords[1][0]) / 2 +
-                '&comment=MappingNorthKorea.com%20sector%20' + this.selectedSector.properties._id;
+            this.setMappingLinks();
         }
     },
+    mounted () {
+        this.setMappingLinks();
+    },
     methods: {
+        setMappingLinks () {
+            // get the center of the section
+            let minx = 9999999;
+            let miny = 9999999;
+            let maxx = 0;
+            let maxy = 0;
+
+            for (let coordSet of this.selectedSector.geometry.coordinates[0]) {
+                if (coordSet[0] < minx) minx = coordSet[0];
+                if (coordSet[1] < miny) miny = coordSet[1];
+                if (coordSet[0] > maxx) maxx = coordSet[0];
+                if (coordSet[1] > maxy) maxy = coordSet[1];
+            }
+
+            let centerx = minx + ((maxx - minx) / 2);
+            let centery = miny + ((maxy - miny) / 2);
+
+            var thisHost = window.location.hostname === 'localhost' ? 'http://localhost:8081' : 'https://www.mappingnorthkorea.com';
+            var osmHost = window.location.hostname === 'localhost' ? 'https://master.apis.dev.openstreetmap.org' : 'https://www.openstreetmap.org';
+
+            this.idUrl = `${osmHost}/edit?editor=id&#map=16/${centery}/${centerx}&comment=MappingNorthKorea.com%20sector%20${this.selectedSector.properties._id}&gpx=${thisHost}/api/sector/generate/${this.selectedSector.properties._id}.gpx`;
+            this.rapidUrl = `https://www.mapwith.ai/rapid?#gpx=${thisHost}/api/sector/generate/${this.selectedSector.properties._id}.gpx&map=16/${centery}/${centerx}&comment=MappingNorthKorea.com%20sector%20${this.selectedSector.properties._id}`;
+        },
         mapSectorInJOSM () {
             var loadAndZoomParams = {
                 left: this.selectedSector.geometry.coordinates[0][0][0],
