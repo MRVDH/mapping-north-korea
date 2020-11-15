@@ -10,7 +10,7 @@ export default {
         var allowedOrigins = ['https://www.mappingnorthkorea.com', 'https://mappingnorthkorea.com', 'https://www.openstreetmap.org', 'https://www.mapwith.ai'];
     
         if (global.devMode) {
-            allowedOrigins = allowedOrigins.concat(['http://127.0.0.1:8080', 'http://localhost:8080', 'http://127.0.0.1:8081', 'http://localhost:8081']);
+            allowedOrigins = allowedOrigins.concat(['http://127.0.0.1:8080', 'http://localhost:8080', 'http://127.0.0.1:8081', 'http://localhost:8081', 'https://master.apis.dev.openstreetmap.org']);
         }
 
         var origin = req.headers.origin;
