@@ -91,10 +91,12 @@ export default {
     },
     watch: {
         selectedSector () {
+            this.$store.dispatch(SET_SECTOR_EVENTS, []);
             this.getEvents();
         }
     },
     mounted () {
+        this.$store.dispatch(SET_SECTOR_EVENTS, []);
         this.getEvents();
     },
     methods: {

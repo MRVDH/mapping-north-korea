@@ -4,8 +4,7 @@
         <CustomMenuRightButtonState/>
         <CustomMenuRightSectorHelp/>
         <v-container
-            grid-list-xs
-            class="pa-4">
+            class="pa-4 pt-0">
             <v-layout>
                 <v-flex>
                     <CustomMenuRightButtonMap/>
