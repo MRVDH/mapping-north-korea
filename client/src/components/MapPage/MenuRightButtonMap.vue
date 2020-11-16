@@ -26,19 +26,19 @@
                 color="success"
                 v-on="on"
                 class="mb-1 ml-0 mt-0 mr-0"
-                :disabled="!loggedInUser || selectedSector.properties.state.title === 'Open' || selectedSector.properties.state.title === 'Review needed' || selectedSector.properties.state.title === 'Completed'"
+                :disabled="!loggedInUser || selectedSector.properties.state.title === 'Completed'"
                 >
                 {{ $t('map_button') }}
             </v-btn>
         </template>
         <v-list>
-            <v-list-item :href="idUrl" target="_blank">
+            <v-list-item :href="idUrl" target="_blank" @click="updateState(); mappingMenuOpen = false;">
                 <v-list-item-title>iD</v-list-item-title>
             </v-list-item>
-            <v-list-item :href="rapidUrl" target="_blank">
+            <v-list-item :href="rapidUrl" target="_blank" @click="updateState(); mappingMenuOpen = false;">
                 <v-list-item-title>RapiD</v-list-item-title>
             </v-list-item>
-            <v-list-item @click.stop="mapSectorInJOSM(); mappingMenuOpen = false;">
+            <v-list-item @click.stop="mapSectorInJOSM(); updateState(); mappingMenuOpen = false;">
                     <v-list-item-title>JOSM</v-list-item-title>
             </v-list-item>
         </v-list>
@@ -128,6 +128,13 @@ export default {
             }).finally(() => {
                 this.$store.dispatch(STOP_LOADING, 'sendJOSMImageryCommand');
             });
+        },
+        updateState () {
+            if (this.selectedSector.properties.state.title !== `Open`) {
+                return;
+            }
+
+            EventBus.$emit(`mnk:set-sector-state-being-edited`);
         }
     }
 };

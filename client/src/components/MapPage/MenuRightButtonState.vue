@@ -95,6 +95,10 @@ export default {
         }).finally(() => {
             this.$store.dispatch(STOP_LOADING, 'getAllStates');
         });
+        
+        EventBus.$on(`mnk:set-sector-state-being-edited`, () => {
+            this.updateSector(this.states.find(x => x.title === `Being edited`));
+        });
     },
     methods: {
         updateSector (state) {

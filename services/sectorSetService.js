@@ -44,9 +44,10 @@ export default {
             try {
                 var doneState = await State.find({ title: 'Completed' });
 
+                let amountOfSectors = await Sector.countDocuments({ sectorSet: id }).exec();
                 let amountOfCompletedSectors = await Sector.countDocuments({ sectorSet: id, state: doneState }).exec();
 
-                SectorSet.update({ _id: id }, { completedCount: amountOfCompletedSectors }).exec();
+                SectorSet.update({ _id: id }, { completedCount: amountOfCompletedSectors, totalCount: amountOfSectors }).exec();
 
                 resolve();
             } catch (err) {

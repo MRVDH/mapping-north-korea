@@ -3,7 +3,7 @@
     "en": {
         "help": {
             "login": "Please log in to map or edit this sector.",
-            "change_back": "Please change the state to 'Being edited' to edit or review this sector."
+            "change_back": "Please change the state to 'Being edited' to edit this sector."
         }
     },
     "ko": {
@@ -18,8 +18,7 @@
 <template>
     <v-container
         text-center
-        grid-list-xs
-        class="py-0 px-4">
+        class="pa-4 pt-0">
         <v-layout>
             <v-flex>
                 <span
@@ -29,7 +28,7 @@
                 </span>
                 <span
                     class="orange--text"
-                    v-if="loggedInUser && (selectedSector.properties.state.title === 'Open' || selectedSector.properties.state.title === 'Review needed' || selectedSector.properties.state.title === 'Completed')">
+                    v-if="loggedInUser && selectedSector.properties.state.title === 'Completed'">
                     {{ $t('help.change_back') }}
                 </span>
             </v-flex>
