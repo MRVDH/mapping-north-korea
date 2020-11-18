@@ -64,7 +64,7 @@ export default {
             return this.$store.state.loggedInUser;
         },
         adminLoggedIn () {
-            return this.loggedInUser && (this.loggedInUser.name === `Artemis64` || this.loggedInUser.name === `Artemis64dev`);
+            return this.loggedInUser && (location.href.includes(`localhost`) || this.loggedInUser.name === `Artemis64` || this.loggedInUser.name === `Artemis64dev`);
         }
     },
     methods: {
