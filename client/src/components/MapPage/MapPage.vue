@@ -12,7 +12,7 @@
 </template>
 
 <script>
-import CustomMap from '@/components/MapPage/CustomMap';
+import CustomMap from '@/components/MapPage/Map';
 import CustomMenuRight from '@/components/MapPage/MenuRight';
 
 export default {

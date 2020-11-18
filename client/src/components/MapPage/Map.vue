@@ -32,7 +32,7 @@ const defaultStyle = {
 };
 
 export default {
-    name: 'CustomMap',
+    name: 'Map',
     data () {
         return {
             map: null,
