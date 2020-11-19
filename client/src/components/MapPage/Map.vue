@@ -323,12 +323,17 @@ export default {
 </script>
 
 <style>
-    #map {
-        height: 100%;
-        width: 100%;
-        z-index: 1;
-    }
-    .leaflet-control-attribution {
-        margin-bottom: 3px !important;
-    }
+#map {
+    height: 100%;
+    width: 100%;
+    z-index: 1;
+}
+
+.leaflet-control-attribution {
+    margin-bottom: 3px !important;
+}
+
+.leaflet-bar a, .leaflet-bar a:hover {
+    color: black !important;
+}
 </style>
