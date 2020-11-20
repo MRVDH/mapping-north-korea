@@ -99,7 +99,7 @@ export default {
             let centerx = minx + ((maxx - minx) / 2);
             let centery = miny + ((maxy - miny) / 2);
 
-            var thisHost = window.location.hostname === 'localhost' ? 'http://localhost:8081' : 'https://www.mappingnorthkorea.com';
+            var thisHost = window.location.hostname === 'localhost' ? 'http://localhost:8081' : 'https://mappingnorthkorea.com';
             var osmHost = window.location.hostname === 'localhost' ? 'https://master.apis.dev.openstreetmap.org' : 'https://www.openstreetmap.org';
 
             this.idUrl = `${osmHost}/edit?editor=id&#map=16/${centery}/${centerx}&comment=MappingNorthKorea.com%20sector%20${this.selectedSector.properties._id}&gpx=${thisHost}/api/sector/generate/${this.selectedSector.properties._id}.gpx`;

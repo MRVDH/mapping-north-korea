@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-var host = window.location.hostname === 'localhost' ? 'http://localhost:8081' : 'https://www.mappingnorthkorea.com';
+var host = window.location.hostname === 'localhost' ? 'http://localhost:8081' : 'https://mappingnorthkorea.com';
 
 export default {
     getAllSectors () {
