@@ -89,6 +89,9 @@
                 </v-list-item-action>
             </v-list-item>
         </v-list>
+        <a class="pl-4" href="https://www.buymeacoffee.com/MRVDH" target="_blank">
+            <img src="https://img.buymeacoffee.com/button-api/?text=Buy me a coffee&emoji=&slug=MRVDH&button_colour=5F7FFF&font_colour=ffffff&font_family=Cookie&outline_colour=000000&coffee_colour=FFDD00">
+        </a>
     </v-navigation-drawer>
 </template>
 
