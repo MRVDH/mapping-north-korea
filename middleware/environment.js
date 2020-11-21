@@ -55,7 +55,7 @@ export default {
             }
         } else {
             log.alt("Production mode");
-            global.localurl = "https://mappingnorthkorea.com";
+            global.localurl = "https://www.mappingnorthkorea.com";
             global.devMode = false;
             global.mongodbConnection = process.env.MONGODB_CONNECTION;
         
