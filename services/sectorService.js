@@ -95,7 +95,7 @@ export default {
                     '<?xml version="1.0" encoding="utf8"?>' +
                     '<gpx creator="MappingNorthKorea.com" version="1.1" xmlns="http://www.topografix.com/GPX/1/1">' +
                         '<metadata>' +
-                            '<link href="https://www.mappingnorthkorea.com/">' +
+                            '<link href="https://mappingnorthkorea.com/">' +
                                 '<text>Mapping North Korea</text>' +
                             '</link>' +
                             `<time>${new Date().toISOString().slice(0, -1)}</time>` +
