@@ -92,6 +92,7 @@
         <a class="pl-4" href="https://www.buymeacoffee.com/MRVDH" target="_blank">
             <img src="https://img.buymeacoffee.com/button-api/?text=Buy me a coffee&emoji=&slug=MRVDH&button_colour=5F7FFF&font_colour=ffffff&font_family=Cookie&outline_colour=000000&coffee_colour=FFDD00">
         </a>
+        <iframe src="https://github.com/sponsors/MRVDH/button" title="Sponsor MRVDH" class="ml-4 mt-4" height="35" width="116" style="border: 0;"></iframe>
     </v-navigation-drawer>
 </template>
 
