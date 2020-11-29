@@ -8,14 +8,13 @@
                             <h3 class="headline">Mapping one of the most isolated and unmapped countries on earth.</h3>
                         </v-card-title>
                         <v-card-text>
-                            The purpose of this tool is to discover North Korea by analysing sattelite imagery and mapping everything to <a target="_blank" href="https://www.openstreetmap.org/about">OpenStreetMap</a>. Because of a lack of interest, and probably due to it being unmonetizable, other map providers (such as Google, Bing and Apple) have only mapped North Korea to a very basic level.
+                            The purpose of this tool is to discover North Korea by analysing sattelite imagery and mapping everything to <a target="_blank" href="https://www.openstreetmap.org/about">OpenStreetMap</a>. Because of a lack of interest, and probably due to it being unmonetizable, other map providers (such as Google) have only mapped North Korea to a very basic level.
                         </v-card-text>
                         <v-card-title id="about-page-how-it-works">
                             <h5 class="headline">How it works</h5>
                         </v-card-title>
                         <v-card-text>
-                            The map is divided into 4723 sectors at the time of writing. These sectors can be selected for editing, reviews and more. Reviews can be done by anyone who would like to, but it's encouraged to let experienced OpenStreetMap mappers do it. An OpenStreetMap account is required to edit sectors. Users can log in with the OpenStreetMap account via OAuth using the menu on the left.<br/>
-                            The sectors are part of an iteration. The iteration system was added for the reason that once mapping starts, it will take a long time for the whole country to be completed. By the time the last sectors are done, the first sectors might be outdated. After completing the country a second iteration can be started for updates.<br/>
+                            The map is divided into sector sets. These sector sets are the counties and special administrative regions of North Korea. The sector sets are divided into 2km by 2km sectors, which can be selected for editing, reviews and more. Reviews can be done by anyone who would like to, but it's encouraged to let experienced OpenStreetMap mappers do it. An OpenStreetMap account is required to edit sectors. Users can log in with the OpenStreetMap account using the menu on the left.<br/>
                             The application is fully dynamic, which means it can be used for any other place on earth as well. The GitHub repository can be found <a href="https://github.com/MRVDH/mapping-north-korea" target="_blank">here</a>.
                         </v-card-text>
                         <v-card-title id="about-page-attribution">
@@ -26,6 +25,7 @@
                             <br/><br/>
                             Back-end attribution.
                             <ul>
+                                <li>The application used to be hosted on a DigitalOcean droplet, but due to the amount of time I spent configuring ssl, nginx etc I decided to move to their new App Platform. However, the app platform caused a lot of problems, including a 3 day downtime in which digital ocean support could not be of any assistance. Therefore, I decided to move to <a target="_blank" href="https://render.com/">Render</a>. The setup was easy, and now everything is automated, giving me more time to work on the actual code instead of the hosting.</li>
                                 <li>The back-end is built on <a target="_blank" href="https://nodejs.org/en/">Node.js</a> using the <a target="_blank" href="https://expressjs.com/">Express.js</a> framework.</li>
                                 <li>The <a target="_blank" href="https://www.mongodb.com/cloud/atlas">MongoDB Atlas</a> platform (free tier) is used for running the <a target="_blank" href="https://www.mongodb.com/">MongoDB</a> instance.</li>
                                 <li>npm packages include <a target="_blank" href="https://github.com/expressjs/session">express-session</a>, <a target="_blank" href="https://github.com/expressjs/body-parser">body-parser</a>, <a target="_blank" href="https://github.com/kelektiv/node-uuid">uuid</a>, <a target="_blank" href="https://github.com/jdesboeufs/connect-mongo">connect-mongo</a>, <a target="_blank" href="https://github.com/Automattic/mongoose">mongoose</a> and <a target="_blank" href="https://github.com/nfriedly/express-rate-limit">express-rate-limit</a>.</li>
