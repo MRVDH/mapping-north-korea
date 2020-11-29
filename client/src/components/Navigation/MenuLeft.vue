@@ -111,7 +111,7 @@ import { MESSAGE_ERROR } from '@/events/eventTypes';
 import { SET_DRAWER_LEFT, START_LOADING, STOP_LOADING } from "@/store/mutationTypes";
 
 export default {
-    name: 'CustomMenuLeft',
+    name: 'MenuLeft',
     data () {
         return {
             loginLink: null

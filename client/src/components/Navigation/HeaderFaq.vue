@@ -138,7 +138,7 @@
 
 <script>
 export default {
-    name: 'CustomHeaderFaq',
+    name: 'HeaderFaq',
     data () {
         return {
             infoDialog: false

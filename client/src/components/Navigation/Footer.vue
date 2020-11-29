@@ -7,7 +7,7 @@
 
 <script>
 export default {
-    name: 'CustomFooter',
+    name: 'Footer',
     data () {
         return { };
     }

@@ -31,11 +31,11 @@
 </template>
 
 <script>
-import CustomHeaderFaq from '@/components/Navigation/CustomHeaderFaq';
+import CustomHeaderFaq from '@/components/Navigation/HeaderFaq';
 import { SET_LOCALE, TOGGLE_DARK_MODE, TOGGLE_DRAWER_LEFT, TOGGLE_DRAWER_RIGHT } from "@/store/mutationTypes";
 
 export default {
-    name: 'CustomHeader',
+    name: 'Header',
     data () {
         return {
             displayRightIcon: this.$router.currentRoute.name === 'MapPage',

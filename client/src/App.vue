@@ -43,9 +43,9 @@
 </template>
 
 <script>
-import CustomMenuLeft from '@/components/Navigation/CustomMenuLeft';
-import CustomHeader from '@/components/Navigation/CustomHeader';
-import CustomFooter from '@/components/Navigation/CustomFooter';
+import CustomMenuLeft from '@/components/Navigation/MenuLeft';
+import CustomHeader from '@/components/Navigation/Header';
+import CustomFooter from '@/components/Navigation/Footer';
 import OAuthService from '@/services/OAuthService';
 import MapApiService from '@/services/MapApiService';
 import EventBus from '@/events/EventBus';
