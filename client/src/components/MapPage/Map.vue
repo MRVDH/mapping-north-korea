@@ -89,8 +89,58 @@ export default {
                 return;
             }
 
+            this.loadSectorSets();
+        },
+        selectedSectorSet (newValue) {
+            if (newValue) {
+                return;
+            }
+
+            this.$router.push({ name: 'MapPage' });
+            this.map.removeLayer(this.sectorLayer);
+            this.map.addLayer(this.sectorSetLayer);
+        }
+    },
+    mounted () {
+        this.initMap();
+        
+        this.setDarkMode(this.darkMode);
+
+        EventBus.$on('mnk:go-to-sector', (sectorInfo) => {
+            this.$router.push({ name: 'MapPageSector', params: { sectorSetId: sectorInfo.sectorSetId, sectorId: sectorInfo.sectorId } });
+            this.selectSectorSet(this.getSectorSetLayerById(sectorInfo.sectorSetId));
+        });
+
+        EventBus.$on('mnk:go-to-sector-set', (sectorSetId) => {
+            this.selectSectorSet(this.getSectorSetLayerById(sectorSetId));
+        });
+
+        if (this.currentIteration) {
+            this.loadSectorSets();
+        }
+    },
+    methods: {
+        initMap: function () {
+            this.map = L.map('map').on('click', this.clickMapEvent).setView([ 39.686, 127.500 ], 7);
+
+            this.lightTileLayer = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                maxZoom: 19,
+                attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+            });
+            this.darkTileLayer = L.tileLayer('https://tiles.stadiamaps.com/tiles/alidade_smooth_dark/{z}/{x}/{y}{r}.png', {
+                maxZoom: 19,
+                attribution: '&copy; <a href="https://stadiamaps.com/">Stadia Maps</a>, &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+            });
+
+            if (localStorage.darkTheme && localStorage.darkTheme === 'true') {
+                this.darkTileLayer.addTo(this.map);
+            } else {
+                this.lightTileLayer.addTo(this.map);
+            }
+        },
+        loadSectorSets () {
             this.$store.dispatch(START_LOADING, 'loadingsectors');
-            MapApiService.getAllSectorSetsByIterationId(newIteration._id).then((res) => {
+            MapApiService.getAllSectorSetsByIterationId(this.currentIteration._id).then((res) => {
                 let sectorSets = res.data;
 
                 this.$store.dispatch(SET_SECTOR_SETS, sectorSets);
@@ -118,49 +168,6 @@ export default {
             }).finally(() => {
                 this.$store.dispatch(STOP_LOADING, 'loadingsectors');
             });
-        },
-        selectedSectorSet (newValue) {
-            if (newValue) {
-                return;
-            }
-
-            this.$router.push({ name: 'MapPage' });
-            this.map.removeLayer(this.sectorLayer);
-            this.map.addLayer(this.sectorSetLayer);
-        }
-    },
-    mounted () {
-        this.initMap();
-        
-        this.setDarkMode(this.darkMode);
-
-        EventBus.$on('mnk:go-to-sector', (sectorInfo) => {
-            this.$router.push({ name: 'MapPageSector', params: { sectorSetId: sectorInfo.sectorSetId, sectorId: sectorInfo.sectorId } });
-            this.selectSectorSet(this.getSectorSetLayerById(sectorInfo.sectorSetId));
-        });
-
-        EventBus.$on('mnk:go-to-sector-set', (sectorSetId) => {
-            this.selectSectorSet(this.getSectorSetLayerById(sectorSetId));
-        });
-    },
-    methods: {
-        initMap: function () {
-            this.map = L.map('map').on('click', this.clickMapEvent).setView([ 39.686, 127.500 ], 7);
-
-            this.lightTileLayer = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-                maxZoom: 19,
-                attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-            });
-            this.darkTileLayer = L.tileLayer('https://tiles.stadiamaps.com/tiles/alidade_smooth_dark/{z}/{x}/{y}{r}.png', {
-                maxZoom: 19,
-                attribution: '&copy; <a href="https://stadiamaps.com/">Stadia Maps</a>, &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-            });
-
-            if (localStorage.darkTheme && localStorage.darkTheme === 'true') {
-                this.darkTileLayer.addTo(this.map);
-            } else {
-                this.lightTileLayer.addTo(this.map);
-            }
         },
         setSectorSelected (layer, select) {
             if (select) {

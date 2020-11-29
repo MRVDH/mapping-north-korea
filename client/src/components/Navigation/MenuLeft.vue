@@ -8,7 +8,11 @@
             "map": "Map",
             "about": "About"
         },
-        "iteration": "Iteration: {iterationTitle}"
+        "iteration": "Iteration: {iterationTitle}",
+
+        "request": {
+            "oauth_token": "Something went wrong while trying to get your OAuth request token."
+        }
     },
     "ko": {
         "button": {
@@ -18,7 +22,11 @@
             "map": "지도",
             "about": "정보"
         },
-        "iteration": "반복: {iterationTitle}"
+        "iteration": "반복: {iterationTitle}",
+
+        "request": {
+            "oauth_token": null
+        }
     }
 }
 </i18n>
@@ -97,12 +105,17 @@
 </template>
 
 <script>
-import { SET_DRAWER_LEFT } from "@/store/mutationTypes";
+import OAuthService from '@/services/OAuthService';
+import EventBus from '@/events/EventBus';
+import { MESSAGE_ERROR } from '@/events/eventTypes';
+import { SET_DRAWER_LEFT, START_LOADING, STOP_LOADING } from "@/store/mutationTypes";
 
 export default {
-    name: 'CustomMenuLeft',
+    name: 'MenuLeft',
     data () {
-        return { };
+        return {
+            loginLink: null
+        };
     },
     computed: {
         drawerLeft: {
@@ -115,9 +128,6 @@ export default {
         },
         sectorSets () {
             return this.$store.state.sectorSets;
-        },
-        loginLink () {
-            return this.$store.state.loginLink;
         },
         loggedInUser () {
             return this.$store.state.loggedInUser;
@@ -134,6 +144,22 @@ export default {
         },
         sectorDoneCount () {
             return this.sectorSets.reduce((prev, curr) => prev + curr.completedCount, 0);
+        }
+    },
+    watch: {
+        drawerLeft (drawerLeft) {
+            if (this.loginLink || !drawerLeft || this.loggedInUser) {
+                return;
+            }
+
+            this.$store.dispatch(START_LOADING, 'getrequesttoken');
+            OAuthService.getRequestToken().then((res) => {
+                this.loginLink = res.data;
+            }).catch(() => {
+                EventBus.$emit(MESSAGE_ERROR, this.$t('request.oauth_token'));
+            }).finally(() => {
+                this.$store.dispatch(STOP_LOADING, 'getrequesttoken');
+            });
         }
     }
 };
