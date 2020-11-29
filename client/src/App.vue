@@ -4,13 +4,20 @@
         "dismiss": "Dismiss",
 
         "request": {
-            "oauth_token": "Something went wrong while trying to get your OAuth request token.",
             "user_details": "Something went wrong while trying to get your user details.",
             "logged_in": "Something went wrong while trying to check if you are logged in.",
             "current_iteration": "Something went wrong while trying to get the current iteration."
         }
     },
-    "ko": { }
+    "ko": {
+        "dismiss": null,
+
+        "request": {
+            "user_details": null,
+            "logged_in": null,
+            "current_iteration": null
+        }
+    }
 }
 </i18n>
 
@@ -43,7 +50,7 @@ import OAuthService from '@/services/OAuthService';
 import MapApiService from '@/services/MapApiService';
 import EventBus from '@/events/EventBus';
 import { MESSAGE_ERROR, MESSAGE_SUCCESS, MESSAGE_INFO } from '@/events/eventTypes';
-import { SET_LOGGED_IN_USER, SET_LOGIN_LINK, START_LOADING, STOP_LOADING, SET_CURRENT_ITERATION } from "@/store/mutationTypes";
+import { SET_LOGGED_IN_USER, START_LOADING, STOP_LOADING, SET_CURRENT_ITERATION } from "@/store/mutationTypes";
 
 export default {
     name: 'App',
@@ -84,24 +91,17 @@ export default {
         this.$store.dispatch(START_LOADING, 'isuserloggedin');
         OAuthService.isUserLoggedIn().then((res) => {
             if (!res.data || !res.data.isAuthenticated) {
-                this.$store.dispatch(START_LOADING, 'getrequesttoken');
-                OAuthService.getRequestToken().then((res) => {
-                    this.$store.dispatch(SET_LOGIN_LINK, res.data);
-                }).catch(() => {
-                    EventBus.$emit(MESSAGE_ERROR, this.$t('request.oauth_token'));
-                }).finally(() => {
-                    this.$store.dispatch(STOP_LOADING, 'getrequesttoken');
-                });
-            } else {
-                this.$store.dispatch(START_LOADING, 'getUserDetails');
-                OAuthService.getUserDetails().then((res) => {
-                    this.$store.dispatch(SET_LOGGED_IN_USER, res.data);
-                }).catch(() => {
-                    EventBus.$emit(MESSAGE_ERROR, this.$t('request.user_details'));
-                }).finally(() => {
-                    this.$store.dispatch(STOP_LOADING, 'getUserDetails');
-                });
+                return;
             }
+
+            this.$store.dispatch(START_LOADING, 'getUserDetails');
+            OAuthService.getUserDetails().then((res) => {
+                this.$store.dispatch(SET_LOGGED_IN_USER, res.data);
+            }).catch(() => {
+                EventBus.$emit(MESSAGE_ERROR, this.$t('request.user_details'));
+            }).finally(() => {
+                this.$store.dispatch(STOP_LOADING, 'getUserDetails');
+            });
         }).catch(() => {
             EventBus.$emit(MESSAGE_ERROR, this.$t('request.logged_in'));
         }).finally(() => {
