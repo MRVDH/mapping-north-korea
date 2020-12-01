@@ -43,7 +43,7 @@
             <v-row v-for="(event, index) in limitedRecentEvents" :key="index">
                 <v-col class="pt-0 px-4">
                     <div class="text-left" @click.stop="selectSector(event.sector)" style="cursor: pointer;">{{ event.description }}</div>
-                    <div class="text-right grey--text text--lighten-1 caption">{{ event.osmUserName }}
+                    <div class="text-right grey--text caption">{{ event.osmUserName }}
                         <a
                             :href="'https://www.openstreetmap.org/user/' + event.osmUserName"
                             target="_blank"

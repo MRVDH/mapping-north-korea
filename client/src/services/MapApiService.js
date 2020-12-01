@@ -38,5 +38,8 @@ export default {
     },
     splitSectorById (id) {
         return axios.get(host + '/api/sector/split/' + id);
+    },
+    getAllPointOfInterests () {
+        return axios.get(host + '/api/pointofinterest');
     }
 };

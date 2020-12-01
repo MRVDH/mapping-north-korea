@@ -38,14 +38,12 @@
             <v-row v-for="(poi, index) in limitedPointOfInterests" :key="index">
                 <v-col class="pt-0 pl-4" @click="selectPointOfInterest(poi._id)" style="cursor: pointer;">
                     {{ poi.title }}
-                </v-col>
-                <v-col class="pt-0 pr-4">
-                    <!-- Add Likes -->
+                    <div class="grey--text caption"><v-icon class="grey--text">mdi-thumb-up</v-icon> {{ poi.likes.length }}</div>
                 </v-col>
             </v-row>
             <v-row>
                 <v-col class="py-0 px-4">
-                    <a v-if="poiLimit && limitedPointOfInterests.length" @click="poiLimit = null;">{{ $t('show_more') }}...</a>
+                    <a v-if="poiLimit && limitedPointOfInterests.length && limitedPointOfInterests.length > 6" @click="poiLimit = null;">{{ $t('show_more') }}...</a>
                     <a v-if="!poiLimit && limitedPointOfInterests.length" @click="poiLimit = 6;">{{ $t('show_less') }}...</a>
                 </v-col>
             </v-row>
@@ -79,8 +77,13 @@ export default {
 };
 </script>
 
-<style>
+<style scoped>
 .v-skeleton-loader__list-item {
     padding: 0;
+}
+
+.v-icon {
+    font-size: 16px;
+    vertical-align: text-bottom;
 }
 </style>

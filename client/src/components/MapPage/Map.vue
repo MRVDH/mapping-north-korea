@@ -3,12 +3,14 @@
     "en": {
         "request": {
             "load_sectors": "Something went wrong while trying to load the sectors.",
+            "load_point_of_interests": "Something went wrong while trying to load the points of interest.",
             "load_sector_sets": "Something went wrong while trying to load the regions."
         }
     },
     "ko": {
         "request": {
             "load_sectors": null,
+            "load_point_of_interests": null,
             "load_sector_sets": null
         }
     }
@@ -24,7 +26,7 @@ import MapApiService from '@/services/MapApiService';
 import EventBus from '@/events/EventBus';
 import * as L from 'leaflet/src/Leaflet';
 import { MESSAGE_ERROR } from '@/events/eventTypes';
-import { START_LOADING, STOP_LOADING, SELECT_SECTOR, SET_SECTOR_SETS, SELECT_SECTOR_SET } from "@/store/mutationTypes";
+import { START_LOADING, STOP_LOADING, SELECT_SECTOR, SET_SECTOR_SETS, SELECT_SECTOR_SET, SET_POINT_OF_INTERESTS } from "@/store/mutationTypes";
 
 const defaultStyle = {
     weight: 1,
@@ -118,6 +120,8 @@ export default {
         if (this.currentIteration) {
             this.loadSectorSets();
         }
+
+        this.loadPointOfInterests();
     },
     methods: {
         initMap: function () {
@@ -313,10 +317,10 @@ export default {
 
             return geoJson;
         },
-        flyToSectorByPolygonCoordinates: function (coordinates) {
+        flyToSectorByPolygonCoordinates (coordinates) {
             this.map.flyTo([(coordinates[2][1] + coordinates[0][1]) / 2, (coordinates[1][0] + coordinates[0][0]) / 2], 13);
         },
-        setDarkMode(newThemeIsDark) {
+        setDarkMode (newThemeIsDark) {
             if (newThemeIsDark) {
                 this.map.removeLayer(this.lightTileLayer);
                 this.map.addLayer(this.darkTileLayer);
@@ -324,6 +328,16 @@ export default {
                 this.map.removeLayer(this.darkTileLayer);
                 this.map.addLayer(this.lightTileLayer);
             }
+        },
+        loadPointOfInterests () {
+            this.$store.dispatch(START_LOADING, 'loadPointOfInterests');
+            MapApiService.getAllPointOfInterests().then((res) => {
+                this.$store.dispatch(SET_POINT_OF_INTERESTS, res.data);
+            }).catch(() => {
+                EventBus.$emit(MESSAGE_ERROR, this.$t('request.load_point_of_interests'));
+            }).finally(() => {
+                this.$store.dispatch(STOP_LOADING, 'loadPointOfInterests');
+            });
         }
     }
 };

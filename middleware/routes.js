@@ -4,6 +4,7 @@ import sectorSetController from "../controllers/sectorSetController.js";
 import stateController from "../controllers/stateController.js";
 import eventController from "../controllers/eventController.js";
 import iterationController from "../controllers/iterationController.js";
+import pointOfInterestController from "../controllers/pointOfInterestController.js";
 
 export default {
     async setUpRouting(app) {
@@ -30,5 +31,7 @@ export default {
         app.get("/api/event/sectorid/:id", eventController.getBySectorId);
 
         app.get('/api/iteration/current', iterationController.getCurrentIteration);
+
+        app.get('/api/pointofinterest', pointOfInterestController.getAllPointOfInterests);
     }
 }
