@@ -18,7 +18,8 @@ export default new Vuex.Store({
         sectorSets: [],
         recentEvents: [],
         selectedSectorSet: null,
-        sectorEvents: []
+        sectorEvents: [],
+        pointOfInterests: []
     },
     mutations: {
         [mt.TOGGLE_DARK_MODE] (state) {
@@ -68,6 +69,9 @@ export default new Vuex.Store({
         },
         [mt.SET_SECTOR_EVENTS] (state, sectorEvents) {
             state.sectorEvents = sectorEvents;
+        },
+        [mt.SET_POINT_OF_INTERESTS] (state, pointOfInterests) {
+            state.pointOfInterests = pointOfInterests;
         }
     },
     actions: {
@@ -118,6 +122,9 @@ export default new Vuex.Store({
         },
         [mt.SET_SECTOR_EVENTS] ({ commit }, sectorEvents) {
             commit(mt.SET_SECTOR_EVENTS, sectorEvents);
+        },
+        [mt.SET_POINT_OF_INTERESTS] ({ commit }, pointOfInterests) {
+            commit(mt.SET_POINT_OF_INTERESTS, pointOfInterests);
         }
     },
     plugins: [new VuexPersistence({

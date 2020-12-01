@@ -10,8 +10,10 @@
             v-if="!selectedSectorSet"
             class="pt-0 pb-0">
             <CustomMenuRightRegions/>
-            <v-divider v-if="recentEvents.length > 0"></v-divider>
+            <v-divider></v-divider>
             <CustomMenuRightRecentEvents/>
+            <v-divider></v-divider>
+            <CustomMenuRightPointOfInterests/>
         </v-list>
         <CustomMenuRightButtonBack v-if="selectedSectorSet"/>
         <CustomMenuRightRegion v-if="selectedSectorSet && !selectedSector"/>
@@ -25,6 +27,7 @@ import CustomMenuRightSector from './MenuRightSector';
 import CustomMenuRightRecentEvents from './MenuRightRecentEvents';
 import CustomMenuRightButtonBack from './MenuRightButtonBack';
 import CustomMenuRightRegion from './MenuRightRegion';
+import CustomMenuRightPointOfInterests from './MenuRightPointOfInterests';
 
 import { SET_DRAWER_RIGHT } from "@/store/mutationTypes";
 
@@ -60,7 +63,8 @@ export default {
         CustomMenuRightSector,
         CustomMenuRightRecentEvents,
         CustomMenuRightButtonBack,
-        CustomMenuRightRegion
+        CustomMenuRightRegion,
+        CustomMenuRightPointOfInterests
     }
 };
 </script>

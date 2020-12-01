@@ -65,7 +65,7 @@
                 </v-col>
             </v-row>
             <v-row>
-                <v-col class="pb-0 px-4">
+                <v-col class="py-0 px-4">
                     <a v-if="sectorSetLimit && limitedSectorSets.length" @click="sectorSetLimit = null;">{{ $t('show_more') }}...</a>
                     <a v-if="!sectorSetLimit && limitedSectorSets.length" @click="sectorSetLimit = 6;">{{ $t('show_less') }}...</a>
                 </v-col>
