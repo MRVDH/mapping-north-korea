@@ -126,7 +126,7 @@ export default {
         this.loadPointOfInterests();
     },
     methods: {
-        initMap: function () {
+        initMap () {
             this.map = L.map('map').on('click', this.clickMapEvent).setView([ 39.686, 127.500 ], 7);
 
             this.lightTileLayer = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
@@ -215,11 +215,11 @@ export default {
                 this.$router.push({ name: 'MapPageSectorSet', params: { sectorSetId: selectedSectorSet._id } });
             }
 
-            this.map.flyToBounds(layer.getBounds());
-            this.map.removeLayer(this.sectorSetLayer);
-            this.loadSectorsBySectorSetId(selectedSectorSet._id);
+            let bounds = layer.getBounds();
+
+            this.loadSectorsBySectorSetId(selectedSectorSet._id, bounds);
         },
-        loadSectorsBySectorSetId (sectorSetId) {
+        loadSectorsBySectorSetId (sectorSetId, bounds) {
             this.$store.dispatch(START_LOADING, 'loadingSectors');
             MapApiService.getSectorsBySectorSetId(sectorSetId).then((res) => {
                 this.sectors = this.sectorsToGeoJson(res.data);
@@ -237,6 +237,9 @@ export default {
                     L.DomEvent.stopPropagation(event);
                     return false;
                 }).addTo(this.map);
+
+                this.map.removeLayer(this.sectorSetLayer);
+                this.map.flyToBounds(bounds);
                 this.poiLayer.bringToFront();
 
                 if (this.$route.params.sectorId) {
