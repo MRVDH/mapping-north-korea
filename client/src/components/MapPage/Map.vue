@@ -143,10 +143,6 @@ export default {
             } else {
                 this.lightTileLayer.addTo(this.map);
             }
-
-            L.easyButton(`<i class="material-icons">eye</i>`, () => {
-                // click
-            }).addTo(this.map);
         },
         loadSectorSets () {
             this.$store.dispatch(START_LOADING, 'loadingsectors');
