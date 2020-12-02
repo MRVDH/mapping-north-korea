@@ -24,7 +24,7 @@
 <script>
 import MapApiService from '@/services/MapApiService';
 import EventBus from '@/events/EventBus';
-import * as L from 'leaflet/src/Leaflet';
+import * as L from 'leaflet';
 import { MESSAGE_ERROR } from '@/events/eventTypes';
 import { START_LOADING, STOP_LOADING, SELECT_SECTOR, SET_SECTOR_SETS, SELECT_SECTOR_SET, SET_POINT_OF_INTERESTS } from "@/store/mutationTypes";
 
@@ -43,7 +43,8 @@ export default {
             selectedSector: null,
             lightTileLayer: null,
             darkTileLayer: null,
-            sectorSetLayer: null
+            sectorSetLayer: null,
+            poiLayer: null
         };
     },
     computed: {
@@ -101,6 +102,7 @@ export default {
             this.$router.push({ name: 'MapPage' });
             this.map.removeLayer(this.sectorLayer);
             this.map.addLayer(this.sectorSetLayer);
+            this.poiLayer.bringToFront();
         }
     },
     mounted () {
@@ -141,6 +143,10 @@ export default {
             } else {
                 this.lightTileLayer.addTo(this.map);
             }
+
+            L.easyButton(`<i class="material-icons">eye</i>`, () => {
+                // click
+            }).addTo(this.map);
         },
         loadSectorSets () {
             this.$store.dispatch(START_LOADING, 'loadingsectors');
@@ -163,6 +169,7 @@ export default {
                     L.DomEvent.stopPropagation(event);
                     return false;
                 }).addTo(this.map);
+                this.poiLayer.bringToFront();
 
                 if (this.$route.params.sectorSetId) {
                     this.selectSectorSet(this.getSectorSetLayerById(this.$route.params.sectorSetId));
@@ -234,6 +241,7 @@ export default {
                     L.DomEvent.stopPropagation(event);
                     return false;
                 }).addTo(this.map);
+                this.poiLayer.bringToFront();
 
                 if (this.$route.params.sectorId) {
                     this.setSectorSelected(this.getSectorLayerById(this.$route.params.sectorId), true);
@@ -289,6 +297,7 @@ export default {
                 features: [],
                 type: 'FeatureCollection'
             };
+
             for (var sector of sectors) {
                 geoJson.features.push({
                     type: 'Feature',
@@ -303,6 +312,7 @@ export default {
                     }
                 });
             }
+
             return geoJson;
         },
         sectorSetsToGeoJson (sectorSets) {
@@ -313,6 +323,34 @@ export default {
 
             for (var sectorSet of sectorSets) {
                 geoJson.features.push(sectorSet.feature);
+            }
+
+            return geoJson;
+        },
+        pointOfInterestsToGeoJson (pointOfInterests) {
+            var geoJson = {
+                features: [],
+                type: 'FeatureCollection'
+            };
+            
+            for (let poi of pointOfInterests) {
+                geoJson.features.push({
+                    type: 'Feature',
+                    properties: {
+                        _id: poi._id,
+                        title: poi.title,
+                        description: poi.description,
+                        longitude: poi.longitude,
+                        latitude: poi.latitude,
+                        time: poi.time,
+                        categories: poi.categories,
+                        likes: poi.likes
+                    },
+                    geometry: {
+                        type: 'Point',
+                        coordinates: [ poi.latitude, poi.longitude ]
+                    }
+                });
             }
 
             return geoJson;
@@ -332,12 +370,31 @@ export default {
         loadPointOfInterests () {
             this.$store.dispatch(START_LOADING, 'loadPointOfInterests');
             MapApiService.getAllPointOfInterests().then((res) => {
+                let geoJsonPois = this.pointOfInterestsToGeoJson(res.data);
                 this.$store.dispatch(SET_POINT_OF_INTERESTS, res.data);
+
+                this.poiLayer = L.geoJSON(geoJsonPois, {
+                    pointToLayer (feature, latlng) {
+                        return L.circleMarker(latlng, {
+                            radius: 6,
+                            fillColor: "#728BD4",
+                            color: "white",
+                            weight: 1,
+                            fillOpacity: 1
+                        });
+                    }
+                }).on('click', this.clickPoiEvent).on('dblclick', function (event) {
+                    L.DomEvent.stopPropagation(event);
+                    return false;
+                }).addTo(this.map);
             }).catch(() => {
                 EventBus.$emit(MESSAGE_ERROR, this.$t('request.load_point_of_interests'));
             }).finally(() => {
                 this.$store.dispatch(STOP_LOADING, 'loadPointOfInterests');
             });
+        },
+        clickPoiEvent () {
+
         }
     }
 };
