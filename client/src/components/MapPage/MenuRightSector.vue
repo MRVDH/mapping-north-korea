@@ -1,20 +1,18 @@
 <template>
-    <v-list
-        class="pt-0 pb-0">
-        <CustomMenuRightButtonState/>
-        <CustomMenuRightSectorHelp/>
-        <v-container
-            class="pa-4 pt-0">
+    <v-list class="pt-0 pb-0">
+        <CustomMenuRightButtonState />
+        <CustomMenuRightSectorHelp />
+        <v-container class="pa-4 pt-0">
             <v-layout>
                 <v-flex>
-                    <CustomMenuRightButtonMap/>
-                    <CustomMenuRightButtonView/>
-                    <CustomMenuRightAdminButtons/>
+                    <CustomMenuRightButtonMap />
+                    <CustomMenuRightButtonView />
+                    <CustomMenuRightAdminButtons />
                 </v-flex>
             </v-layout>
         </v-container>
-        <v-divider></v-divider>
-        <CustomMenuRightSectorEvents/>
+        <v-divider />
+        <CustomMenuRightSectorEvents />
     </v-list>
 </template>
 
@@ -28,9 +26,6 @@ import CustomMenuRightButtonState from './MenuRightButtonState';
 
 export default {
     name: 'MenuRightSector',
-    data () {
-        return { };
-    },
     components: {
         CustomMenuRightSectorEvents,
         CustomMenuRightSectorHelp,

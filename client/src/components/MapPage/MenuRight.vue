@@ -5,19 +5,21 @@
         clipped
         mobile-breakpoint="0"
         app
-        width="300">
+        width="300"
+        >
         <v-list
             v-if="!selectedSectorSet"
-            class="pt-0 pb-0">
-            <CustomMenuRightRegions/>
-            <v-divider></v-divider>
-            <CustomMenuRightRecentEvents/>
-            <v-divider></v-divider>
-            <CustomMenuRightPointOfInterests/>
+            class="pt-0 pb-0"
+            >
+            <CustomMenuRightRegions />
+            <v-divider />
+            <CustomMenuRightRecentEvents />
+            <v-divider />
+            <CustomMenuRightPointOfInterests />
         </v-list>
-        <CustomMenuRightButtonBack v-if="selectedSectorSet"/>
-        <CustomMenuRightRegion v-if="selectedSectorSet && !selectedSector"/>
-        <CustomMenuRightSector v-if="selectedSector"/>
+        <CustomMenuRightButtonBack v-if="selectedSectorSet" />
+        <CustomMenuRightRegion v-if="selectedSectorSet && !selectedSector" />
+        <CustomMenuRightSector v-if="selectedSector" />
     </v-navigation-drawer>
 </template>
 
@@ -33,8 +35,13 @@ import { SET_DRAWER_RIGHT } from "@/store/mutationTypes";
 
 export default {
     name: 'MenuRight',
-    data () {
-        return { };
+    components: {
+        CustomMenuRightRegions,
+        CustomMenuRightSector,
+        CustomMenuRightRecentEvents,
+        CustomMenuRightButtonBack,
+        CustomMenuRightRegion,
+        CustomMenuRightPointOfInterests
     },
     computed: {
         drawerRight: {
@@ -57,14 +64,6 @@ export default {
     },
     mounted () {
         this.$store.dispatch(SET_DRAWER_RIGHT, !this.$vuetify.breakpoint.xs);
-    },
-    components: {
-        CustomMenuRightRegions,
-        CustomMenuRightSector,
-        CustomMenuRightRecentEvents,
-        CustomMenuRightButtonBack,
-        CustomMenuRightRegion,
-        CustomMenuRightPointOfInterests
     }
 };
 </script>

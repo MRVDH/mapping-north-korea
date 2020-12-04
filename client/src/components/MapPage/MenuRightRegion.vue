@@ -14,19 +14,33 @@
 </i18n>
 
 <template>
-    <v-container
-        class="py-0 px-4">
+    <v-container class="py-0 px-4">
         <v-row>
             <v-col cols="8">{{ $t('name') }}</v-col>
-            <v-col cols="4" class="text-right">{{ selectedSectorSet.title }}</v-col>
+            <v-col
+                cols="4"
+                class="text-right"
+                >
+                {{ selectedSectorSet.title }}
+            </v-col>
         </v-row>
         <v-row>
             <v-col cols="8">{{ $t('completed') }}</v-col>
-            <v-col cols="4" class="text-right">{{ selectedSectorSet.completedCount }}</v-col>
+            <v-col
+                cols="4"
+                class="text-right"
+                >
+                {{ selectedSectorSet.completedCount }}
+            </v-col>
         </v-row>
         <v-row>
             <v-col cols="8">{{ $t('total') }}</v-col>
-            <v-col cols="4" class="text-right">{{ selectedSectorSet.totalCount }}</v-col>
+            <v-col
+                cols="4"
+                class="text-right"
+                >
+                {{ selectedSectorSet.totalCount }}
+            </v-col>
         </v-row>
         <v-row>
             <v-col>

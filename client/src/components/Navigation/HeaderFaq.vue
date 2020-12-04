@@ -87,10 +87,16 @@
 
 <template>
     <div>
-        <v-btn icon @click.stop="infoDialog = true">
+        <v-btn
+            icon
+            @click.stop="infoDialog = true"
+            >
             <v-icon>help_outline</v-icon>
         </v-btn>
-        <v-dialog v-model="infoDialog" max-width="700px">
+        <v-dialog
+            v-model="infoDialog"
+            max-width="700px"
+            >
             <v-card id="info-dialog">
                 <v-card-title>
                     <h1>{{ $t('faq.head') }}</h1>
@@ -101,35 +107,76 @@
                     <p>{{ $t('faq.q7.answer') }}</p>
 
                     <h3>{{ $t('faq.q1.question') }}</h3>
-                    <i18n path="faq.q1.answer" tag="p">
-                        <a href="/about" @click.stop="infoDialog = false" target="_blank">{{ $t('faq.q1.link') }}</a>
+                    <i18n
+                        path="faq.q1.answer"
+                        tag="p"
+                        >
+                        <a
+                            href="/about"
+                            target="_blank"
+                            @click="infoDialog = false"
+                            >
+                            {{ $t('faq.q1.link') }}
+                        </a>
                     </i18n>
 
                     <h3>{{ $t('faq.q2.question') }}</h3>
-                    <i18n path="faq.q2.answer" tag="p">
-                        <a href="https://www.openstreetmap.org/user/new" @click.stop="infoDialog = false" target="_blank">{{ $t('faq.q2.link') }}</a>
+                    <i18n
+                        path="faq.q2.answer" 
+                        tag="p"
+                        >
+                        <a
+                            href="https://www.openstreetmap.org/user/new"
+                            target="_blank"
+                            @click="infoDialog = false"
+                            >
+                            {{ $t('faq.q2.link') }}
+                        </a>
                     </i18n>
 
                     <h3>{{ $t('faq.q3.question') }}</h3>
                     <p>{{ $t('faq.q3.answer') }}</p>
 
                     <h3>{{ $t('faq.q4.question') }}</h3>
-                    <i18n path="faq.q4.answer" tag="p">
-                        <a href="mailto:info@maartenvandenhoven.com" @click.stop="infoDialog = false" target="_blank">{{ $t('faq.q4.link') }}</a>
+                    <i18n
+                        path="faq.q4.answer"
+                        tag="p"
+                        >
+                        <a
+                            href="mailto:info@maartenvandenhoven.com"
+                            target="_blank"
+                            @click="infoDialog = false"
+                            >
+                            {{ $t('faq.q4.link') }}
+                        </a>
                     </i18n>
 
                     <h3>{{ $t('faq.q5.question') }}</h3>
-                    <i18n path="faq.q5.answer" tag="p">
-                        <a href="https://github.com/MRVDH/mapping-north-korea" @click.stop="infoDialog = false" target="_blank">{{ $t('faq.q5.link') }}</a>
+                    <i18n
+                        path="faq.q5.answer"
+                        tag="p"
+                        >
+                        <a
+                            href="https://github.com/MRVDH/mapping-north-korea"
+                            target="_blank"
+                            @click="infoDialog = false"
+                            >
+                            {{ $t('faq.q5.link') }}
+                        </a>
                     </i18n>
 
                     <h3>{{ $t('faq.q6.question') }}</h3>
                     <p>{{ $t('faq.q6.answer') }}</p>
                 </v-card-text>
-                <v-divider></v-divider>
+                <v-divider />
                 <v-card-actions>
-                    <v-spacer></v-spacer>
-                    <v-btn outlined @click.stop="infoDialog = false">{{ $t('faq.confirm') }}</v-btn>
+                    <v-spacer />
+                    <v-btn
+                        outlined
+                        @click="infoDialog = false"
+                        >
+                        {{ $t('faq.confirm') }}
+                    </v-btn>
                 </v-card-actions>
             </v-card>
         </v-dialog>

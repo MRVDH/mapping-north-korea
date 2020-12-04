@@ -19,23 +19,32 @@
 
 <template>
     <v-menu
+        v-model="mappingMenuOpen"
         offset-y
-        v-model="mappingMenuOpen">
+        >
         <template v-slot:activator="{ on }">
             <v-btn
                 color="success"
-                v-on="on"
                 class="mb-1 ml-0 mt-0 mr-0"
                 :disabled="!loggedInUser || selectedSector.properties.state.title === 'Completed'"
+                v-on="on"
                 >
                 {{ $t('map_button') }}
             </v-btn>
         </template>
         <v-list>
-            <v-list-item :href="idUrl" target="_blank" @click="updateState(); mappingMenuOpen = false;">
+            <v-list-item
+                :href="idUrl"
+                target="_blank"
+                @click="updateState(); mappingMenuOpen = false;"
+                >
                 <v-list-item-title>iD</v-list-item-title>
             </v-list-item>
-            <v-list-item :href="rapidUrl" target="_blank" @click="updateState(); mappingMenuOpen = false;">
+            <v-list-item
+                :href="rapidUrl"
+                target="_blank"
+                @click="updateState(); mappingMenuOpen = false;"
+                >
                 <v-list-item-title>RapiD</v-list-item-title>
             </v-list-item>
             <v-list-item @click.stop="mapSectorInJOSM(); updateState(); mappingMenuOpen = false;">

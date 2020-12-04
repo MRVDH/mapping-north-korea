@@ -26,33 +26,50 @@
 <template>
     <div>
         <v-container
+            v-if="loggedInUser"
             text-center
             grid-list-xs
             style="padding: 0 16px;"
-            v-if="loggedInUser">
-            <v-layout class="row" wrap>
+            >
+            <v-layout
+                class="row"
+                wrap
+                >
                 <v-flex xs12>
                     <v-textarea
                         v-model="newComment"
                         append-outer-icon="send"
-                        @click:append-outer="postComment();"
                         :counter="500"
                         :rules="[v => v.length <= 500 || $t('comment_less_than')]"
                         :label="$t('comment')"
-                    ></v-textarea>
+                        @click:append-outer="postComment();"
+                        />
                 </v-flex>
             </v-layout>
         </v-container>
-        <v-container grid-list-md text-center style="padding: 16px;">
-            <v-layout class="row" v-for="(event, index) in sectorEvents" :key="index">
+        <v-container
+            grid-list-md
+            text-center
+            style="padding: 16px;"
+            >
+            <v-layout
+                v-for="(event, index) in sectorEvents"
+                :key="index"
+                class="row"
+                >
                 <v-flex xs12>
                     <div class="text-left">{{ event.description }}</div>
-                    <div class="text-right grey--text caption">{{ event.osmUserName }}
+                    <div class="text-right grey--text caption">
+                        {{ event.osmUserName }}
                         <a
                             :href="'https://www.openstreetmap.org/user/' + event.osmUserName"
                             target="_blank"
-                            style="text-decoration: none;">
-                            <v-icon small style="font-size: 10px; vertical-align: initial;">launch</v-icon>
+                            style="text-decoration: none;"
+                            >
+                            <v-icon
+                                small
+                                style="font-size: 10px; vertical-align: initial;"
+                                >launch</v-icon>
                         </a> - <span :title="new Date(event.time)">{{ calculateDateOutput(new Date(event.time)) }}</span>
                     </div>
                 </v-flex>

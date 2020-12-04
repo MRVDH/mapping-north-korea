@@ -11,8 +11,7 @@
 
 <template>
     <v-list class="pt-0 pb-0">
-        <v-list-item
-            @click="backToRegions()">
+        <v-list-item @click="backToRegions()">
             <v-list-item-icon>
                 <v-icon>mdi-arrow-left</v-icon>
             </v-list-item-icon>

@@ -22,20 +22,25 @@
 </i18n>
 
 <template>
-    <v-app id="app" v-cloak>
-        <CustomMenuLeft/>
-        <CustomHeader/>
-        <router-view/>
-        <CustomFooter/>
+    <v-app
+        v-cloak
+        id="app"
+        >
+        <CustomMenuLeft />
+        <CustomHeader />
+        <router-view />
+        <CustomFooter />
         <v-snackbar
-            left
             v-model="snackbar"
+            left
             :color="snackbarOptions.color"
-            :timeout="snackbarOptions.timeout">
+            :timeout="snackbarOptions.timeout"
+            >
             {{ snackbarOptions.text }}
             <v-btn
                 text
-                @click="snackbar = false">
+                @click="snackbar = false"
+                >
                 {{ $t('dismiss') }}
             </v-btn>
         </v-snackbar>
@@ -44,8 +49,8 @@
 
 <script>
 import CustomMenuLeft from '@/components/Navigation/MenuLeft';
-import CustomHeader from '@/components/Navigation/Header';
-import CustomFooter from '@/components/Navigation/Footer';
+import CustomHeader from '@/components/Navigation/CustomHeader';
+import CustomFooter from '@/components/Navigation/CustomFooter';
 import OAuthService from '@/services/OAuthService';
 import MapApiService from '@/services/MapApiService';
 import EventBus from '@/events/EventBus';
@@ -54,6 +59,11 @@ import { SET_LOGGED_IN_USER, START_LOADING, STOP_LOADING, SET_CURRENT_ITERATION 
 
 export default {
     name: 'App',
+    components: {
+        CustomMenuLeft,
+        CustomHeader,
+        CustomFooter
+    },
     data: () => {
         return {
             snackbar: false,
@@ -134,11 +144,6 @@ export default {
             this.snackbarOptions.color = 'error';
             this.snackbarOptions.text = text;
         });
-    },
-    components: {
-        CustomMenuLeft,
-        CustomHeader,
-        CustomFooter
     }
 };
 </script>

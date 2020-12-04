@@ -27,21 +27,25 @@
 
 <template>
     <div>
-        <br/>
+        <br>
         <v-btn
             v-if="adminLoggedIn"
             class="ma-0"
             color="warning"
-            @click.stop="splitSector()"
             :disabled="!loggedInUser"
-            >{{ $t('button_split') }}</v-btn>
+            @click="splitSector()"
+            >
+            {{ $t('button_split') }}
+        </v-btn>
         <v-btn
             v-if="adminLoggedIn"
             class="mb-0 ml-1 mt-0 mr-0"
             color="error"
-            @click.stop="deleteSector()"
             :disabled="!loggedInUser"
-            >{{ $t('button_delete') }}</v-btn>
+            @click="deleteSector()"
+            >
+            {{ $t('button_delete') }}
+        </v-btn>
     </div>
 </template>
 

@@ -28,14 +28,15 @@
         </v-list-item-content>
         <v-list-item-action>
             <v-menu
+                v-model="stateEditOpen"
                 offset-y
-                v-model="stateEditOpen">
+                >
                 <template v-slot:activator="{ on }">
                     <v-btn
                         outlined
-                        v-on="on"
                         class="mb-1 ml-0 mt-0 mr-0"
                         :disabled="!loggedInUser"
+                        v-on="on"
                         >
                         {{ selectedSector.properties.state.title }}
                     </v-btn>

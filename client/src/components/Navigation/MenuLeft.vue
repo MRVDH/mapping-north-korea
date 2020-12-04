@@ -33,29 +33,45 @@
 
 <template>
     <v-navigation-drawer
+        v-model="drawerLeft"
         app
         temporary
         clipped
-        v-model="drawerLeft"
-        width="300">
+        width="300"
+        >
         <v-toolbar
             flat
-            class="transparent">
+            class="transparent"
+            >
             <v-list class="pa-0">
-                <v-list-item class="pa-0" v-if="loggedInUser" :href="'https://www.openstreetmap.org/user/' + loggedInUser.name" target="_blank">
+                <v-list-item
+                    v-if="loggedInUser"
+                    class="pa-0"
+                    :href="'https://www.openstreetmap.org/user/' + loggedInUser.name"
+                    target="_blank"
+                    >
                     <v-list-item-content>
                         <v-list-item-title id="logged-in-user-name">{{ loggedInUser.name }}</v-list-item-title>
                     </v-list-item-content>
                 </v-list-item>
-                <v-list-item class="pa-0" v-else>
+                <v-list-item
+                    v-else
+                    class="pa-0"
+                    >
                     <v-list-item-action>
-                        <v-btn color="info" :href="loginLink" :disabled="!loginLink">{{ $t('button.login') }}</v-btn>
+                        <v-btn
+                            color="info"
+                            :href="loginLink"
+                            :disabled="!loginLink"
+                            >
+                            {{ $t('button.login') }}
+                        </v-btn>
                     </v-list-item-action>
                 </v-list-item>
             </v-list>
         </v-toolbar>
         <v-list>
-            <v-divider></v-divider>
+            <v-divider />
             <v-list-item :to="{ path: '/map' }">
                 <v-list-item-action>
                     <v-icon>dashboard</v-icon>
@@ -82,7 +98,7 @@
             </v-list-item>
         </v-list>
         <v-list v-if="currentIteration">
-            <v-divider></v-divider>
+            <v-divider />
             <v-list-item>
                 <v-list-item-content>
                     <v-list-item-title>{{ $t('iteration', { iterationTitle: currentIteration.title }) }}</v-list-item-title>
@@ -90,17 +106,31 @@
             </v-list-item>
             <v-list-item>
                 <v-list-item-content>
-                    <v-progress-linear v-if="sectorTotalCount > 0" v-model="totalPercentageDone"></v-progress-linear>
+                    <v-progress-linear
+                        v-if="sectorTotalCount > 0"
+                        v-model="totalPercentageDone"
+                        />
                 </v-list-item-content>
                 <v-list-item-action style="padding-left: 10px;">
                     <span>{{ sectorDoneCount }} / {{ sectorTotalCount }}</span>
                 </v-list-item-action>
             </v-list-item>
         </v-list>
-        <a class="pl-4" href="https://www.buymeacoffee.com/MRVDH" target="_blank">
+        <a
+            class="pl-4"
+            href="https://www.buymeacoffee.com/MRVDH"
+            target="_blank"
+            >
             <img src="https://img.buymeacoffee.com/button-api/?text=Buy me a coffee&emoji=&slug=MRVDH&button_colour=5F7FFF&font_colour=ffffff&font_family=Cookie&outline_colour=000000&coffee_colour=FFDD00">
         </a>
-        <iframe src="https://github.com/sponsors/MRVDH/button" title="Sponsor MRVDH" class="ml-4 mt-4" height="35" width="116" style="border: 0;"></iframe>
+        <iframe
+            src="https://github.com/sponsors/MRVDH/button"
+            title="Sponsor MRVDH"
+            class="ml-4 mt-4"
+            height="35"
+            width="116"
+            style="border: 0;"
+            />
     </v-navigation-drawer>
 </template>
 

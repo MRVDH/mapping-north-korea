@@ -18,17 +18,20 @@
 <template>
     <v-container
         text-center
-        class="pa-4 pt-0">
+        class="pa-4 pt-0"
+        >
         <v-layout>
             <v-flex>
                 <span
+                    v-if="!loggedInUser"
                     class="orange--text"
-                    v-if="!loggedInUser">
+                    >
                     {{ $t('help.login') }}
                 </span>
                 <span
+                    v-if="loggedInUser && selectedSector.properties.state.title === 'Completed'"
                     class="orange--text"
-                    v-if="loggedInUser && selectedSector.properties.state.title === 'Completed'">
+                    >
                     {{ $t('help.change_back') }}
                 </span>
             </v-flex>

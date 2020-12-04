@@ -22,15 +22,24 @@
                 <v-col class="pt-0 pb-0">
                     <span class="font-weight-bold">{{ $t('regions') }}</span>
                 </v-col>
-                <v-col v-if="limitedSectorSets.length" class="pt-0 pb-0" id="regions-switch">
+                <v-col
+                    v-if="limitedSectorSets.length"
+                    id="regions-switch"
+                    class="pt-0 pb-0"
+                    >
                     <v-tooltip bottom>
                         <template v-slot:activator="{ on, attrs }">
-                            <div v-bind="attrs" v-on="on" style="height: 24px;">
+                            <div
+                                v-bind="attrs"
+                                style="height: 24px;"
+                                v-on="on"
+                                >
                                 <v-switch
                                     v-model="hideCompletedRegions"
                                     dense
                                     hide-details
-                                    class="mt-0"></v-switch>
+                                    class="mt-0"
+                                    />
                             </div>
                         </template>
                         <span>{{ $t('hide_completed_regions') }}</span>
@@ -40,19 +49,26 @@
         </v-container>
         <v-container class="pt-4">
             <v-row v-if="!limitedSectorSets.length">
-                <v-col class="py-0 pl-4"><v-skeleton-loader type="list-item"></v-skeleton-loader></v-col>
-                <v-col class="py-0 pr-4"><v-skeleton-loader type="list-item"></v-skeleton-loader></v-col>
+                <v-col class="py-0 pl-4"><v-skeleton-loader type="list-item" /></v-col>
+                <v-col class="py-0 pr-4"><v-skeleton-loader type="list-item" /></v-col>
             </v-row>
             <v-row v-if="!limitedSectorSets.length">
-                <v-col class="py-0 pl-4"><v-skeleton-loader type="list-item"></v-skeleton-loader></v-col>
-                <v-col class="py-0 pr-4"><v-skeleton-loader type="list-item"></v-skeleton-loader></v-col>
+                <v-col class="py-0 pl-4"><v-skeleton-loader type="list-item" /></v-col>
+                <v-col class="py-0 pr-4"><v-skeleton-loader type="list-item" /></v-col>
             </v-row>
             <v-row v-if="!limitedSectorSets.length">
-                <v-col class="py-0 pl-4"><v-skeleton-loader type="list-item"></v-skeleton-loader></v-col>
-                <v-col class="py-0 pr-4"><v-skeleton-loader type="list-item"></v-skeleton-loader></v-col>
+                <v-col class="py-0 pl-4"><v-skeleton-loader type="list-item" /></v-col>
+                <v-col class="py-0 pr-4"><v-skeleton-loader type="list-item" /></v-col>
             </v-row>
-            <v-row v-for="(sectorSet, index) in limitedSectorSets" :key="index">
-                <v-col class="pt-0 pl-4" @click.stop="selectSectorSetById(sectorSet._id)" style="cursor: pointer;">
+            <v-row
+                v-for="(sectorSet, index) in limitedSectorSets"
+                :key="index"
+                >
+                <v-col
+                    class="pt-0 pl-4"
+                    style="cursor: pointer;"
+                    @click="selectSectorSetById(sectorSet._id)"
+                    >
                     {{ sectorSet.title }}
                 </v-col>
                 <v-col class="pt-0 pr-4">
@@ -66,8 +82,14 @@
             </v-row>
             <v-row>
                 <v-col class="py-0 px-4">
-                    <a v-if="sectorSetLimit && limitedSectorSets.length" @click="sectorSetLimit = null;">{{ $t('show_more') }}...</a>
-                    <a v-if="!sectorSetLimit && limitedSectorSets.length" @click="sectorSetLimit = 6;">{{ $t('show_less') }}...</a>
+                    <a
+                        v-if="sectorSetLimit && limitedSectorSets.length"
+                        @click="sectorSetLimit = null;"
+                        >{{ $t('show_more') }}...</a>
+                    <a
+                        v-if="!sectorSetLimit && limitedSectorSets.length"
+                        @click="sectorSetLimit = 6;"
+                        >{{ $t('show_less') }}...</a>
                 </v-col>
             </v-row>
         </v-container>
