@@ -18,10 +18,13 @@
 </i18n>
 
 <template>
-    <div id="map"></div>
+    <div id="map">
+        <CustomMapPointOfInterestControl/>
+    </div>
 </template>
 
 <script>
+import CustomMapPointOfInterestControl from '@/components/MapPage/MapPointOfInterestControl';
 import MapApiService from '@/services/MapApiService';
 import EventBus from '@/events/EventBus';
 import * as L from 'leaflet';
@@ -46,6 +49,9 @@ export default {
             sectorSetLayer: null,
             poiLayer: null
         };
+    },
+    components: {
+        CustomMapPointOfInterestControl
     },
     computed: {
         darkMode () {
