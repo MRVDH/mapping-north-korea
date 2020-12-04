@@ -15,3 +15,4 @@ export const ADD_TO_RECENT_EVENTS = 'addToRecentEvents';
 export const SELECT_SECTOR_SET = 'selectSectorSet';
 export const SET_SECTOR_EVENTS = 'setSectorEvents';
 export const SET_POINT_OF_INTERESTS = 'setPointOfInterests';
+export const SET_POIS_VISIBLE = 'setPoisVisible';
