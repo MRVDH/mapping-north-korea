@@ -26,6 +26,7 @@
 <script>
 import CustomMapPointOfInterestControl from '@/components/MapPage/MapPointOfInterestControl';
 import MapApiService from '@/services/MapApiService';
+//import MapService from '@/services/MapService';
 import EventBus from '@/events/EventBus';
 import * as L from 'leaflet';
 import { MESSAGE_ERROR } from '@/events/eventTypes';
@@ -149,6 +150,8 @@ export default {
             } else {
                 this.lightTileLayer.addTo(this.map);
             }
+
+
         },
         loadSectorSets () {
             this.$store.dispatch(START_LOADING, 'loadingsectors');
