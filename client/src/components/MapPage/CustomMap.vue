@@ -19,7 +19,7 @@
 
 <template>
     <div id="map">
-        <CustomMapPointOfInterestControl/>
+        <CustomMapPointOfInterestControl />
     </div>
 </template>
 
@@ -37,7 +37,10 @@ const defaultStyle = {
 };
 
 export default {
-    name: 'Map',
+    name: 'CustomMap',
+    components: {
+        CustomMapPointOfInterestControl
+    },
     data () {
         return {
             map: null,
@@ -49,9 +52,6 @@ export default {
             sectorSetLayer: null,
             poiLayer: null
         };
-    },
-    components: {
-        CustomMapPointOfInterestControl
     },
     computed: {
         darkMode () {

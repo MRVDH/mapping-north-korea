@@ -1,28 +1,32 @@
 <template>
     <v-main>
-        <v-container id="content-container" fluid fill-height>
+        <v-container
+            id="content-container"
+            fluid
+            fill-height
+            >
             <v-layout>
                 <v-flex>
-                    <CustomMap/>
+                    <CustomMap />
                 </v-flex>
             </v-layout>
         </v-container>
-        <CustomMenuRight/>
+        <CustomMenuRight />
     </v-main>
 </template>
 
 <script>
-import CustomMap from '@/components/MapPage/Map';
+import CustomMap from '@/components/MapPage/CustomMap';
 import CustomMenuRight from '@/components/MapPage/MenuRight';
 
 export default {
     name: 'MapPage',
-    data () {
-        return { };
-    },
     components: {
         CustomMap,
         CustomMenuRight
+    },
+    data () {
+        return { };
     }
 };
 </script>
