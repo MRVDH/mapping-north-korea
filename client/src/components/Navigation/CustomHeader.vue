@@ -2,8 +2,6 @@
     <v-app-bar
         app
         clipped-right
-        extended
-        extension-height="7"
         >
         <v-app-bar-nav-icon @click="toggleDrawerLeft()" />
         <v-toolbar-title>
@@ -57,7 +55,8 @@
         <v-progress-linear
             v-if="processesWorking.length > 0"
             :indeterminate="true"
-            class="ma-0"
+            absolute
+            bottom
             />
     </v-app-bar>
 </template>
