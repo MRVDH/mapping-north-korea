@@ -10,6 +10,19 @@ import { START_LOADING, STOP_LOADING, SET_SECTOR_SETS, SELECT_SECTOR, SELECT_SEC
 
 var instance;
 
+const LAYER = {
+    SECTOR_SET_LAYER: 'sector-set-layer',
+    SECTOR_LAYER: 'sector-layer',
+    SELECTED_SECTOR_LAYER: 'selected-sector-layer',
+    SECTOR_SET_SOURCE: 'sector-set-source',
+    SECTOR_SOURCE: 'sector-source'
+};
+
+const MAP_STYLE = {
+    LIGHT: "mapbox://styles/mapbox/streets-v11",
+    DARK: "mapbox://styles/mapbox/dark-v10"
+}
+
 export default {
     mapStyle: {
         LIGHT: "mapbox://styles/mapbox/streets-v11",
@@ -26,7 +39,7 @@ export default {
 
         this.map = new mapboxgl.Map({
             container: 'map',
-            style: darkMode ? this.mapStyle.DARK : this.mapStyle.LIGHT,
+            style: darkMode ? MAP_STYLE.DARK : MAP_STYLE.LIGHT,
             center: [ 127.500, 39.686],
             zoom: 5.5,
             antialias: true
@@ -39,21 +52,21 @@ export default {
         return this.map;
     },
     mapClickEvent (event) {
-        let featuresUnderMouse = instance.map.queryRenderedFeatures(event.point).filter(x => x.source === 'sector-source');
+        let featuresUnderMouse = instance.map.queryRenderedFeatures(event.point).filter(x => x.source === LAYER.SECTOR_SOURCE);
             
         if ((featuresUnderMouse && featuresUnderMouse.length) || !router.currentRoute.params.sectorSetId || !router.currentRoute.params.sectorId) {
             return;
         }
 
         instance.routeToSectorSet(router.currentRoute.params.sectorSetId, true);
+        instance.map.setFilter(LAYER.SELECTED_SECTOR_LAYER, [ "==", [ "get", "_id" ], "" ]);
         store.dispatch(SELECT_SECTOR, null);
-        instance.map.setFilter('selected-sector-layer', [ "==", [ "get", "_id" ], "" ]);
     },
     setMapComponent (component) {
         this.component = component;
     },
     setDarkMode (darkMode) {
-        this.map.setStyle(darkMode ? this.mapStyle.DARK : this.mapStyle.LIGHT);
+        this.map.setStyle(darkMode ? MAP_STYLE.DARK : MAP_STYLE.LIGHT);
 
         this.removeSectorLayer();
         this.removeSectorSetLayer();
@@ -68,32 +81,32 @@ export default {
             store.dispatch(SET_SECTOR_SETS, this.sectorSets);
             let geoJsonSectorSets = this.sectorSetsToGeoJson(this.sectorSets);
 
-            this.map.addSource('sector-set-source', {
+            this.map.addSource(LAYER.SECTOR_SET_SOURCE, {
                 'type': 'geojson',
                 'data': geoJsonSectorSets
             });
     
             this.map.addLayer({
-                id: 'sector-set-layer',
+                id: LAYER.SECTOR_SET_LAYER,
                 type: 'fill',
-                source: 'sector-set-source',
+                source: LAYER.SECTOR_SET_SOURCE,
                 paint: {
                     'fill-color': [ 'get', '_color' ],
                     'fill-opacity': 0.4
                 }
             });
 
-            this.map.on('mouseenter', 'sector-set-layer', () => {
+            this.map.on('mouseenter', LAYER.SECTOR_SET_LAYER, () => {
                 this.map.getCanvas().style.cursor = 'pointer';
                 this.map.doubleClickZoom.disable();
             });
                 
-            this.map.on('mouseleave', 'sector-set-layer', () => {
+            this.map.on('mouseleave', LAYER.SECTOR_SET_LAYER, () => {
                 this.map.getCanvas().style.cursor = '';
                 this.map.doubleClickZoom.enable();
             });
 
-            this.map.on('click', 'sector-set-layer', this.sectorSetClickEvent);
+            this.map.on('click', LAYER.SECTOR_SET_LAYER, this.sectorSetClickEvent);
 
             if (router.currentRoute.params.sectorSetId) {
                 this.selectSectorSet(router.currentRoute.params.sectorSetId);
@@ -111,22 +124,22 @@ export default {
     },
     selectSectorSet (sectorSetId) {
         store.dispatch(SELECT_SECTOR_SET, store.state.sectorSets.find(x => x._id === sectorSetId));
-        this.map.setLayoutProperty('sector-set-layer', 'visibility', 'none');
+        this.map.setLayoutProperty(LAYER.SECTOR_SET_LAYER, 'visibility', 'none');
 
         store.dispatch(START_LOADING, 'loadingSectors');
         MapApiService.getSectorsBySectorSetId(sectorSetId).then((res) => {
             this.sectors = res.data;
             let geoJsonSectors = this.sectorsToGeoJson(this.sectors);
 
-            this.map.addSource('sector-source', {
+            this.map.addSource(LAYER.SECTOR_SOURCE, {
                 'type': 'geojson',
                 'data': geoJsonSectors
             });
     
             this.map.addLayer({
-                id: 'sector-layer',
+                id: LAYER.SECTOR_LAYER,
                 type: 'fill',
-                source: 'sector-source',
+                source: LAYER.SECTOR_SOURCE,
                 paint: {
                     'fill-color': [ 'get', 'color', [ 'get', 'state' ] ],
                     'fill-opacity': 0.4
@@ -134,9 +147,9 @@ export default {
             });
 
             this.map.addLayer({
-                id: 'selected-sector-layer',
+                id: LAYER.SELECTED_SECTOR_LAYER,
                 type: 'line',
-                source: 'sector-source',
+                source: LAYER.SECTOR_SOURCE,
                 paint: {
                     'line-color': 'yellow',
                     'line-width': 2
@@ -144,17 +157,17 @@ export default {
                 filter: ["==", "_id", ""]
             });
 
-            this.map.on('mouseenter', 'sector-layer', () => {
+            this.map.on('mouseenter', LAYER.SECTOR_LAYER, () => {
                 this.map.getCanvas().style.cursor = 'pointer';
                 this.map.doubleClickZoom.disable();
             });
             
-            this.map.on('mouseleave', 'sector-layer', () => {
+            this.map.on('mouseleave', LAYER.SECTOR_LAYER, () => {
                 this.map.getCanvas().style.cursor = '';
                 this.map.doubleClickZoom.enable();
             });
 
-            this.map.on('click', 'sector-layer', this.sectorClickEvent);
+            this.map.on('click', LAYER.SECTOR_LAYER, this.sectorClickEvent);
 
             //this.map.moveLayer('poi-layer');
 
@@ -184,18 +197,19 @@ export default {
     selectSector (sectorId) {
         if (store.state.selectedSector && store.state.selectedSector._id === sectorId) {
             this.routeToSectorSet(router.currentRoute.params.sectorSetId);
-            this.map.setFilter('selected-sector-layer', [ "==", [ "get", "_id" ], "" ]);
+            this.map.setFilter(LAYER.SELECTED_SECTOR_LAYER, [ "==", [ "get", "_id" ], "" ]);
             store.dispatch(SELECT_SECTOR, null);
         } else {
             let selectedSector = this.sectors.find(x => x._id === sectorId);
             store.dispatch(SELECT_SECTOR, selectedSector);
-            this.map.setFilter('selected-sector-layer', [ "==", [ "get", "_id" ], sectorId || "" ]);
+            this.map.setFilter(LAYER.SELECTED_SECTOR_LAYER, [ "==", [ "get", "_id" ], sectorId || "" ]);
             this.routeToSector(selectedSector.sectorSet, selectedSector._id);
         }
     },
     goToSectorSets () {
         this.removeSectorLayer();
-        this.map.setLayoutProperty('sector-set-layer', 'visibility', 'visible');
+        this.map.setLayoutProperty(LAYER.SECTOR_SET_LAYER, 'visibility', 'visible');
+        store.dispatch(SELECT_SECTOR, null);
         router.push({ name: 'MapPage' });
     },
     sectorSetsToGeoJson (sectorSets) {
@@ -234,27 +248,27 @@ export default {
         return geoJson;
     },
     removeSectorLayer () {
-        if (this.map.getLayer('sector-layer')) {
-            this.map.off('click', 'sector-layer', this.sectorClickEvent);
-            this.map.removeLayer('sector-layer');
+        if (this.map.getLayer(LAYER.SECTOR_LAYER)) {
+            this.map.off('click', LAYER.SECTOR_LAYER, this.sectorClickEvent);
+            this.map.removeLayer(LAYER.SECTOR_LAYER);
         }
 
-        if (this.map.getLayer('selected-sector-layer')) {
-            this.map.removeLayer('selected-sector-layer');
+        if (this.map.getLayer(LAYER.SELECTED_SECTOR_LAYER)) {
+            this.map.removeLayer(LAYER.SELECTED_SECTOR_LAYER);
         }
         
-        if (this.map.getSource('sector-source')) {
-            this.map.removeSource('sector-source');
+        if (this.map.getSource(LAYER.SECTOR_SOURCE)) {
+            this.map.removeSource(LAYER.SECTOR_SOURCE);
         }
     },
     removeSectorSetLayer () {
-        if (this.map.getLayer('sector-set-layer')) {
-            this.map.off('click', 'sector-set-layer', this.sectorSetClickEvent);
-            this.map.removeLayer('sector-set-layer');
+        if (this.map.getLayer(LAYER.SECTOR_SET_LAYER)) {
+            this.map.off('click', LAYER.SECTOR_SET_LAYER, this.sectorSetClickEvent);
+            this.map.removeLayer(LAYER.SECTOR_SET_LAYER);
         }
         
-        if (this.map.getSource('sector-set-source')) {
-            this.map.removeSource('sector-set-source');
+        if (this.map.getSource(LAYER.SECTOR_SET_SOURCE)) {
+            this.map.removeSource(LAYER.SECTOR_SET_SOURCE);
         }
     },
     routeToSectorSet (sectorSetId, force) {
