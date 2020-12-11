@@ -18,7 +18,9 @@
 </i18n>
 
 <template>
-    <div id="map" />
+    <div id="map">
+        <CustomMapPointOfInterestControl />
+    </div>
 </template>
 
 <script>
@@ -28,8 +30,13 @@ import EventBus from '@/events/EventBus';
 import { MESSAGE_ERROR } from '@/events/eventTypes';
 import { START_LOADING, STOP_LOADING, SET_POINT_OF_INTERESTS, SET_SECTOR_SETS } from "@/store/mutationTypes";
 
+import CustomMapPointOfInterestControl from '@/components/MapPage/MapPointOfInterestControl';
+
 export default {
     name: 'CustomMap',
+    components: {
+        CustomMapPointOfInterestControl
+    },
     computed: {
         darkMode () {
             return this.$store.state.darkMode;

@@ -58,6 +58,8 @@ export default {
             store.dispatch(SELECT_SECTOR, null);
         });
 
+        this.map.addControl(new mapboxgl.NavigationControl(), 'top-left');
+
         instance = this;
 
         return this.map;
@@ -92,6 +94,19 @@ export default {
                 "circle-stroke-color": "#fff"
             }
         });
+    },
+    setPoiVisibility (toVisible) {
+        if (toVisible) {
+            this.displayPointOfInterests();
+        } else {
+            if (this.map.getLayer(LAYER.POI_LAYER)) {
+                this.map.removeLayer(LAYER.POI_LAYER);
+            }
+    
+            if (this.map.getSource(LAYER.POI_SOURCE)) {
+                this.map.removeSource(LAYER.POI_SOURCE);
+            }
+        }
     },
     displaySectorSets () {
         let geoJsonSectorSets = this.sectorSetsToGeoJson(store.state.sectorSets);

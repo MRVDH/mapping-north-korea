@@ -12,35 +12,36 @@
 </i18n>
 
 <template>
-    <div class="leaflet-control-zoom leaflet-bar leaflet-control">
-        <a
-            class="leaflet-control-zoom-in"
+    <div class="mapboxgl-ctrl mapboxgl-ctrl-group">
+        <button
+            type="button"
             :title="$t('button_toggle_poi_visibility')"
-            role="button"
-            :aria-label="$t('button_toggle_poi_visibility')"
             @click="togglePoisVisibility()"
             >
-            <v-icon v-if="poisVisible">mdi-eye</v-icon>
-            <v-icon v-else>mdi-eye-off</v-icon>
-        </a>
-        <a
-            class="leaflet-control-zoom-out"
+            <span class="mapboxgl-ctrl-icon">
+                <v-icon v-if="poisVisible">mdi-eye</v-icon>
+                <v-icon v-else>mdi-eye-off</v-icon>
+            </span>
+        </button>
+        <button
+            type="button"
             :title="$t('button_add_poi')"
-            role="button"
-            :aria-label="$t('button_add_poi')"
             @click="addPoi()"
             >
-            <v-icon>mdi-map-marker-plus</v-icon>
-        </a>
+            <span class="mapboxgl-ctrl-icon">
+                <v-icon>mdi-map-marker-plus</v-icon>
+            </span>
+        </button>
     </div>
 </template>
 
 <script>
+import MapService from '@/services/MapService';
 import { SET_POIS_VISIBLE } from "@/store/mutationTypes";
 
 async function mountButton (component) {
     let interval = setInterval(() => {
-        let elements = document.getElementsByClassName('leaflet-top leaflet-right');
+        let elements = document.getElementsByClassName('mapboxgl-ctrl-top-right');
 
         if (!elements || !elements.length) {
             return;
@@ -63,6 +64,7 @@ export default {
     },
     methods: {
         togglePoisVisibility () {
+            MapService.setPoiVisibility(!this.poisVisible);
             this.$store.dispatch(SET_POIS_VISIBLE, !this.poisVisible);
         },
         addPoi () {
@@ -75,5 +77,6 @@ export default {
 <style scoped>
 .v-icon {
     font-size: 18px;
+    padding-top: 5px;
 }
 </style>
