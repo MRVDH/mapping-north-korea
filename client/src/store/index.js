@@ -20,7 +20,8 @@ export default new Vuex.Store({
         selectedSectorSet: null,
         sectorEvents: [],
         pointOfInterests: [],
-        poisVisible: true
+        poisVisible: true,
+        addMode: false
     },
     mutations: {
         [mt.TOGGLE_DARK_MODE] (state) {
@@ -76,6 +77,9 @@ export default new Vuex.Store({
         },
         [mt.SET_POIS_VISIBLE] (state, poisVisible) {
             state.poisVisible = poisVisible;
+        },
+        [mt.SET_ADD_MODE] (state, addMode) {
+            state.addMode = addMode;
         }
     },
     actions: {
@@ -132,6 +136,9 @@ export default new Vuex.Store({
         },
         [mt.SET_POIS_VISIBLE] ({ commit }, poisVisible) {
             commit(mt.SET_POIS_VISIBLE, poisVisible);
+        },
+        [mt.SET_ADD_MODE] ({ commit }, addMode) {
+            commit(mt.SET_ADD_MODE, addMode);
         }
     },
     plugins: [new VuexPersistence({

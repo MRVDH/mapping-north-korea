@@ -37,7 +37,7 @@
 
 <script>
 import MapService from '@/services/MapService';
-import { SET_POIS_VISIBLE } from "@/store/mutationTypes";
+import { SET_POIS_VISIBLE, SET_ADD_MODE } from "@/store/mutationTypes";
 
 async function mountButton (component) {
     let interval = setInterval(() => {
@@ -57,6 +57,9 @@ export default {
     computed: {
         poisVisible () {
             return this.$store.state.poisVisible;
+        },
+        addMode () {
+            return this.$store.state.addMode;
         }
     },
     async mounted () {
@@ -68,7 +71,8 @@ export default {
             this.$store.dispatch(SET_POIS_VISIBLE, !this.poisVisible);
         },
         addPoi () {
-
+            MapService.setAddMode(!this.addMode);
+            this.$store.dispatch(SET_ADD_MODE, !this.addMode);
         }
     }
 };

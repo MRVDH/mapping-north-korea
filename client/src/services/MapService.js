@@ -6,7 +6,7 @@ import EventBus from '@/events/EventBus';
 import { MESSAGE_ERROR } from '@/events/eventTypes';
 import store from '@/store';
 import router from '@/router';
-import { START_LOADING, STOP_LOADING, SELECT_SECTOR, SELECT_SECTOR_SET } from "@/store/mutationTypes";
+import { START_LOADING, STOP_LOADING, SELECT_SECTOR, SELECT_SECTOR_SET, SET_ADD_MODE } from "@/store/mutationTypes";
 
 var instance;
 
@@ -47,15 +47,21 @@ export default {
         });
 
         this.map.on('click', (event) => {
-            let featuresUnderMouse = this.map.queryRenderedFeatures(event.point).filter(x => x.source === LAYER.SECTOR_SOURCE);
-                
-            if ((featuresUnderMouse && featuresUnderMouse.length) || !router.currentRoute.params.sectorSetId || !router.currentRoute.params.sectorId) {
-                return;
+            if (store.state.addMode) {
+                // open popup
+                this.setAddMode(!store.state.addMode);
+                store.dispatch(SET_ADD_MODE, !store.state.addMode);
+            } else {
+                let featuresUnderMouse = this.map.queryRenderedFeatures(event.point).filter(x => x.source === LAYER.SECTOR_SOURCE);
+                    
+                if ((featuresUnderMouse && featuresUnderMouse.length) || !router.currentRoute.params.sectorSetId || !router.currentRoute.params.sectorId) {
+                    return;
+                }
+        
+                this.routeToSectorSet(router.currentRoute.params.sectorSetId, true);
+                this.map.setFilter(LAYER.SELECTED_SECTOR_LAYER, [ "==", [ "get", "_id" ], "" ]);
+                store.dispatch(SELECT_SECTOR, null);
             }
-    
-            this.routeToSectorSet(router.currentRoute.params.sectorSetId, true);
-            this.map.setFilter(LAYER.SELECTED_SECTOR_LAYER, [ "==", [ "get", "_id" ], "" ]);
-            store.dispatch(SELECT_SECTOR, null);
         });
 
         this.map.addControl(new mapboxgl.NavigationControl(), 'top-left');
@@ -63,6 +69,17 @@ export default {
         instance = this;
 
         return this.map;
+    },
+    setAddMode (toVisible) {
+        if (toVisible) {
+            this.map.on('mousemove', this.mapMouseMoveEvent);
+        } else {
+            this.map.off('mousemove', this.mapMouseMoveEvent);
+            this.map.getCanvas().style.cursor = 'pointer';
+        }
+    },
+    mapMouseMoveEvent () {
+        instance.map.getCanvas().style.cursor = 'crosshair';
     },
     setMapComponent (component) {
         this.component = component;
@@ -127,17 +144,23 @@ export default {
         });
 
         this.map.on('mouseenter', LAYER.SECTOR_SET_LAYER, () => {
-            this.map.getCanvas().style.cursor = 'pointer';
-            this.map.doubleClickZoom.disable();
+            if (!this.addMode) {
+                this.map.getCanvas().style.cursor = 'pointer';
+                this.map.doubleClickZoom.disable();
+            }
         });
             
         this.map.on('mouseleave', LAYER.SECTOR_SET_LAYER, () => {
-            this.map.getCanvas().style.cursor = '';
-            this.map.doubleClickZoom.enable();
+            if (!this.addMode) {
+                this.map.getCanvas().style.cursor = '';
+                this.map.doubleClickZoom.enable();
+            }
         });
 
         this.map.on('click', LAYER.SECTOR_SET_LAYER, (event) => {
-            this.selectSectorSet(event.features[0].properties._id);
+            if (!store.state.addMode) {
+                this.selectSectorSet(event.features[0].properties._id);
+            }
         });
 
         if (router.currentRoute.params.sectorSetId) {
@@ -182,13 +205,17 @@ export default {
             });
 
             this.map.on('mouseenter', LAYER.SECTOR_LAYER, () => {
-                this.map.getCanvas().style.cursor = 'pointer';
-                this.map.doubleClickZoom.disable();
+                if (!this.addMode) {
+                    this.map.getCanvas().style.cursor = 'pointer';
+                    this.map.doubleClickZoom.disable();
+                }
             });
             
             this.map.on('mouseleave', LAYER.SECTOR_LAYER, () => {
-                this.map.getCanvas().style.cursor = '';
-                this.map.doubleClickZoom.enable();
+                if (!this.addMode) {
+                    this.map.getCanvas().style.cursor = '';
+                    this.map.doubleClickZoom.enable();
+                }
             });
 
             this.map.on('click', LAYER.SECTOR_LAYER, this.sectorClickEvent);
@@ -216,7 +243,9 @@ export default {
         });
     },
     sectorClickEvent (event) {
-        instance.selectSector(event.features[0].properties._id);
+        if (!store.state.addMode) {
+            instance.selectSector(event.features[0].properties._id);
+        }
     },
     selectSector (sectorId) {
         if (store.state.selectedSector && store.state.selectedSector._id === sectorId) {
