@@ -153,7 +153,7 @@ export default {
             }
 
             this.$store.dispatch(START_LOADING, 'getEventsBySectorId');
-            MapApiService.getEventsBySectorId(this.selectedSector.properties._id).then((res) => {
+            MapApiService.getEventsBySectorId(this.selectedSector._id).then((res) => {
                 if (!res.data.length) {
                     return;
                 }

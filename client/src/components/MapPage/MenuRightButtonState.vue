@@ -38,7 +38,7 @@
                         :disabled="!loggedInUser"
                         v-on="on"
                         >
-                        {{ selectedSector.properties.state.title }}
+                        {{ selectedSector.state.title }}
                     </v-btn>
                 </template>
                 <v-list>
@@ -103,12 +103,11 @@ export default {
     },
     methods: {
         updateSector (state) {
-            var apiSector = this.geoJsonSectorToApiSector(this.selectedSector);
             this.stateEditOpen = false;
 
             this.$store.dispatch(START_LOADING, 'updateSector');
             MapApiService.updateSector({
-                sector: apiSector,
+                sector: this.selectedSector,
                 state: state
             }).then((res) => {
                 let newEvents = [
@@ -119,7 +118,7 @@ export default {
                 this.$store.dispatch(SET_SECTOR_EVENTS, newEvents);
                 this.$store.dispatch(ADD_TO_RECENT_EVENTS, event);
 
-                this.selectedSector = this.sectorToGeoJson(res.data.sector);
+                this.selectedSector = res.data.sector;
 
                 MapApiService.recountSectorSetCounts(res.data.sector.sectorSet);
 
@@ -129,28 +128,6 @@ export default {
             }).finally(() => {
                 this.$store.dispatch(STOP_LOADING, 'updateSector');
             });
-        },
-        geoJsonSectorToApiSector (sect) {
-            return {
-                _id: sect.properties._id,
-                sectorSet: sect.properties.sectorSet,
-                state: sect.properties.state,
-                coordinates: sect.geometry.coordinates
-            };
-        },
-        sectorToGeoJson (sector) {
-            return {
-                type: 'Feature',
-                properties: {
-                    _id: sector._id,
-                    state: sector.state,
-                    sectorSet: sector.sectorSet
-                },
-                geometry: {
-                    type: 'Polygon',
-                    coordinates: sector.coordinates
-                }
-            };
         }
     }
 };

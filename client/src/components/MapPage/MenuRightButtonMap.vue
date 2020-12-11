@@ -26,7 +26,7 @@
             <v-btn
                 color="success"
                 class="mb-1 ml-0 mt-0 mr-0"
-                :disabled="!loggedInUser || selectedSector.properties.state.title === 'Completed'"
+                :disabled="!loggedInUser || selectedSector.state.title === 'Completed'"
                 v-on="on"
                 >
                 {{ $t('map_button') }}
@@ -98,7 +98,7 @@ export default {
             let maxx = 0;
             let maxy = 0;
 
-            for (let coordSet of this.selectedSector.geometry.coordinates[0]) {
+            for (let coordSet of this.selectedSector.coordinates[0]) {
                 if (coordSet[0] < minx) minx = coordSet[0];
                 if (coordSet[1] < miny) miny = coordSet[1];
                 if (coordSet[0] > maxx) maxx = coordSet[0];
@@ -111,16 +111,16 @@ export default {
             var thisHost = window.location.hostname === 'localhost' ? 'http://localhost:8081' : 'https://www.mappingnorthkorea.com';
             var osmHost = window.location.hostname === 'localhost' ? 'https://master.apis.dev.openstreetmap.org' : 'https://www.openstreetmap.org';
 
-            this.idUrl = `${osmHost}/edit?editor=id&#map=16/${centery}/${centerx}&comment=MappingNorthKorea.com%20sector%20${this.selectedSector.properties._id}&gpx=${thisHost}/api/sector/generate/${this.selectedSector.properties._id}.gpx`;
-            this.rapidUrl = `https://www.mapwith.ai/rapid?#gpx=${thisHost}/api/sector/generate/${this.selectedSector.properties._id}.gpx&map=16/${centery}/${centerx}&comment=MappingNorthKorea.com%20sector%20${this.selectedSector.properties._id}`;
+            this.idUrl = `${osmHost}/edit?editor=id&#map=16/${centery}/${centerx}&comment=MappingNorthKorea.com%20sector%20${this.selectedSector._id}&gpx=${thisHost}/api/sector/generate/${this.selectedSector._id}.gpx`;
+            this.rapidUrl = `https://www.mapwith.ai/rapid?#gpx=${thisHost}/api/sector/generate/${this.selectedSector._id}.gpx&map=16/${centery}/${centerx}&comment=MappingNorthKorea.com%20sector%20${this.selectedSector._id}`;
         },
         mapSectorInJOSM () {
             var loadAndZoomParams = {
-                left: this.selectedSector.geometry.coordinates[0][0][0],
-                bottom: this.selectedSector.geometry.coordinates[0][2][1],
-                right: this.selectedSector.geometry.coordinates[0][1][0],
-                top: this.selectedSector.geometry.coordinates[0][0][1],
-                changeset_comment: encodeURIComponent('MappingNorthKorea.com sector ' + this.selectedSector.properties._id)
+                left: this.selectedSector.coordinates[0][0][0],
+                bottom: this.selectedSector.coordinates[0][2][1],
+                right: this.selectedSector.coordinates[0][1][0],
+                top: this.selectedSector.coordinates[0][0][1],
+                changeset_comment: encodeURIComponent('MappingNorthKorea.com sector ' + this.selectedSector._id)
             };
 
             this.$store.dispatch(START_LOADING, 'sendJOSMCommand');
@@ -139,7 +139,7 @@ export default {
             });
         },
         updateState () {
-            if (this.selectedSector.properties.state.title !== `Open`) {
+            if (this.selectedSector.state.title !== `Open`) {
                 return;
             }
 

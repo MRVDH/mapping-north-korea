@@ -125,7 +125,7 @@ export default {
 };
 </script>
 
-<style>
+<style scoped>
 .v-skeleton-loader__list-item {
     padding: 0;
 }

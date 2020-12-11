@@ -29,7 +29,7 @@
                     {{ $t('help.login') }}
                 </span>
                 <span
-                    v-if="loggedInUser && selectedSector.properties.state.title === 'Completed'"
+                    v-if="loggedInUser && selectedSector.state.title === 'Completed'"
                     class="orange--text"
                     >
                     {{ $t('help.change_back') }}

@@ -26,13 +26,49 @@ import MapService from '@/services/MapService';
 
 export default {
     name: 'CustomMap',
+    computed: {
+        darkMode () {
+            return this.$store.state.darkMode;
+        },
+        currentIteration () {
+            return this.$store.state.currentIteration;
+        },
+        selectedSectorSet () {
+            return this.$store.state.selectedSectorSet;
+        },
+        selectedSector () {
+            return this.$store.state.selectedSector;
+        }
+    },
+    watch: {
+        darkMode () {
+            MapService.setDarkMode(this.$store.state.darkMode);
+        },
+        currentIteration (newIteration) {
+            if (!newIteration) {
+                return;
+            }
+
+            MapService.loadSectorSets(this.currentIteration._id.toString());
+        },
+        selectedSectorSet (selectedSectorSet) {
+            if (!selectedSectorSet) {
+                MapService.goToSectorSets();
+            }
+        }
+    },
     mounted () {
-        MapService.newMap();
+        MapService.setMapComponent(this);
+        MapService.newMap(this.$store.state.darkMode);
+
+        if (this.currentIteration) {
+            MapService.loadSectorSets(this.currentIteration._id.toString());
+        }
     }
 };
 </script>
 
-<style>
+<style scoped>
 #map {
     height: 100%;
     width: 100%;
