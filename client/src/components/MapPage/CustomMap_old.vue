@@ -44,90 +44,13 @@ export default {
     data () {
         return {
             map: null,
-            sectorLayer: null,
-            sectors: null,
-            selectedSector: null,
-            sectorSetLayer: null,
             poiLayer: null
         };
     },
-    computed: {
-        updatedSector () {
-            return this.$store.state.selectedSector;
-        },
-        sectorSets () {
-            return this.$store.state.sectorSets;
-        },
-        selectedSectorSet () {
-            return this.$store.state.selectedSectorSet;
-        }
-    },
-    watch: {
-        updatedSector (sector) {
-            if (!sector) {
-                return;
-            }
-
-            // find and update the sector in the sector list.
-            this.sectors.features[this.sectors.features.findIndex(x => x.properties._id === sector.properties._id)] = sector;
-
-            // find and update the sector that is drawn.
-            for (var layerIndex in this.sectorLayer._layers) {
-                if (this.sectorLayer._layers[layerIndex].feature.properties._id === sector.properties._id) {
-                    this.sectorLayer._layers[layerIndex].feature = sector;
-                    this.sectorLayer._layers[layerIndex].setStyle({
-                        fillColor: sector.properties.state.color
-                    });
-                    break;
-                }
-            }
-        },
-        selectedSectorSet (newValue) {
-            if (newValue) {
-                return;
-            }
-
-            this.$router.push({ name: 'MapPage' });
-            this.map.removeLayer(this.sectorLayer);
-            this.map.addLayer(this.sectorSetLayer);
-            this.poiLayer.bringToFront();
-        }
-    },
     mounted () {
-        this.initMap();
-
-        EventBus.$on('mnk:go-to-sector', (sectorInfo) => {
-            this.$router.push({ name: 'MapPageSector', params: { sectorSetId: sectorInfo.sectorSetId, sectorId: sectorInfo.sectorId } });
-            this.selectSectorSet(this.getSectorSetLayerById(sectorInfo.sectorSetId));
-        });
-
-        EventBus.$on('mnk:go-to-sector-set', (sectorSetId) => {
-            this.selectSectorSet(this.getSectorSetLayerById(sectorSetId));
-        });
-
         this.loadPointOfInterests();
     },
     methods: {
-        initMap () {
-            this.map = L.map('map').on('click', this.clickMapEvent).setView([ 39.686, 127.500 ], 7);
-        },
-        clickSectorSetEvent (event) {
-            this.selectSectorSet(event.layer);
-            L.DomEvent.stopPropagation(event);
-        },
-        clickMapEvent () {
-            if (!this.selectedSector) {
-                return;
-            }
-
-            // this.sectorLayer._layers is an object and not an array...
-            for (var layerIndex in this.sectorLayer._layers) {
-                if (this.sectorLayer._layers[layerIndex].feature.properties._id === this.selectedSector.feature.properties._id) {
-                    this.setSectorSelected(this.sectorLayer._layers[layerIndex], false);
-                    break;
-                }
-            }
-        },
         pointOfInterestsToGeoJson (pointOfInterests) {
             var geoJson = {
                 features: [],
@@ -155,9 +78,6 @@ export default {
             }
 
             return geoJson;
-        },
-        flyToSectorByPolygonCoordinates (coordinates) {
-            this.map.flyTo([(coordinates[2][1] + coordinates[0][1]) / 2, (coordinates[1][0] + coordinates[0][0]) / 2], 13);
         },
         loadPointOfInterests () {
             this.$store.dispatch(START_LOADING, 'loadPointOfInterests');
@@ -193,17 +113,5 @@ export default {
 </script>
 
 <style>
-#map {
-    height: 100%;
-    width: 100%;
-    z-index: 1;
-}
 
-.leaflet-control-attribution {
-    margin-bottom: 3px !important;
-}
-
-.leaflet-bar a, .leaflet-bar a:hover {
-    color: black !important;
-}
 </style>

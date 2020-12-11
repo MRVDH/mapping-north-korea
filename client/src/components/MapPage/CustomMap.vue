@@ -55,6 +55,13 @@ export default {
             if (!selectedSectorSet) {
                 MapService.goToSectorSets();
             }
+        },
+        selectedSector (selectedSector) {
+            if (!selectedSector) {
+                return;
+            }
+
+            MapService.sectorUpdate(selectedSector);
         }
     },
     mounted () {

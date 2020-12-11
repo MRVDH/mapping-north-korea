@@ -45,22 +45,21 @@ export default {
             antialias: true
         });
 
-        this.map.on('click', this.mapClickEvent);
+        this.map.on('click', (event) => {
+            let featuresUnderMouse = this.map.queryRenderedFeatures(event.point).filter(x => x.source === LAYER.SECTOR_SOURCE);
+                
+            if ((featuresUnderMouse && featuresUnderMouse.length) || !router.currentRoute.params.sectorSetId || !router.currentRoute.params.sectorId) {
+                return;
+            }
+    
+            this.routeToSectorSet(router.currentRoute.params.sectorSetId, true);
+            this.map.setFilter(LAYER.SELECTED_SECTOR_LAYER, [ "==", [ "get", "_id" ], "" ]);
+            store.dispatch(SELECT_SECTOR, null);
+        });
 
         instance = this;
 
         return this.map;
-    },
-    mapClickEvent (event) {
-        let featuresUnderMouse = instance.map.queryRenderedFeatures(event.point).filter(x => x.source === LAYER.SECTOR_SOURCE);
-            
-        if ((featuresUnderMouse && featuresUnderMouse.length) || !router.currentRoute.params.sectorSetId || !router.currentRoute.params.sectorId) {
-            return;
-        }
-
-        instance.routeToSectorSet(router.currentRoute.params.sectorSetId, true);
-        instance.map.setFilter(LAYER.SELECTED_SECTOR_LAYER, [ "==", [ "get", "_id" ], "" ]);
-        store.dispatch(SELECT_SECTOR, null);
     },
     setMapComponent (component) {
         this.component = component;
@@ -106,7 +105,9 @@ export default {
                 this.map.doubleClickZoom.enable();
             });
 
-            this.map.on('click', LAYER.SECTOR_SET_LAYER, this.sectorSetClickEvent);
+            this.map.on('click', LAYER.SECTOR_SET_LAYER, (event) => {
+                this.selectSectorSet(event.features[0].properties._id);
+            });
 
             if (router.currentRoute.params.sectorSetId) {
                 this.selectSectorSet(router.currentRoute.params.sectorSetId);
@@ -119,9 +120,6 @@ export default {
             store.dispatch(STOP_LOADING, 'loadingsectors');
         });
     },
-    sectorSetClickEvent (event) {
-        instance.selectSectorSet(event.features[0].properties._id);
-    },
     selectSectorSet (sectorSetId) {
         store.dispatch(SELECT_SECTOR_SET, store.state.sectorSets.find(x => x._id === sectorSetId));
         this.map.setLayoutProperty(LAYER.SECTOR_SET_LAYER, 'visibility', 'none');
@@ -129,11 +127,11 @@ export default {
         store.dispatch(START_LOADING, 'loadingSectors');
         MapApiService.getSectorsBySectorSetId(sectorSetId).then((res) => {
             this.sectors = res.data;
-            let geoJsonSectors = this.sectorsToGeoJson(this.sectors);
+            this.geoJsonSectors = this.sectorsToGeoJson(this.sectors);
 
             this.map.addSource(LAYER.SECTOR_SOURCE, {
                 'type': 'geojson',
-                'data': geoJsonSectors
+                'data': this.geoJsonSectors
             });
     
             this.map.addLayer({
@@ -173,7 +171,7 @@ export default {
 
             var bounds = new mapboxgl.LngLatBounds();
 
-            geoJsonSectors.features.forEach((feature) => {
+            this.geoJsonSectors.features.forEach((feature) => {
                 bounds.extend(feature.geometry.coordinates[0][0]);
             });
 
@@ -280,5 +278,27 @@ export default {
         if (router.currentRoute.params.sectorSetId !== sectorSetId || router.currentRoute.params.sectorId !== sectorId) {
             router.push({ name: 'MapPage', params: { sectorSetId: sectorSetId, sectorId: sectorId } });
         }
+    },
+    sectorUpdate (updatedSector) {
+        let source = this.map.getSource(LAYER.SECTOR_SOURCE);
+
+        this.sectors = this.sectors.filter(x => x._id !== updatedSector._id);
+        this.sectors.push(updatedSector);
+
+        this.geoJsonSectors.features = this.geoJsonSectors.features.filter(x => x.properties._id !== updatedSector._id);
+        this.geoJsonSectors.features.push({
+            type: 'Feature',
+            properties: {
+                _id: updatedSector._id,
+                state: updatedSector.state,
+                sectorSet: updatedSector.sectorSet
+            },
+            geometry: {
+                type: 'Polygon',
+                coordinates: updatedSector.coordinates
+            }
+        });
+
+        source.setData(this.geoJsonSectors);
     }
 };
