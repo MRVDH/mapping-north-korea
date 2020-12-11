@@ -6,14 +6,16 @@ import EventBus from '@/events/EventBus';
 import { MESSAGE_ERROR } from '@/events/eventTypes';
 import store from '@/store';
 import router from '@/router';
-import { START_LOADING, STOP_LOADING, SET_SECTOR_SETS, SELECT_SECTOR, SELECT_SECTOR_SET } from "@/store/mutationTypes";
+import { START_LOADING, STOP_LOADING, SELECT_SECTOR, SELECT_SECTOR_SET } from "@/store/mutationTypes";
 
 var instance;
 
 const LAYER = {
+    POI_LAYER: 'poi-layer',
     SECTOR_SET_LAYER: 'sector-set-layer',
     SECTOR_LAYER: 'sector-layer',
     SELECTED_SECTOR_LAYER: 'selected-sector-layer',
+    POI_SOURCE: 'poi-source',
     SECTOR_SET_SOURCE: 'sector-set-source',
     SECTOR_SOURCE: 'sector-source'
 };
@@ -32,7 +34,6 @@ export default {
     map: null,
     component: null,
     sectors: [],
-    sectorSets: [],
 
     newMap (darkMode) {
         mapboxgl.accessToken = "pk.eyJ1IjoibXJ2ZGgiLCJhIjoiY2tpN2pjNmR6MWl6NzJ6cXMxZHYxZXF2cyJ9.6FUJ6L-3rIIUliPnyoo4sQ";
@@ -72,53 +73,63 @@ export default {
 
         this.loadSectorSets(store.state.currentIteration._id.toString());
     },
-    loadSectorSets (iterationId) {
-        store.dispatch(START_LOADING, 'loadingsectors');
-        MapApiService.getAllSectorSetsByIterationId(iterationId).then((res) => {
-            this.sectorSets = res.data;
+    displayPointOfInterests () {
+        let geoJsonPois = this.pointOfInterestsToGeoJson(store.state.pointOfInterests);
 
-            store.dispatch(SET_SECTOR_SETS, this.sectorSets);
-            let geoJsonSectorSets = this.sectorSetsToGeoJson(this.sectorSets);
-
-            this.map.addSource(LAYER.SECTOR_SET_SOURCE, {
-                'type': 'geojson',
-                'data': geoJsonSectorSets
-            });
-    
-            this.map.addLayer({
-                id: LAYER.SECTOR_SET_LAYER,
-                type: 'fill',
-                source: LAYER.SECTOR_SET_SOURCE,
-                paint: {
-                    'fill-color': [ 'get', '_color' ],
-                    'fill-opacity': 0.4
-                }
-            });
-
-            this.map.on('mouseenter', LAYER.SECTOR_SET_LAYER, () => {
-                this.map.getCanvas().style.cursor = 'pointer';
-                this.map.doubleClickZoom.disable();
-            });
-                
-            this.map.on('mouseleave', LAYER.SECTOR_SET_LAYER, () => {
-                this.map.getCanvas().style.cursor = '';
-                this.map.doubleClickZoom.enable();
-            });
-
-            this.map.on('click', LAYER.SECTOR_SET_LAYER, (event) => {
-                this.selectSectorSet(event.features[0].properties._id);
-            });
-
-            if (router.currentRoute.params.sectorSetId) {
-                this.selectSectorSet(router.currentRoute.params.sectorSetId);
-            }
-
-            //this.map.moveLayer('poi-layer');
-        }).catch(() => {
-            EventBus.$emit(MESSAGE_ERROR, this.component.$t('request.load_sector_sets'));
-        }).finally(() => {
-            store.dispatch(STOP_LOADING, 'loadingsectors');
+        this.map.addSource(LAYER.POI_SOURCE, {
+            'type': 'geojson',
+            'data': geoJsonPois
         });
+
+        this.map.addLayer({
+            id: LAYER.POI_LAYER,
+            type: 'circle',
+            source: LAYER.POI_SOURCE,
+            paint: {
+                "circle-color": "#728BD4",
+                "circle-radius": 6,
+                "circle-stroke-width": 1,
+                "circle-stroke-color": "#fff"
+            }
+        });
+    },
+    displaySectorSets () {
+        let geoJsonSectorSets = this.sectorSetsToGeoJson(store.state.sectorSets);
+
+        this.map.addSource(LAYER.SECTOR_SET_SOURCE, {
+            'type': 'geojson',
+            'data': geoJsonSectorSets
+        });
+
+        this.map.addLayer({
+            id: LAYER.SECTOR_SET_LAYER,
+            type: 'fill',
+            source: LAYER.SECTOR_SET_SOURCE,
+            paint: {
+                'fill-color': [ 'get', '_color' ],
+                'fill-opacity': 0.4
+            }
+        });
+
+        this.map.on('mouseenter', LAYER.SECTOR_SET_LAYER, () => {
+            this.map.getCanvas().style.cursor = 'pointer';
+            this.map.doubleClickZoom.disable();
+        });
+            
+        this.map.on('mouseleave', LAYER.SECTOR_SET_LAYER, () => {
+            this.map.getCanvas().style.cursor = '';
+            this.map.doubleClickZoom.enable();
+        });
+
+        this.map.on('click', LAYER.SECTOR_SET_LAYER, (event) => {
+            this.selectSectorSet(event.features[0].properties._id);
+        });
+
+        if (router.currentRoute.params.sectorSetId) {
+            this.selectSectorSet(router.currentRoute.params.sectorSetId);
+        }
+
+        this.map.moveLayer(LAYER.POI_LAYER);
     },
     selectSectorSet (sectorSetId) {
         store.dispatch(SELECT_SECTOR_SET, store.state.sectorSets.find(x => x._id === sectorSetId));
@@ -167,7 +178,7 @@ export default {
 
             this.map.on('click', LAYER.SECTOR_LAYER, this.sectorClickEvent);
 
-            //this.map.moveLayer('poi-layer');
+            this.map.moveLayer(LAYER.POI_LAYER);
 
             var bounds = new mapboxgl.LngLatBounds();
 
@@ -209,6 +220,34 @@ export default {
         this.map.setLayoutProperty(LAYER.SECTOR_SET_LAYER, 'visibility', 'visible');
         store.dispatch(SELECT_SECTOR, null);
         router.push({ name: 'MapPage' });
+    },
+    pointOfInterestsToGeoJson (pointOfInterests) {
+        var geoJson = {
+            features: [],
+            type: 'FeatureCollection'
+        };
+        
+        for (let poi of pointOfInterests) {
+            geoJson.features.push({
+                type: 'Feature',
+                properties: {
+                    _id: poi._id,
+                    title: poi.title,
+                    description: poi.description,
+                    longitude: poi.longitude,
+                    latitude: poi.latitude,
+                    time: poi.time,
+                    categories: poi.categories,
+                    likes: poi.likes
+                },
+                geometry: {
+                    type: 'Point',
+                    coordinates: [ poi.latitude, poi.longitude ]
+                }
+            });
+        }
+
+        return geoJson;
     },
     sectorSetsToGeoJson (sectorSets) {
         var geoJson = {

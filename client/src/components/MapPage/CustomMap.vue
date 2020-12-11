@@ -23,6 +23,10 @@
 
 <script>
 import MapService from '@/services/MapService';
+import MapApiService from '@/services/MapApiService';
+import EventBus from '@/events/EventBus';
+import { MESSAGE_ERROR } from '@/events/eventTypes';
+import { START_LOADING, STOP_LOADING, SET_POINT_OF_INTERESTS, SET_SECTOR_SETS } from "@/store/mutationTypes";
 
 export default {
     name: 'CustomMap',
@@ -44,12 +48,12 @@ export default {
         darkMode () {
             MapService.setDarkMode(this.$store.state.darkMode);
         },
-        currentIteration (newIteration) {
+        async currentIteration (newIteration) {
             if (!newIteration) {
                 return;
             }
 
-            MapService.loadSectorSets(this.currentIteration._id.toString());
+            await this.loadSectorSets(this.currentIteration._id.toString());
         },
         selectedSectorSet (selectedSectorSet) {
             if (!selectedSectorSet) {
@@ -64,12 +68,42 @@ export default {
             MapService.sectorUpdate(selectedSector);
         }
     },
-    mounted () {
+    async created () {
         MapService.setMapComponent(this);
-        MapService.newMap(this.$store.state.darkMode);
-
-        if (this.currentIteration) {
-            MapService.loadSectorSets(this.currentIteration._id.toString());
+        await this.loadPointOfInterests();
+    },
+    mounted () {
+        MapService.newMap(this.$store.state.darkMode).on('load', () => {
+            MapService.displayPointOfInterests();
+            MapService.displaySectorSets();
+        });
+    },
+    methods: {
+        async loadPointOfInterests () {
+            return new Promise((resolve) => {
+                this.$store.dispatch(START_LOADING, 'loadPointOfInterests');
+                MapApiService.getAllPointOfInterests().then((res) => {
+                    this.$store.dispatch(SET_POINT_OF_INTERESTS, res.data);
+                }).catch(() => {
+                    EventBus.$emit(MESSAGE_ERROR, this.$t('request.load_point_of_interests'));
+                }).finally(() => {
+                    this.$store.dispatch(STOP_LOADING, 'loadPointOfInterests');
+                    resolve();
+                });
+            });
+        },
+        async loadSectorSets (iterationId) {
+            return new Promise((resolve) => {
+                this.$store.dispatch(START_LOADING, 'loadingsectors');
+                MapApiService.getAllSectorSetsByIterationId(iterationId).then((res) => {
+                    this.$store.dispatch(SET_SECTOR_SETS, res.data);
+                }).catch(() => {
+                    EventBus.$emit(MESSAGE_ERROR, this.$t('request.load_sector_sets'));
+                }).finally(() => {
+                    this.$store.dispatch(STOP_LOADING, 'loadingsectors');
+                    resolve();
+                });
+            });
         }
     }
 };
