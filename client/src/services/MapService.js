@@ -70,6 +70,9 @@ export default {
 
         return this.map;
     },
+    remove () {
+        this.map.remove();
+    },
     setAddMode (toVisible) {
         if (toVisible) {
             this.map.on('mousemove', this.mapMouseMoveEvent);
@@ -83,14 +86,6 @@ export default {
     },
     setMapComponent (component) {
         this.component = component;
-    },
-    setDarkMode (darkMode) {
-        this.map.setStyle(darkMode ? MAP_STYLE.DARK : MAP_STYLE.LIGHT);
-
-        this.removeSectorLayer();
-        this.removeSectorSetLayer();
-
-        this.loadSectorSets(store.state.currentIteration._id.toString());
     },
     displayPointOfInterests () {
         let geoJsonPois = this.pointOfInterestsToGeoJson(store.state.pointOfInterests);
@@ -170,6 +165,10 @@ export default {
         this.map.moveLayer(LAYER.POI_LAYER);
     },
     selectSectorSet (sectorSetId) {
+        if (!sectorSetId) {
+            throw `sectorSetId can't be of value: ${sectorSetId}`;
+        }
+
         store.dispatch(SELECT_SECTOR_SET, store.state.sectorSets.find(x => x._id === sectorSetId));
         this.map.setLayoutProperty(LAYER.SECTOR_SET_LAYER, 'visibility', 'none');
 
@@ -248,12 +247,21 @@ export default {
         }
     },
     selectSector (sectorId) {
+        if (!sectorId) {
+            throw `sectorId can't be of value: ${sectorId}`;
+        }
+
         if (store.state.selectedSector && store.state.selectedSector._id === sectorId) {
             this.routeToSectorSet(router.currentRoute.params.sectorSetId);
             this.map.setFilter(LAYER.SELECTED_SECTOR_LAYER, [ "==", [ "get", "_id" ], "" ]);
             store.dispatch(SELECT_SECTOR, null);
         } else {
             let selectedSector = this.sectors.find(x => x._id === sectorId);
+
+            if (!selectedSector) {
+                throw `selectedSector: ${sectorId} should exist in sectors array but can't be found.`;
+            }
+
             store.dispatch(SELECT_SECTOR, selectedSector);
             this.map.setFilter(LAYER.SELECTED_SECTOR_LAYER, [ "==", [ "get", "_id" ], sectorId || "" ]);
             this.routeToSector(selectedSector.sectorSet, selectedSector._id);

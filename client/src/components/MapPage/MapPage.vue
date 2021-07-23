@@ -7,7 +7,7 @@
             >
             <v-layout>
                 <v-flex>
-                    <CustomMap />
+                    <CustomMap :key="componentKey" />
                 </v-flex>
             </v-layout>
         </v-container>
@@ -26,7 +26,19 @@ export default {
         CustomMenuRight
     },
     data () {
-        return { };
+        return {
+            componentKey: 1
+        };
+    },
+    computed: {
+        darkMode () {
+            return this.$store.state.darkMode;
+        }
+    },
+    watch: {
+        darkMode () {
+            this.componentKey++;
+        }
     }
 };
 </script>

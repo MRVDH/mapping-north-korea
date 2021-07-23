@@ -2,11 +2,13 @@
 {
     "en": {
         "button_toggle_poi_visibility": "Toggle Point of Interest visibility",
-        "button_add_poi": "Add Point of Interest"
+        "button_add_poi": "Add Point of Interest",
+        "message_select_on_map": "Select a location on the map for the Point of Interest."
     },
     "ko": {
         "button_toggle_poi_visibility": null,
-        "button_add_poi": null
+        "button_add_poi": null,
+        "message_select_on_map": null
     }
 }
 </i18n>
@@ -36,6 +38,8 @@
 </template>
 
 <script>
+import EventBus from '@/events/EventBus';
+import { MESSAGE_INFO } from '@/events/eventTypes';
 import MapService from '@/services/MapService';
 import { SET_POIS_VISIBLE, SET_ADD_MODE } from "@/store/mutationTypes";
 
@@ -73,6 +77,10 @@ export default {
         addPoi () {
             MapService.setAddMode(!this.addMode);
             this.$store.dispatch(SET_ADD_MODE, !this.addMode);
+
+            if (this.addMode) {
+                EventBus.$emit(MESSAGE_INFO, this.$t('message_select_on_map'));
+            }
         }
     }
 };
@@ -82,5 +90,6 @@ export default {
 .v-icon {
     font-size: 18px;
     padding-top: 5px;
+    color: #333333;
 }
 </style>

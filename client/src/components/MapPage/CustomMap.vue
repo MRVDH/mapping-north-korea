@@ -24,6 +24,7 @@
 </template>
 
 <script>
+import router from '@/router';
 import MapService from '@/services/MapService';
 import MapApiService from '@/services/MapApiService';
 import EventBus from '@/events/EventBus';
@@ -38,9 +39,6 @@ export default {
         CustomMapPointOfInterestControl
     },
     computed: {
-        darkMode () {
-            return this.$store.state.darkMode;
-        },
         currentIteration () {
             return this.$store.state.currentIteration;
         },
@@ -52,9 +50,6 @@ export default {
         }
     },
     watch: {
-        darkMode () {
-            MapService.setDarkMode(this.$store.state.darkMode);
-        },
         async currentIteration (newIteration) {
             if (!newIteration) {
                 return;
@@ -80,12 +75,27 @@ export default {
         await this.loadPointOfInterests();
     },
     mounted () {
-        MapService.newMap(this.$store.state.darkMode).on('load', () => {
-            MapService.displayPointOfInterests();
-            MapService.displaySectorSets();
+        this.createMap();
+
+        EventBus.$on('mnk:go-to-sector', (data) => {
+            router.push({ name: 'MapPage', params: { sectorSetId: data.sectorSetId, sectorId: data.sectorId } });
+            MapService.selectSectorSet(data.sectorSetId);
+        });
+        EventBus.$on('mnk:go-to-sector-set', (data) => {
+            router.push({ name: 'MapPage', params: { sectorSetId: data } });
+            MapService.selectSectorSet(data);
         });
     },
+    beforeDestroy () {
+        MapService.remove();
+    },
     methods: {
+        createMap () {
+            MapService.newMap(this.$store.state.darkMode).on('load', () => {
+                MapService.displayPointOfInterests();
+                MapService.displaySectorSets();
+            });
+        },
         async loadPointOfInterests () {
             return new Promise((resolve) => {
                 this.$store.dispatch(START_LOADING, 'loadPointOfInterests');
