@@ -41,5 +41,8 @@ export default {
     },
     getAllPointOfInterests () {
         return axios.get(host + '/api/pointofinterest');
+    },
+    getAllPointOfInterestCategories () {
+        return axios.get(host + '/api/pointofinterestcategories');
     }
 };

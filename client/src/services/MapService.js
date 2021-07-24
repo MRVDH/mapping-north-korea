@@ -6,7 +6,7 @@ import EventBus from '@/events/EventBus';
 import { MESSAGE_ERROR } from '@/events/eventTypes';
 import store from '@/store';
 import router from '@/router';
-import { START_LOADING, STOP_LOADING, SELECT_SECTOR, SELECT_SECTOR_SET, SET_ADD_MODE } from "@/store/mutationTypes";
+import { START_LOADING, STOP_LOADING, SELECT_SECTOR, SELECT_SECTOR_SET, SET_ADD_MODE_MODAL } from "@/store/mutationTypes";
 
 var instance;
 
@@ -48,9 +48,8 @@ export default {
 
         this.map.on('click', (event) => {
             if (store.state.addMode) {
-                // open popup
                 this.setAddMode(!store.state.addMode);
-                store.dispatch(SET_ADD_MODE, !store.state.addMode);
+                store.dispatch(SET_ADD_MODE_MODAL, !store.state.addModeModal);
             } else {
                 let featuresUnderMouse = this.map.queryRenderedFeatures(event.point).filter(x => x.source === LAYER.SECTOR_SOURCE);
                     
