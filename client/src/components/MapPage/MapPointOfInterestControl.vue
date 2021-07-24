@@ -67,6 +67,7 @@ export default {
         }
     },
     async mounted () {
+        // add auth check
         await mountButton(this);
     },
     methods: {

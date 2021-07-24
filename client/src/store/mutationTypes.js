@@ -18,3 +18,5 @@ export const SET_POINT_OF_INTERESTS = 'setPointOfInterests';
 export const SET_POIS_VISIBLE = 'setPoisVisible';
 export const SET_ADD_MODE = 'setAddMode';
 export const SET_ADD_MODE_MODAL = 'setAddModeModal';
+export const SET_ADD_MODE_LONGITUDE = 'setAddModeLongitude';
+export const SET_ADD_MODE_LATITUDE = 'setAddModeLatitude';

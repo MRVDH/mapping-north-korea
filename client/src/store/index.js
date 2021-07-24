@@ -22,7 +22,9 @@ export default new Vuex.Store({
         pointOfInterests: [],
         poisVisible: true,
         addMode: false,
-        addModeModal: false
+        addModeModal: false,
+        addModeLongitude: null,
+        addModeLatitude: null
     },
     mutations: {
         [mt.TOGGLE_DARK_MODE] (state) {
@@ -84,6 +86,12 @@ export default new Vuex.Store({
         },
         [mt.SET_ADD_MODE_MODAL] (state, addModeModal) {
             state.addModeModal = addModeModal;
+        },
+        [mt.SET_ADD_MODE_LONGITUDE] (state, addModeLongitude) {
+            state.addModeLongitude = addModeLongitude;
+        },
+        [mt.SET_ADD_MODE_LATITUDE] (state, addModeLatitude) {
+            state.addModeLatitude = addModeLatitude;
         }
     },
     actions: {
@@ -146,6 +154,12 @@ export default new Vuex.Store({
         },
         [mt.SET_ADD_MODE_MODAL] ({ commit }, addModeModal) {
             commit(mt.SET_ADD_MODE_MODAL, addModeModal);
+        },
+        [mt.SET_ADD_MODE_LONGITUDE] ({ commit }, addModeLongitude) {
+            commit(mt.SET_ADD_MODE_LONGITUDE, addModeLongitude);
+        },
+        [mt.SET_ADD_MODE_LATITUDE] ({ commit }, addModeLatitude) {
+            commit(mt.SET_ADD_MODE_LATITUDE, addModeLatitude);
         }
     },
     plugins: [new VuexPersistence({

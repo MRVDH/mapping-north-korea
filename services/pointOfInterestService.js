@@ -17,5 +17,28 @@ export default {
                 resolve(pointOfInterests);
             });
         });
+    },
+    addPointOfInterest (title, description, longitude, latitude, categories, osmUserId, osmUserName) {
+        return new Promise(async (resolve, reject) => {
+            try {console.log(categories)
+                let newPoi = new PointOfInterest({
+                    title,
+                    description,
+                    osmUserId,
+                    osmUserName,
+                    longitude,
+                    latitude,
+                    time: new Date(),
+                    categories: categories.map(x => x._id),
+                    likes: []
+                });
+
+                newPoi = await newPoi.save();
+                
+                resolve(newPoi);
+            } catch (err) {
+                reject(err);
+            }
+        });
     }
 }

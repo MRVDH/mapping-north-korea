@@ -7,7 +7,10 @@
         "poi-title": "Title",
         "description": "Description",
         "categories": "Categories",
-        "request-error-categories": "An error occurd while retrieving the categories"
+        "request-error-categories": "An error occurd while retrieving the categories",
+        "input-field-error": "Not all required input fields are filled.",
+        "request-success-poi-save": "Point of Interest saved",
+        "request-error-poi-save": "An error occurd while saving the Point of Interest"
     },
     "ko": {
         "title": null,
@@ -16,7 +19,10 @@
         "poi-title": null,
         "description": null,
         "categories": null,
-        "request-error-categories": null
+        "request-error-categories": null,
+        "input-field-error": null,
+        "request-success-poi-save": null,
+        "request-error-poi-save": null
     }
 }
 </i18n>
@@ -36,10 +42,12 @@
                     <v-row>
                         <v-col cols="12">
                             <v-text-field
+                                v-model="poiTitle"
                                 :label="$t('poi-title') + '*'"
                                 required
                                 />
                             <v-textarea
+                                v-model="poiDescription"
                                 :label="$t('description')"
                                 rows="3"
                                 />
@@ -80,17 +88,19 @@
 <script>
 import MapApiService from '@/services/MapApiService';
 import EventBus from '@/events/EventBus';
-import { MESSAGE_ERROR } from '@/events/eventTypes';
+import { MESSAGE_SUCCESS, MESSAGE_ERROR, MESSAGE_INFO } from '@/events/eventTypes';
 import store from '@/store';
-import { START_LOADING, STOP_LOADING, SET_ADD_MODE, SET_ADD_MODE_MODAL } from "@/store/mutationTypes";
+import { START_LOADING, STOP_LOADING, SET_ADD_MODE, SET_ADD_MODE_MODAL, SET_ADD_MODE_LONGITUDE, SET_ADD_MODE_LATITUDE } from "@/store/mutationTypes";
 
 export default {
     name: 'AddPointOfInterestModal',
     data () {
         return {
-            poiName: null,
+            poiTitle: null,
+            poiDescription: null,
             selectedCategories: [],
-            categories: []
+            categories: [],
+            rawCategories: []
         };
     },
     computed: {
@@ -103,6 +113,8 @@ export default {
             if (this.addModeModal) {
                 this.$store.dispatch(START_LOADING, 'loadPointOfInterestCategories');
                 MapApiService.getAllPointOfInterestCategories().then((res) => {
+                    this.rawCategories = res.data;
+                    
                     for (let category of res.data) {
                         this.categories.push(category.title);
                     }
@@ -116,13 +128,36 @@ export default {
     },
     methods: {
         addPoi () {
-            this.close();
+            if (!this.poiTitle || !this.selectedCategories.length) {
+                EventBus.$emit(MESSAGE_INFO, this.$t('input-field-error'));
+                return;
+            }
+
+            let categories = this.selectedCategories.map(x => {
+                return this.rawCategories.find(y => y.title === x);
+            });
+
+            MapApiService.addPointOfInterests({
+                title: this.poiTitle,
+                description: this.poiDescription,
+                longitude: this.$store.state.addModeLongitude,
+                latitude: this.$store.state.addModeLatitude,
+                categories
+            }).then(() => {
+                EventBus.$emit(MESSAGE_SUCCESS, this.$t('request-success-poi-save'));
+                this.close();
+            }).catch(() => {
+                EventBus.$emit(MESSAGE_ERROR, this.$t('request-error-poi-save'));
+            });
         },
         close () {
-            this.poiName = null;
+            this.poiTitle = null;
+            this.poiDescription = null;
             this.selectedCategories = [];
             store.dispatch(SET_ADD_MODE, false);
             store.dispatch(SET_ADD_MODE_MODAL, false);
+            store.dispatch(SET_ADD_MODE_LATITUDE, null);
+            store.dispatch(SET_ADD_MODE_LONGITUDE, null);
         }
     }
 };

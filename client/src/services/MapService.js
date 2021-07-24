@@ -6,7 +6,7 @@ import EventBus from '@/events/EventBus';
 import { MESSAGE_ERROR } from '@/events/eventTypes';
 import store from '@/store';
 import router from '@/router';
-import { START_LOADING, STOP_LOADING, SELECT_SECTOR, SELECT_SECTOR_SET, SET_ADD_MODE_MODAL } from "@/store/mutationTypes";
+import { START_LOADING, STOP_LOADING, SELECT_SECTOR, SELECT_SECTOR_SET, SET_ADD_MODE_MODAL, SET_ADD_MODE_LATITUDE, SET_ADD_MODE_LONGITUDE } from "@/store/mutationTypes";
 
 var instance;
 
@@ -48,8 +48,10 @@ export default {
 
         this.map.on('click', (event) => {
             if (store.state.addMode) {
-                this.setAddMode(!store.state.addMode);
-                store.dispatch(SET_ADD_MODE_MODAL, !store.state.addModeModal);
+                this.setAddMode(false);
+                store.dispatch(SET_ADD_MODE_MODAL, true);
+                store.dispatch(SET_ADD_MODE_LATITUDE, event.lngLat.lat);
+                store.dispatch(SET_ADD_MODE_LONGITUDE, event.lngLat.lng);
             } else {
                 let featuresUnderMouse = this.map.queryRenderedFeatures(event.point).filter(x => x.source === LAYER.SECTOR_SOURCE);
                     
@@ -293,7 +295,7 @@ export default {
                 },
                 geometry: {
                     type: 'Point',
-                    coordinates: [ poi.latitude, poi.longitude ]
+                    coordinates: [ poi.longitude, poi.latitude ]
                 }
             });
         }

@@ -34,6 +34,8 @@ export default {
         app.get('/api/iteration/current', iterationController.getCurrentIteration);
 
         app.get('/api/pointofinterest', pointOfInterestController.getAllPointOfInterests);
+        app.post('/api/pointofinterest', pointOfInterestController.addPointOfInterests);
+
         app.get('/api/pointofinterestcategories', pointOfInterestCategoryController.getAllPointOfInterestCategories);
     }
 }

@@ -44,5 +44,8 @@ export default {
     },
     getAllPointOfInterestCategories () {
         return axios.get(host + '/api/pointofinterestcategories');
+    },
+    addPointOfInterests (data) {
+        return axios.post(host + '/api/pointofinterest', data);
     }
 };

@@ -10,17 +10,17 @@ export default {
             return;
         }
         if (req.body.sectorId === "" || req.body.sectorId === null || req.body.sectorId === undefined) {
-            log.err(" <= RES /event/add invalid or no req body param sectorId.", req.params);
+            log.err(" <= RES /event/add invalid or no req body param sectorId.", req.body);
             res.sendStatus(400);
             return;
         }
         if (req.body.description === "" || req.body.description === null || req.body.description === undefined) {
-            log.err(" <= RES /event/add invalid or no req body param description.", req.params);
+            log.err(" <= RES /event/add invalid or no req body param description.", req.body);
             res.sendStatus(400);
             return;
         }
         if ((req.session.osmUserId === "" || req.session.osmUserId === null || req.session.osmUserId === undefined) && !global.testUserMode) {
-            log.err(" <= RES /event/add unauthorized.", req.params);
+            log.err(" <= RES /event/add unauthorized.", req.body);
             res.sendStatus(401);
             return;
         }

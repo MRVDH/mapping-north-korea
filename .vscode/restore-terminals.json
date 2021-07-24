@@ -7,7 +7,7 @@
             "splitTerminals": [
                 {
                     "name": "server",
-                    "commands": ["node .\\app.js dev"]
+                    "commands": ["node .\\app.js dev testuser"]
                 },
                 {
                     "name": "client",
