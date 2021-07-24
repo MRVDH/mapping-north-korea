@@ -15,6 +15,7 @@ import Event from "../models/Event.js";
 export default {
     async setUpDatabaseConnection () {
         mongoose.connect(global.mongodbConnection, {
+            useUnifiedTopology: true,
             useNewUrlParser: true
         });
         
