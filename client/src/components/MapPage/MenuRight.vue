@@ -7,16 +7,15 @@
         app
         width="300"
         >
-        <v-list
+        <div
             v-if="!selectedSectorSet"
-            class="pt-0 pb-0"
             >
             <CustomMenuRightRegions />
             <v-divider />
             <CustomMenuRightRecentEvents />
             <v-divider />
             <CustomMenuRightPointOfInterests />
-        </v-list>
+        </div>
         <CustomMenuRightButtonBack v-if="selectedSectorSet" />
         <CustomMenuRightRegion v-if="selectedSectorSet && !selectedSector" />
         <CustomMenuRightSector v-if="selectedSector" />

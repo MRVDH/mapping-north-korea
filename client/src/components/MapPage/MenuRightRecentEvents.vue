@@ -22,67 +22,63 @@
 </i18n>
 
 <template>
-    <div>
-        <v-container class="pa-4 pb-0">
-            <v-row>
-                <v-col class="py-0">
-                    <span class="font-weight-bold">{{ $t('recent_events') }}</span>
-                </v-col>
-            </v-row>
-        </v-container>
-        <v-container class="pt-4">
-            <v-row v-if="!limitedRecentEvents.length">
-                <v-col class="pt-0 pb-0"><v-skeleton-loader type="list-item" /></v-col>
-            </v-row>
-            <v-row v-if="!limitedRecentEvents.length">
-                <v-col class="pt-0 pb-0"><v-skeleton-loader type="list-item" /></v-col>
-            </v-row>
-            <v-row v-if="!limitedRecentEvents.length">
-                <v-col class="pt-0 pb-0"><v-skeleton-loader type="list-item" /></v-col>
-            </v-row>
-            <v-row
-                v-for="(event, index) in limitedRecentEvents"
-                :key="index"
-                >
-                <v-col class="pt-0 px-4">
-                    <div
-                        class="text-left"
-                        style="cursor: pointer;"
-                        @click="selectSector(event.sector)"
+    <v-container fluid>
+        <v-row>
+            <v-col>
+                <span class="font-weight-bold">{{ $t('recent_events') }}</span>
+            </v-col>
+        </v-row>
+        <v-row v-if="!limitedRecentEvents.length">
+            <v-col class="pt-0 pb-0"><v-skeleton-loader type="list-item" /></v-col>
+        </v-row>
+        <v-row v-if="!limitedRecentEvents.length">
+            <v-col class="pt-0 pb-0"><v-skeleton-loader type="list-item" /></v-col>
+        </v-row>
+        <v-row v-if="!limitedRecentEvents.length">
+            <v-col class="pt-0 pb-0"><v-skeleton-loader type="list-item" /></v-col>
+        </v-row>
+        <v-row
+            v-for="(event, index) in limitedRecentEvents"
+            :key="index"
+            >
+            <v-col class="pt-0 px-4">
+                <div
+                    class="text-left"
+                    style="cursor: pointer;"
+                    @click="selectSector(event.sector)"
+                    >
+                    {{ event.description }}
+                </div>
+                <div class="text-right grey--text caption">
+                    {{ event.osmUserName }}
+                    <a
+                        :href="'https://www.openstreetmap.org/user/' + event.osmUserName"
+                        target="_blank"
+                        style="text-decoration: none;"
                         >
-                        {{ event.description }}
-                    </div>
-                    <div class="text-right grey--text caption">
-                        {{ event.osmUserName }}
-                        <a
-                            :href="'https://www.openstreetmap.org/user/' + event.osmUserName"
-                            target="_blank"
-                            style="text-decoration: none;"
+                        <v-icon
+                            small
+                            style="font-size: 10px; vertical-align: initial;"
                             >
-                            <v-icon
-                                small
-                                style="font-size: 10px; vertical-align: initial;"
-                                >
-                                launch
-                            </v-icon>
-                        </a> - <span :title="new Date(event.time)">{{ calculateDateOutput(new Date(event.time)) }}</span>
-                    </div>
-                </v-col>
-            </v-row>
-            <v-row text-left>
-                <v-col class="py-0 px-4">
-                    <a
-                        v-if="eventsLimit && limitedRecentEvents.length"
-                        @click="eventsLimit = null;"
-                        >{{ $t('show_more') }}...</a>
-                    <a
-                        v-if="!eventsLimit && limitedRecentEvents.length"
-                        @click="eventsLimit = 4;"
-                        >{{ $t('show_less') }}...</a>
-                </v-col>
-            </v-row>
-        </v-container>
-    </div>
+                            launch
+                        </v-icon>
+                    </a> - <span :title="new Date(event.time)">{{ calculateDateOutput(new Date(event.time)) }}</span>
+                </div>
+            </v-col>
+        </v-row>
+        <v-row text-left>
+            <v-col class="pt-0 px-4">
+                <a
+                    v-if="eventsLimit && limitedRecentEvents.length"
+                    @click="eventsLimit = null;"
+                    >{{ $t('show_more') }}...</a>
+                <a
+                    v-if="!eventsLimit && limitedRecentEvents.length"
+                    @click="eventsLimit = 4;"
+                    >{{ $t('show_less') }}...</a>
+            </v-col>
+        </v-row>
+    </v-container>
 </template>
 
 <script>

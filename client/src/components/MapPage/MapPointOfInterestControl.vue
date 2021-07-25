@@ -28,6 +28,7 @@
         <button
             type="button"
             :title="$t('button_add_poi')"
+            :disabled="!loggedInUser"
             @click="addPoi()"
             >
             <span class="mapboxgl-ctrl-icon">
@@ -64,6 +65,9 @@ export default {
         },
         addMode () {
             return this.$store.state.addMode;
+        },
+        loggedInUser () {
+            return this.$store.state.loggedInUser;
         }
     },
     async mounted () {
