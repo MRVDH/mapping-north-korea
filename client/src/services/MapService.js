@@ -35,6 +35,7 @@ export default {
     map: null,
     component: null,
     sectors: [],
+    geoJsonPois: [],
 
     newMap (darkMode) {
         mapboxgl.accessToken = "pk.eyJ1IjoibXJ2ZGgiLCJhIjoiY2tpN2pjNmR6MWl6NzJ6cXMxZHYxZXF2cyJ9.6FUJ6L-3rIIUliPnyoo4sQ";
@@ -55,11 +56,11 @@ export default {
                 store.dispatch(SET_ADD_MODE_LONGITUDE, event.lngLat.lng);
             } else {
                 let featuresUnderMouse = this.map.queryRenderedFeatures(event.point).filter(x => x.source === LAYER.SECTOR_SOURCE);
-                    
+
                 if (featuresUnderMouse?.length || !router.currentRoute.params.sectorSetId || !router.currentRoute.params.sectorId) {
                     return;
                 }
-        
+
                 this.routeToSectorSet(router.currentRoute.params.sectorSetId, true);
                 this.map.setFilter(LAYER.SELECTED_SECTOR_LAYER, [ "==", [ "get", "_id" ], "" ]);
                 this.map.setFilter(LAYER.SELECTED_POI_LAYER, [ "==", [ "get", "_id" ], "" ]);
@@ -92,11 +93,11 @@ export default {
         this.component = component;
     },
     displayPointOfInterests () {
-        let geoJsonPois = this.pointOfInterestsToGeoJson(store.state.pointOfInterests);
+        this.geoJsonPois = this.pointOfInterestsToGeoJson(store.state.pointOfInterests);
 
         this.map.addSource(LAYER.POI_SOURCE, {
             'type': 'geojson',
-            'data': geoJsonPois
+            'data': this.geoJsonPois
         });
 
         this.map.addLayer({
@@ -442,5 +443,46 @@ export default {
         });
 
         source.setData(this.geoJsonSectors);
+    },
+    updatePois (pois) {
+        let source = this.map.getSource(LAYER.POI_SOURCE);
+
+        this.geoJsonPois = this.pointOfInterestsToGeoJson(pois);
+
+        source.setData(this.geoJsonPois);
+    },
+    addPoi (poiToAdd) {
+        let source = this.map.getSource(LAYER.POI_SOURCE);
+
+        this.geoJsonPois.features.push({
+            type: 'Feature',
+            properties: {
+                _id: poiToAdd._id,
+                title: poiToAdd.title,
+                description: poiToAdd.description,
+                longitude: poiToAdd.longitude,
+                latitude: poiToAdd.latitude,
+                time: poiToAdd.time,
+                categories: poiToAdd.categories,
+                likes: poiToAdd.likes
+            },
+            geometry: {
+                type: 'Point',
+                coordinates: [ poiToAdd.longitude, poiToAdd.latitude ]
+            }
+        });
+
+        source.setData(this.geoJsonPois);
+    },
+    removePoi (poiToRemove) {
+        let source = this.map.getSource(LAYER.POI_SOURCE);
+
+        this.geoJsonPois.features = this.geoJsonPois.features.filter(x => x.properties._id !== poiToRemove._id);
+
+        source.setData(this.geoJsonPois);
+    },
+    updatePoi (poiToUpdate) {
+        this.removePoi(poiToUpdate);
+        this.addPoi(poiToUpdate);
     }
 };

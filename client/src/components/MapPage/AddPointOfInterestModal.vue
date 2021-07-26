@@ -88,7 +88,7 @@ import MapApiService from '@/services/MapApiService';
 import EventBus from '@/events/EventBus';
 import { MESSAGE_SUCCESS, MESSAGE_ERROR, MESSAGE_INFO } from '@/events/eventTypes';
 import store from '@/store';
-import { START_LOADING, STOP_LOADING, SET_ADD_MODE, SET_ADD_MODE_MODAL, SET_ADD_MODE_LONGITUDE, SET_ADD_MODE_LATITUDE } from "@/store/mutationTypes";
+import { START_LOADING, STOP_LOADING, SET_ADD_MODE, SET_ADD_MODE_MODAL, SET_ADD_MODE_LONGITUDE, SET_ADD_MODE_LATITUDE, SET_POINT_OF_INTERESTS } from "@/store/mutationTypes";
 
 export default {
     name: 'AddPointOfInterestModal',
@@ -103,6 +103,9 @@ export default {
     computed: {
         addModeModal () {
             return this.$store.state.addModeModal;
+        },
+        pointOfInterests () {
+            return this.$store.state.pointOfInterests;
         },
         pointOfInterestCategories () {
             return this.$store.state.pointOfInterestCategories;
@@ -131,7 +134,12 @@ export default {
                 longitude: this.$store.state.addModeLongitude,
                 latitude: this.$store.state.addModeLatitude,
                 categories
-            }).then(() => {
+            }).then((res) => {
+                let newPoiArray = this.pointOfInterests;
+                newPoiArray.push(res.data);
+                newPoiArray = newPoiArray.sort((first, second) => { return first.likes.length - second.likes.length });
+
+                this.$store.dispatch(SET_POINT_OF_INTERESTS, newPoiArray);
                 EventBus.$emit(MESSAGE_SUCCESS, this.$t('request-success-poi-save'));
                 this.close();
             }).catch(() => {

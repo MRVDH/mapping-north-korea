@@ -50,6 +50,9 @@ export default {
         },
         selectedPoi () {
             return this.$store.state.selectedPoi;
+        },
+        pointOfInterests () {
+            return this.$store.state.pointOfInterests;
         }
     },
     watch: {
@@ -76,6 +79,13 @@ export default {
             }
 
             MapService.sectorUpdate(selectedSector);
+        },
+        pointOfInterests (changedPointOfInterests) {
+            if (!changedPointOfInterests || !changedPointOfInterests.length) {
+                return;
+            }
+
+            MapService.updatePois(changedPointOfInterests);
         }
     },
     async created () {

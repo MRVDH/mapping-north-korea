@@ -20,7 +20,7 @@ export default {
     },
     addPointOfInterest (title, description, longitude, latitude, categories, osmUserId, osmUserName) {
         return new Promise(async (resolve, reject) => {
-            try {console.log(categories)
+            try {
                 let newPoi = new PointOfInterest({
                     title,
                     description,
