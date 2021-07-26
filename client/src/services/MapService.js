@@ -227,6 +227,8 @@ export default {
             throw `sectorSetId can't be of value: ${sectorSetId}`;
         }
 
+        this.deselectPoi();
+
         store.dispatch(SELECT_SECTOR_SET, store.state.sectorSets.find(x => x._id === sectorSetId));
         this.map.setLayoutProperty(LAYER.SECTOR_SET_LAYER, 'visibility', 'none');
 
@@ -312,6 +314,8 @@ export default {
         if (!sectorId) {
             throw `sectorId can't be of value: ${sectorId}`;
         }
+        
+        this.deselectPoi();
 
         if (store.state.selectedSector && store.state.selectedSector._id === sectorId) {
             this.routeToSectorSet(router.currentRoute.params.sectorSetId);
