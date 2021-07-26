@@ -7,18 +7,17 @@
         app
         width="300"
         >
-        <div
-            v-if="!selectedSectorSet"
-            >
+        <div v-if="!selectedSectorSet && !selectedSector && !selectedPoi">
             <CustomMenuRightRegions />
             <v-divider />
             <CustomMenuRightRecentEvents />
             <v-divider />
             <CustomMenuRightPointOfInterests />
         </div>
-        <CustomMenuRightButtonBack v-if="selectedSectorSet" />
-        <CustomMenuRightRegion v-if="selectedSectorSet && !selectedSector" />
-        <CustomMenuRightSector v-if="selectedSector" />
+        <CustomMenuRightButtonBack v-if="selectedSectorSet || selectedPoi" />
+        <CustomMenuRightRegion v-if="selectedSectorSet && !selectedSector && !selectedPoi" />
+        <CustomMenuRightSector v-if="selectedSector && !selectedPoi" />
+        <MenuRightPointOfInterest v-if="selectedPoi" />
     </v-navigation-drawer>
 </template>
 
@@ -29,6 +28,7 @@ import CustomMenuRightRecentEvents from './MenuRightRecentEvents';
 import CustomMenuRightButtonBack from './MenuRightButtonBack';
 import CustomMenuRightRegion from './MenuRightRegion';
 import CustomMenuRightPointOfInterests from './MenuRightPointOfInterests';
+import MenuRightPointOfInterest from './MenuRightPointOfInterest';
 
 import { SET_DRAWER_RIGHT } from "@/store/mutationTypes";
 
@@ -40,7 +40,8 @@ export default {
         CustomMenuRightRecentEvents,
         CustomMenuRightButtonBack,
         CustomMenuRightRegion,
-        CustomMenuRightPointOfInterests
+        CustomMenuRightPointOfInterests,
+        MenuRightPointOfInterest
     },
     computed: {
         drawerRight: {
@@ -53,6 +54,9 @@ export default {
         },
         selectedSector () {
             return this.$store.state.selectedSector;
+        },
+        selectedPoi () {
+            return this.$store.state.selectedPoi;
         },
         recentEvents () {
             return this.$store.state.recentEvents;

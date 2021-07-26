@@ -6,12 +6,13 @@ import EventBus from '@/events/EventBus';
 import { MESSAGE_ERROR } from '@/events/eventTypes';
 import store from '@/store';
 import router from '@/router';
-import { START_LOADING, STOP_LOADING, SELECT_SECTOR, SELECT_SECTOR_SET, SET_ADD_MODE_MODAL, SET_ADD_MODE_LATITUDE, SET_ADD_MODE_LONGITUDE } from "@/store/mutationTypes";
+import { START_LOADING, STOP_LOADING, SELECT_SECTOR, SELECT_SECTOR_SET, SET_ADD_MODE_MODAL, SET_ADD_MODE_LATITUDE, SET_ADD_MODE_LONGITUDE, SELECT_POI } from "@/store/mutationTypes";
 
 var instance;
 
 const LAYER = {
     POI_LAYER: 'poi-layer',
+    SELECTED_POI_LAYER: 'selected-poi-layer',
     SECTOR_SET_LAYER: 'sector-set-layer',
     SECTOR_LAYER: 'sector-layer',
     SELECTED_SECTOR_LAYER: 'selected-sector-layer',
@@ -55,13 +56,15 @@ export default {
             } else {
                 let featuresUnderMouse = this.map.queryRenderedFeatures(event.point).filter(x => x.source === LAYER.SECTOR_SOURCE);
                     
-                if ((featuresUnderMouse && featuresUnderMouse.length) || !router.currentRoute.params.sectorSetId || !router.currentRoute.params.sectorId) {
+                if (featuresUnderMouse?.length || !router.currentRoute.params.sectorSetId || !router.currentRoute.params.sectorId) {
                     return;
                 }
         
                 this.routeToSectorSet(router.currentRoute.params.sectorSetId, true);
                 this.map.setFilter(LAYER.SELECTED_SECTOR_LAYER, [ "==", [ "get", "_id" ], "" ]);
+                this.map.setFilter(LAYER.SELECTED_POI_LAYER, [ "==", [ "get", "_id" ], "" ]);
                 store.dispatch(SELECT_SECTOR, null);
+                store.dispatch(SELECT_POI, null);
             }
         });
 
@@ -107,6 +110,41 @@ export default {
                 "circle-stroke-color": "#fff"
             }
         });
+
+        this.map.addLayer({
+            id: LAYER.SELECTED_POI_LAYER,
+            type: 'circle',
+            source: LAYER.POI_SOURCE,
+            paint: {
+                "circle-color": "#949DF6",
+                "circle-radius": 6,
+                "circle-stroke-width": 1,
+                "circle-stroke-color": "yellow"
+            },
+            filter: ["==", "_id", ""]
+        });
+
+        this.map.on('click', LAYER.POI_LAYER, (event) => {
+            const poiId = this.map.queryRenderedFeatures(event.point).find(feature => feature.source === LAYER.POI_SOURCE)?.properties._id;
+
+            if (store.state.selectedPoi?._id === poiId) {
+                this.map.setFilter(LAYER.SELECTED_POI_LAYER, [ "==", [ "get", "_id" ], "" ]);
+                store.dispatch(SELECT_POI, null);
+            } else {
+                const selectedPoi = store.state.pointOfInterests.find(x => x._id === poiId);
+    
+                if (!selectedPoi) {
+                    throw `selectedPoi: ${selectedPoi} should exist in sectors array but can't be found.`;
+                }
+
+                store.dispatch(SELECT_POI, selectedPoi);
+                this.map.setFilter(LAYER.SELECTED_POI_LAYER, [ "==", [ "get", "_id" ], poiId || "" ]);
+            }
+        });
+    },
+    deselectPoi () {
+        this.map.setFilter(LAYER.SELECTED_POI_LAYER, [ "==", [ "get", "_id" ], "" ]);
+        store.dispatch(SELECT_POI, null);
     },
     setPoiVisibility (toVisible) {
         if (toVisible) {
@@ -114,6 +152,10 @@ export default {
         } else {
             if (this.map.getLayer(LAYER.POI_LAYER)) {
                 this.map.removeLayer(LAYER.POI_LAYER);
+            }
+
+            if (this.map.getLayer(LAYER.SELECTED_POI_LAYER)) {
+                this.map.removeLayer(LAYER.SELECTED_POI_LAYER);
             }
     
             if (this.map.getSource(LAYER.POI_SOURCE)) {
@@ -154,6 +196,9 @@ export default {
         });
 
         this.map.on('click', LAYER.SECTOR_SET_LAYER, (event) => {
+            if (this.map.queryRenderedFeatures(event.point).some(feature => feature.source === LAYER.POI_SOURCE)) {
+                return;
+            }
             if (!store.state.addMode) {
                 this.selectSectorSet(event.features[0].properties._id);
             }
@@ -164,6 +209,7 @@ export default {
         }
 
         this.map.moveLayer(LAYER.POI_LAYER);
+        this.map.moveLayer(LAYER.SELECTED_POI_LAYER);
     },
     selectSectorSet (sectorSetId) {
         if (!sectorSetId) {
@@ -221,6 +267,7 @@ export default {
             this.map.on('click', LAYER.SECTOR_LAYER, this.sectorClickEvent);
 
             this.map.moveLayer(LAYER.POI_LAYER);
+            this.map.moveLayer(LAYER.SELECTED_POI_LAYER);
 
             var bounds = new mapboxgl.LngLatBounds();
 
@@ -243,6 +290,9 @@ export default {
         });
     },
     sectorClickEvent (event) {
+        if (instance.map.queryRenderedFeatures(event.point).some(feature => feature.source === LAYER.POI_SOURCE)) {
+            return;
+        }
         if (!store.state.addMode) {
             instance.selectSector(event.features[0].properties._id);
         }

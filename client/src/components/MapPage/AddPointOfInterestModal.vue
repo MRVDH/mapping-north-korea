@@ -7,7 +7,6 @@
         "poi-title": "Title",
         "description": "Description",
         "categories": "Categories",
-        "request-error-categories": "An error occurd while retrieving the categories",
         "input-field-error": "Not all required input fields are filled.",
         "request-success-poi-save": "Point of Interest saved",
         "request-error-poi-save": "An error occurd while saving the Point of Interest"
@@ -19,7 +18,6 @@
         "poi-title": null,
         "description": null,
         "categories": null,
-        "request-error-categories": null,
         "input-field-error": null,
         "request-success-poi-save": null,
         "request-error-poi-save": null
@@ -99,30 +97,21 @@ export default {
             poiTitle: null,
             poiDescription: null,
             selectedCategories: [],
-            categories: [],
-            rawCategories: []
+            categories: []
         };
     },
     computed: {
         addModeModal () {
             return this.$store.state.addModeModal;
+        },
+        pointOfInterestCategories () {
+            return this.$store.state.pointOfInterestCategories;
         }
     },
     watch: {
         addModeModal () {
             if (this.addModeModal) {
-                this.$store.dispatch(START_LOADING, 'loadPointOfInterestCategories');
-                MapApiService.getAllPointOfInterestCategories().then((res) => {
-                    this.rawCategories = res.data;
-                    
-                    for (let category of res.data) {
-                        this.categories.push(category.title);
-                    }
-                }).catch(() => {
-                    EventBus.$emit(MESSAGE_ERROR, this.$t('request-error-categories'));
-                }).finally(() => {
-                    this.$store.dispatch(STOP_LOADING, 'loadPointOfInterestCategories');
-                });
+                this.categories = this.pointOfInterestCategories.map(x => x.title);
             }
         }
     },
@@ -133,10 +122,9 @@ export default {
                 return;
             }
 
-            let categories = this.selectedCategories.map(x => {
-                return this.rawCategories.find(y => y.title === x);
-            });
+            let categories = this.selectedCategories.map(x => this.pointOfInterestCategories.find(y => y.title === x));
 
+            this.$store.dispatch(START_LOADING, 'savePointOfInterest');
             MapApiService.addPointOfInterests({
                 title: this.poiTitle,
                 description: this.poiDescription,
@@ -148,6 +136,8 @@ export default {
                 this.close();
             }).catch(() => {
                 EventBus.$emit(MESSAGE_ERROR, this.$t('request-error-poi-save'));
+            }).finally(() => {
+                this.$store.dispatch(STOP_LOADING, 'savePointOfInterest');
             });
         },
         close () {

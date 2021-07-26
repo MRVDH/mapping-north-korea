@@ -47,6 +47,9 @@ export default {
         },
         selectedSector () {
             return this.$store.state.selectedSector;
+        },
+        selectedPoi () {
+            return this.$store.state.selectedPoi;
         }
     },
     watch: {
@@ -60,6 +63,11 @@ export default {
         selectedSectorSet (selectedSectorSet) {
             if (!selectedSectorSet) {
                 MapService.goToSectorSets();
+            }
+        },
+        selectedPoi (selectedPoi) {
+            if (!selectedPoi) {
+                MapService.deselectPoi();
             }
         },
         selectedSector (selectedSector) {

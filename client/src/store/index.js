@@ -24,7 +24,9 @@ export default new Vuex.Store({
         addMode: false,
         addModeModal: false,
         addModeLongitude: null,
-        addModeLatitude: null
+        addModeLatitude: null,
+        selectedPoi: null,
+        pointOfInterestCategories: []
     },
     mutations: {
         [mt.TOGGLE_DARK_MODE] (state) {
@@ -92,6 +94,12 @@ export default new Vuex.Store({
         },
         [mt.SET_ADD_MODE_LATITUDE] (state, addModeLatitude) {
             state.addModeLatitude = addModeLatitude;
+        },
+        [mt.SELECT_POI] (state, poi) {
+            state.selectedPoi = poi;
+        },
+        [mt.SET_POINT_OF_INTEREST_CATEGORIES] (state, poiCategories) {
+            state.pointOfInterestCategories = poiCategories;
         }
     },
     actions: {
@@ -160,6 +168,12 @@ export default new Vuex.Store({
         },
         [mt.SET_ADD_MODE_LATITUDE] ({ commit }, addModeLatitude) {
             commit(mt.SET_ADD_MODE_LATITUDE, addModeLatitude);
+        },
+        [mt.SELECT_POI] ({ commit }, poi) {
+            commit(mt.SELECT_POI, poi);
+        },
+        [mt.SET_POINT_OF_INTEREST_CATEGORIES] ({ commit }, poiCategories) {
+            commit(mt.SET_POINT_OF_INTEREST_CATEGORIES, poiCategories);
         }
     },
     plugins: [new VuexPersistence({

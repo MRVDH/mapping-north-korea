@@ -20,3 +20,5 @@ export const SET_ADD_MODE = 'setAddMode';
 export const SET_ADD_MODE_MODAL = 'setAddModeModal';
 export const SET_ADD_MODE_LONGITUDE = 'setAddModeLongitude';
 export const SET_ADD_MODE_LATITUDE = 'setAddModeLatitude';
+export const SELECT_POI = 'selectPoi';
+export const SET_POINT_OF_INTEREST_CATEGORIES = 'setPointOfInterestCategories';

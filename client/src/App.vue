@@ -6,7 +6,8 @@
         "request": {
             "user_details": "Something went wrong while trying to get your user details.",
             "logged_in": "Something went wrong while trying to check if you are logged in.",
-            "current_iteration": "Something went wrong while trying to get the current iteration."
+            "current_iteration": "Something went wrong while trying to get the current iteration.",
+            "categories": "An error occurd while retrieving the categories"
         }
     },
     "ko": {
@@ -15,7 +16,8 @@
         "request": {
             "user_details": null,
             "logged_in": null,
-            "current_iteration": null
+            "current_iteration": null,
+            "categories": null
         }
     }
 }
@@ -55,7 +57,7 @@ import OAuthService from '@/services/OAuthService';
 import MapApiService from '@/services/MapApiService';
 import EventBus from '@/events/EventBus';
 import { MESSAGE_ERROR, MESSAGE_SUCCESS, MESSAGE_INFO } from '@/events/eventTypes';
-import { SET_LOGGED_IN_USER, START_LOADING, STOP_LOADING, SET_CURRENT_ITERATION } from "@/store/mutationTypes";
+import { SET_LOGGED_IN_USER, START_LOADING, STOP_LOADING, SET_CURRENT_ITERATION, SET_POINT_OF_INTEREST_CATEGORIES } from "@/store/mutationTypes";
 
 export default {
     name: 'App',
@@ -126,6 +128,16 @@ export default {
             EventBus.$emit(MESSAGE_ERROR, this.$t('request.current_iteration'));
         }).finally(() => {
             this.$store.dispatch(STOP_LOADING, 'getCurrentIteration');
+        });
+
+        // Get the poi categories
+        this.$store.dispatch(START_LOADING, 'loadPointOfInterestCategories');
+        MapApiService.getAllPointOfInterestCategories().then((res) => {
+            this.$store.dispatch(SET_POINT_OF_INTEREST_CATEGORIES, res.data);
+        }).catch(() => {
+            EventBus.$emit(MESSAGE_ERROR, this.$t('request.categories'));
+        }).finally(() => {
+            this.$store.dispatch(STOP_LOADING, 'loadPointOfInterestCategories');
         });
 
         // Set the toast event listeners.
