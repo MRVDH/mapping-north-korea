@@ -129,19 +129,29 @@ export default {
             const poiId = this.map.queryRenderedFeatures(event.point).find(feature => feature.source === LAYER.POI_SOURCE)?.properties._id;
 
             if (store.state.selectedPoi?._id === poiId) {
-                this.map.setFilter(LAYER.SELECTED_POI_LAYER, [ "==", [ "get", "_id" ], "" ]);
-                store.dispatch(SELECT_POI, null);
+                this.deselectPoi();
             } else {
-                const selectedPoi = store.state.pointOfInterests.find(x => x._id === poiId);
-    
-                if (!selectedPoi) {
-                    throw `selectedPoi: ${selectedPoi} should exist in sectors array but can't be found.`;
-                }
-
-                store.dispatch(SELECT_POI, selectedPoi);
-                this.map.setFilter(LAYER.SELECTED_POI_LAYER, [ "==", [ "get", "_id" ], poiId || "" ]);
+                this.selectPoi(poiId);
             }
         });
+    },
+    selectAndFlyToPoi (poi) {
+        this.selectPoi(poi._id);
+        this.map.flyTo({
+            center: [ poi.longitude, poi.latitude ],
+            essential: true,
+            zoom: 17
+        });
+    },
+    selectPoi (poiId) {
+        const selectedPoi = store.state.pointOfInterests.find(x => x._id === poiId);
+    
+        if (!selectedPoi) {
+            throw `selectedPoi: ${selectedPoi} should exist in sectors array but can't be found.`;
+        }
+
+        store.dispatch(SELECT_POI, selectedPoi);
+        this.map.setFilter(LAYER.SELECTED_POI_LAYER, [ "==", [ "get", "_id" ], poiId || "" ]);
     },
     deselectPoi () {
         this.map.setFilter(LAYER.SELECTED_POI_LAYER, [ "==", [ "get", "_id" ], "" ]);
@@ -447,42 +457,12 @@ export default {
     updatePois (pois) {
         let source = this.map.getSource(LAYER.POI_SOURCE);
 
+        if (!source) {
+            return;
+        }
+
         this.geoJsonPois = this.pointOfInterestsToGeoJson(pois);
 
         source.setData(this.geoJsonPois);
-    },
-    addPoi (poiToAdd) {
-        let source = this.map.getSource(LAYER.POI_SOURCE);
-
-        this.geoJsonPois.features.push({
-            type: 'Feature',
-            properties: {
-                _id: poiToAdd._id,
-                title: poiToAdd.title,
-                description: poiToAdd.description,
-                longitude: poiToAdd.longitude,
-                latitude: poiToAdd.latitude,
-                time: poiToAdd.time,
-                categories: poiToAdd.categories,
-                likes: poiToAdd.likes
-            },
-            geometry: {
-                type: 'Point',
-                coordinates: [ poiToAdd.longitude, poiToAdd.latitude ]
-            }
-        });
-
-        source.setData(this.geoJsonPois);
-    },
-    removePoi (poiToRemove) {
-        let source = this.map.getSource(LAYER.POI_SOURCE);
-
-        this.geoJsonPois.features = this.geoJsonPois.features.filter(x => x.properties._id !== poiToRemove._id);
-
-        source.setData(this.geoJsonPois);
-    },
-    updatePoi (poiToUpdate) {
-        this.removePoi(poiToUpdate);
-        this.addPoi(poiToUpdate);
     }
 };

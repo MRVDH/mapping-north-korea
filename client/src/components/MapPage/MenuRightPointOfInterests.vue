@@ -39,7 +39,7 @@
             <v-col
                 class="pt-0 pl-4"
                 style="cursor: pointer;"
-                @click="selectPointOfInterest(poi._id)"
+                @click="selectPointOfInterest(poi)"
                 >
                 {{ poi.title }}
                 <div class="grey--text caption"><v-icon class="grey--text">mdi-thumb-up</v-icon> {{ poi.likes.length }}</div>
@@ -61,7 +61,7 @@
 </template>
 
 <script>
-//import EventBus from '@/events/EventBus';
+import EventBus from '@/events/EventBus';
 
 export default {
     name: 'MenuRightPointOfInterests',
@@ -79,8 +79,8 @@ export default {
         }
     },
     methods: {
-        selectPointOfInterest (/* id */) {
-            // TODO
+        selectPointOfInterest (poi) {
+            EventBus.$emit('mnk:go-to-poi', poi);
         }
     }
 };

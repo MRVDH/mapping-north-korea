@@ -103,6 +103,9 @@ export default {
             router.push({ name: 'MapPage', params: { sectorSetId: data } });
             MapService.selectSectorSet(data);
         });
+        EventBus.$on('mnk:go-to-poi', (data) => {
+            MapService.selectAndFlyToPoi(data);
+        });
     },
     beforeDestroy () {
         MapService.remove();
