@@ -3,12 +3,16 @@
     "en": {
         "poi-title": "Title",
         "description": "Description",
-        "categories": "Categories"
+        "categories": "Categories",
+        "btn-edit": "Edit",
+        "btn-delete": "Delete"
     },
     "ko": {
         "poi-title": null,
         "description": null,
-        "categories": null
+        "categories": null,
+        "btn-edit": null,
+        "btn-delete": null
     }
 }
 </i18n>
@@ -66,6 +70,27 @@
                 </span>
             </v-col>
         </v-row>
+        <v-row>
+            <v-col cols="12">
+                <v-btn
+                    class="ma-0"
+                    color="warning"
+                    :disabled="!loggedInUser"
+                    @click="edit()"
+                    >
+                    {{ $t('btn-edit') }}
+                </v-btn>
+                <v-btn
+                    v-if="adminLoggedIn"
+                    class="mb-0 ml-1 mt-0 mr-0"
+                    color="error"
+                    :disabled="!loggedInUser"
+                    @click="deletePoi()"
+                    >
+                    {{ $t('btn-delete') }}
+                </v-btn>
+            </v-col>
+        </v-row>
     </v-container>
 </template>
 
@@ -84,6 +109,20 @@ export default {
         },
         thisPoisCategories () {
             return this.selectedPoi.categories.map(x => this.pointOfInterestCategories.find(y => y._id === x));
+        },
+        loggedInUser () {
+            return this.$store.state.loggedInUser;
+        },
+        adminLoggedIn () {
+            return this.loggedInUser && (location.href.includes(`localhost`) || this.loggedInUser.name === `Artemis64` || this.loggedInUser.name === `Artemis64dev`);
+        }
+    },
+    methods: {
+        edit () {
+            // open popup
+        },
+        deletePoi () {
+            // send delete request and update list
         }
     }
 };
