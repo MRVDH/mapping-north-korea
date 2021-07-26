@@ -50,5 +50,8 @@ export default {
     },
     deletePointOfInterest (id) {
         return axios.delete(host + '/api/pointofinterest/' + id);
+    },
+    updatePointOfInterest (data) {
+        return axios.put(host + '/api/pointofinterest', data);
     }
 };

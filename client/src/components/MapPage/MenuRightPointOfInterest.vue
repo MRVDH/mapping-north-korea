@@ -102,7 +102,7 @@
 import MapApiService from '@/services/MapApiService';
 import EventBus from '@/events/EventBus';
 import { MESSAGE_SUCCESS, MESSAGE_ERROR } from '@/events/eventTypes';
-import { START_LOADING, STOP_LOADING, SELECT_POI, SET_POINT_OF_INTERESTS } from "@/store/mutationTypes";
+import { START_LOADING, STOP_LOADING, SELECT_POI, SET_POINT_OF_INTERESTS, SET_POI_MODAL } from "@/store/mutationTypes";
 
 export default {
     name: 'MenuRightPointOfInterest',
@@ -131,7 +131,7 @@ export default {
     },
     methods: {
         edit () {
-            // open popup
+            this.$store.dispatch(SET_POI_MODAL, true);
         },
         deletePoi () {
             this.$store.dispatch(START_LOADING, 'deletePointOfInterest');

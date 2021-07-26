@@ -1,7 +1,7 @@
 <i18n>
 {
     "en": {
-        "title": "Add Point of Interest",
+        "title": "Point of Interest",
         "save": "Save",
         "close": "Close",
         "poi-title": "Title",
@@ -27,7 +27,7 @@
 
 <template>
     <v-dialog
-        v-model="addModeModal"
+        v-model="poiModal"
         max-width="700px"
         persistent
         >
@@ -74,7 +74,7 @@
                 <v-btn
                     color="blue darken-1"
                     text
-                    @click="addPoi()"
+                    @click="save()"
                     >
                     {{ $t('save') }}
                 </v-btn>
@@ -88,7 +88,7 @@ import MapApiService from '@/services/MapApiService';
 import EventBus from '@/events/EventBus';
 import { MESSAGE_SUCCESS, MESSAGE_ERROR, MESSAGE_INFO } from '@/events/eventTypes';
 import store from '@/store';
-import { START_LOADING, STOP_LOADING, SET_ADD_MODE, SET_ADD_MODE_MODAL, SET_ADD_MODE_LONGITUDE, SET_ADD_MODE_LATITUDE, SET_POINT_OF_INTERESTS } from "@/store/mutationTypes";
+import { START_LOADING, STOP_LOADING, SET_ADD_MODE, SET_POI_MODAL, SET_ADD_MODE_LONGITUDE, SET_ADD_MODE_LATITUDE, SET_POINT_OF_INTERESTS, SELECT_POI } from "@/store/mutationTypes";
 
 export default {
     name: 'PointOfInterestModal',
@@ -101,25 +101,34 @@ export default {
         };
     },
     computed: {
-        addModeModal () {
-            return this.$store.state.addModeModal;
+        poiModal () {
+            return this.$store.state.poiModal;
         },
         pointOfInterests () {
             return this.$store.state.pointOfInterests;
         },
         pointOfInterestCategories () {
             return this.$store.state.pointOfInterestCategories;
+        },
+        selectedPoi () {
+            return this.$store.state.selectedPoi;
         }
     },
     watch: {
-        addModeModal () {
-            if (this.addModeModal) {
+        poiModal () {
+            if (this.poiModal) {
                 this.categories = this.pointOfInterestCategories.map(x => x.title);
+
+                if (this.selectedPoi) {
+                    this.selectedCategories = this.pointOfInterestCategories.filter(x => this.selectedPoi.categories.find(y => y === x._id)).map(x => x.title);
+                    this.poiTitle = this.selectedPoi.title;
+                    this.poiDescription = this.selectedPoi.description;
+                }
             }
         }
     },
     methods: {
-        addPoi () {
+        save () {
             if (!this.poiTitle || !this.selectedCategories.length) {
                 EventBus.$emit(MESSAGE_INFO, this.$t('input-field-error'));
                 return;
@@ -127,33 +136,59 @@ export default {
 
             let categories = this.selectedCategories.map(x => this.pointOfInterestCategories.find(y => y.title === x));
 
-            this.$store.dispatch(START_LOADING, 'savePointOfInterest');
-            MapApiService.addPointOfInterest({
-                title: this.poiTitle,
-                description: this.poiDescription,
-                longitude: this.$store.state.addModeLongitude,
-                latitude: this.$store.state.addModeLatitude,
-                categories
-            }).then((res) => {
-                let newPoiArray = this.pointOfInterests;
-                newPoiArray.push(res.data);
-                newPoiArray = newPoiArray.sort((first, second) => { return first.likes.length - second.likes.length });
+            if (!this.selectedPoi) {
+                this.$store.dispatch(START_LOADING, 'savePointOfInterest');
+                MapApiService.addPointOfInterest({
+                    title: this.poiTitle,
+                    description: this.poiDescription,
+                    longitude: this.$store.state.addModeLongitude,
+                    latitude: this.$store.state.addModeLatitude,
+                    categories
+                }).then((res) => {
+                    let newPoiArray = this.pointOfInterests;
+                    newPoiArray.push(res.data);
+                    newPoiArray = newPoiArray.sort((first, second) => { return first.likes.length - second.likes.length });
 
-                this.$store.dispatch(SET_POINT_OF_INTERESTS, newPoiArray);
-                EventBus.$emit(MESSAGE_SUCCESS, this.$t('request-success-poi-save'));
-                this.close();
-            }).catch(() => {
-                EventBus.$emit(MESSAGE_ERROR, this.$t('request-error-poi-save'));
-            }).finally(() => {
-                this.$store.dispatch(STOP_LOADING, 'savePointOfInterest');
-            });
+                    this.$store.dispatch(SET_POINT_OF_INTERESTS, newPoiArray);
+                    EventBus.$emit(MESSAGE_SUCCESS, this.$t('request-success-poi-save'));
+                    this.close();
+                }).catch(() => {
+                    EventBus.$emit(MESSAGE_ERROR, this.$t('request-error-poi-save'));
+                }).finally(() => {
+                    this.$store.dispatch(STOP_LOADING, 'savePointOfInterest');
+                });
+            } else {
+                let updatedPoi = { ...this.selectedPoi };
+
+                updatedPoi.title = this.poiTitle;
+                updatedPoi.description = this.poiDescription;
+                updatedPoi.categories = categories;
+
+                this.$store.dispatch(START_LOADING, 'updatePointOfInterest');
+                MapApiService.updatePointOfInterest(updatedPoi).then((res) => {
+                    res.data.categories = res.data.categories.map(x => x._id);
+                    let newPoiArray = this.pointOfInterests.filter(x => x._id !== updatedPoi._id);
+                    newPoiArray.push(res.data);
+
+                    newPoiArray = newPoiArray.sort((first, second) => { return first.likes.length - second.likes.length });
+
+                    this.$store.dispatch(SELECT_POI, res.data);
+                    this.$store.dispatch(SET_POINT_OF_INTERESTS, newPoiArray);
+                    EventBus.$emit(MESSAGE_SUCCESS, this.$t('request-success-poi-save'));
+                    this.close();
+                }).catch(() => {
+                    EventBus.$emit(MESSAGE_ERROR, this.$t('request-error-poi-save'));
+                }).finally(() => {
+                    this.$store.dispatch(STOP_LOADING, 'updatePointOfInterest');
+                });
+            }
         },
         close () {
             this.poiTitle = null;
             this.poiDescription = null;
             this.selectedCategories = [];
             store.dispatch(SET_ADD_MODE, false);
-            store.dispatch(SET_ADD_MODE_MODAL, false);
+            store.dispatch(SET_POI_MODAL, false);
             store.dispatch(SET_ADD_MODE_LATITUDE, null);
             store.dispatch(SET_ADD_MODE_LONGITUDE, null);
         }

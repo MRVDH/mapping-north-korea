@@ -41,6 +41,16 @@ export default {
             }
         });
     },
+    updatePointOfInterest (poi) {
+        return new Promise(async (resolve, reject) => {
+            try {
+                await PointOfInterest.findOneAndUpdate({ _id: poi._id }, poi);
+                resolve(poi);
+            } catch (err) {
+                reject(err);
+            }
+        });
+    },
     deletePointOfInterest (id) {
         return new Promise(async (resolve, reject) => {
             try {

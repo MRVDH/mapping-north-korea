@@ -22,7 +22,7 @@ export default new Vuex.Store({
         pointOfInterests: [],
         poisVisible: true,
         addMode: false,
-        addModeModal: false,
+        poiModal: false,
         addModeLongitude: null,
         addModeLatitude: null,
         selectedPoi: null,
@@ -86,8 +86,8 @@ export default new Vuex.Store({
         [mt.SET_ADD_MODE] (state, addMode) {
             state.addMode = addMode;
         },
-        [mt.SET_ADD_MODE_MODAL] (state, addModeModal) {
-            state.addModeModal = addModeModal;
+        [mt.SET_POI_MODAL] (state, poiModal) {
+            state.poiModal = poiModal;
         },
         [mt.SET_ADD_MODE_LONGITUDE] (state, addModeLongitude) {
             state.addModeLongitude = addModeLongitude;
@@ -160,8 +160,8 @@ export default new Vuex.Store({
         [mt.SET_ADD_MODE] ({ commit }, addMode) {
             commit(mt.SET_ADD_MODE, addMode);
         },
-        [mt.SET_ADD_MODE_MODAL] ({ commit }, addModeModal) {
-            commit(mt.SET_ADD_MODE_MODAL, addModeModal);
+        [mt.SET_POI_MODAL] ({ commit }, poiModal) {
+            commit(mt.SET_POI_MODAL, poiModal);
         },
         [mt.SET_ADD_MODE_LONGITUDE] ({ commit }, addModeLongitude) {
             commit(mt.SET_ADD_MODE_LONGITUDE, addModeLongitude);

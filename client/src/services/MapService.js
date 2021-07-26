@@ -6,7 +6,7 @@ import EventBus from '@/events/EventBus';
 import { MESSAGE_ERROR } from '@/events/eventTypes';
 import store from '@/store';
 import router from '@/router';
-import { START_LOADING, STOP_LOADING, SELECT_SECTOR, SELECT_SECTOR_SET, SET_ADD_MODE_MODAL, SET_ADD_MODE_LATITUDE, SET_ADD_MODE_LONGITUDE, SELECT_POI } from "@/store/mutationTypes";
+import { START_LOADING, STOP_LOADING, SELECT_SECTOR, SELECT_SECTOR_SET, SET_POI_MODAL, SET_ADD_MODE_LATITUDE, SET_ADD_MODE_LONGITUDE, SELECT_POI } from "@/store/mutationTypes";
 
 var instance;
 
@@ -51,7 +51,7 @@ export default {
         this.map.on('click', (event) => {
             if (store.state.addMode) {
                 this.setAddMode(false);
-                store.dispatch(SET_ADD_MODE_MODAL, true);
+                store.dispatch(SET_POI_MODAL, true);
                 store.dispatch(SET_ADD_MODE_LATITUDE, event.lngLat.lat);
                 store.dispatch(SET_ADD_MODE_LONGITUDE, event.lngLat.lng);
             } else {

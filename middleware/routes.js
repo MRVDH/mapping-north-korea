@@ -34,6 +34,7 @@ export default {
         app.get('/api/iteration/current', iterationController.getCurrentIteration);
 
         app.get('/api/pointofinterest', pointOfInterestController.getAllPointOfInterests);
+        app.put('/api/pointofinterest', pointOfInterestController.updatePointOfInterest);
         app.post('/api/pointofinterest', pointOfInterestController.addPointOfInterest);
         app.delete('/api/pointofinterest/:id', pointOfInterestController.deletePointOfInterest);
 

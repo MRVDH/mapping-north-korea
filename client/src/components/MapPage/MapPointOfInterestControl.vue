@@ -42,7 +42,7 @@
 import EventBus from '@/events/EventBus';
 import { MESSAGE_INFO } from '@/events/eventTypes';
 import MapService from '@/services/MapService';
-import { SET_POIS_VISIBLE, SET_ADD_MODE } from "@/store/mutationTypes";
+import { SET_POIS_VISIBLE, SET_ADD_MODE, SELECT_POI } from "@/store/mutationTypes";
 
 async function mountButton (component) {
     let interval = setInterval(() => {
@@ -80,6 +80,7 @@ export default {
             this.$store.dispatch(SET_POIS_VISIBLE, !this.poisVisible);
         },
         addPoi () {
+            this.$store.dispatch(SELECT_POI, null);
             MapService.setAddMode(!this.addMode);
             this.$store.dispatch(SET_ADD_MODE, !this.addMode);
 

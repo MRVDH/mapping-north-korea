@@ -50,6 +50,49 @@ export default {
             res.sendStatus(500);
         });
     },
+    updatePointOfInterest (req, res) {
+        if (!req.body) {
+            log.err(" <= RES /pointofinterest invalid or no req body.", req.body);
+            res.sendStatus(400);
+            return;
+        }
+        if (!req.body._id) {
+            log.err(" <= RES /pointofinterest invalid or no req body param id.", req.body);
+            res.sendStatus(400);
+        }
+        if (!req.body.title) {
+            log.err(" <= RES /pointofinterest invalid or no req body param title.", req.body);
+            res.sendStatus(400);
+            return;
+        }
+        if (!req.body.longitude) {
+            log.err(" <= RES /pointofinterest invalid or no req body param longitude.", req.body);
+            res.sendStatus(400);
+            return;
+        }
+        if (!req.body.latitude) {
+            log.err(" <= RES /pointofinterest invalid or no req body param latitude.", req.body);
+            res.sendStatus(400);
+            return;
+        }
+        if (!req.body.categories || !req.body.categories.length) {
+            log.err(" <= RES /pointofinterest invalid or no req body param categories.", req.body);
+            res.sendStatus(400);
+            return;
+        }
+        if (!req.session.osmUserId && !global.testUserMode) {
+            log.err(" <= RES /pointofinterest unauthorized.", req.body);
+            res.sendStatus(403);
+            return;
+        }
+
+        pointOfInterestService.updatePointOfInterest(req.body).then((pointOfInterest) => {
+            res.send(pointOfInterest);
+        }).catch((err) => {
+            log.err(" <= RES /pointofinterest ERROR db error.", err);
+            res.sendStatus(500);
+        });
+    },
     deletePointOfInterest (req, res) {
         if (!global.devMode && (!req.session || req.session.osmUserName !== process.env.OSM_ADMIN_NAME)) {
             log.err(" <= RES /pointofinterest/:id forbidden.", req.session);
