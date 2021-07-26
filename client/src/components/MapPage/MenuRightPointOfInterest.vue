@@ -4,6 +4,7 @@
         "poi-title": "Title",
         "description": "Description",
         "categories": "Categories",
+        "btn-go-to": "Go to",
         "btn-edit": "Edit",
         "btn-delete": "Delete",
         "request-success-poi-delete": "Point of interest successfully deleted",
@@ -13,6 +14,7 @@
         "poi-title": null,
         "description": null,
         "categories": null,
+        "btn-go-to": null,
         "btn-edit": null,
         "btn-delete": null,
         "request-success-poi-delete": null,
@@ -78,6 +80,13 @@
             <v-col cols="12">
                 <v-btn
                     class="ma-0"
+                    color="info"
+                    @click="goTo()"
+                    >
+                    {{ $t('btn-go-to') }}
+                </v-btn>
+                <v-btn
+                    class="mb-0 ml-1 mt-0 mr-0"
                     color="warning"
                     :disabled="!loggedInUser"
                     @click="edit()"
@@ -146,6 +155,9 @@ export default {
             }).finally(() => {
                 this.$store.dispatch(STOP_LOADING, 'deletePointOfInterest');
             });
+        },
+        goTo () {
+            EventBus.$emit('mnk:go-to-poi', this.selectedPoi);
         }
     }
 };
