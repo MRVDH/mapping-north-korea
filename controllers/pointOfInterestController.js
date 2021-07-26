@@ -11,7 +11,7 @@ export default {
             res.sendStatus(500);
         });
     },
-    addPointOfInterests (req, res) {
+    addPointOfInterest (req, res) {
         if (!req.body) {
             log.err(" <= RES /pointofinterest invalid or no req body.", req.body);
             res.sendStatus(400);
@@ -39,7 +39,7 @@ export default {
         }
         if (!req.session.osmUserId && !global.testUserMode) {
             log.err(" <= RES /pointofinterest unauthorized.", req.body);
-            res.sendStatus(401);
+            res.sendStatus(403);
             return;
         }
 
@@ -47,6 +47,30 @@ export default {
             res.send(pointOfInterest);
         }).catch((err) => {
             log.err(" <= RES /pointofinterest ERROR db error.", err);
+            res.sendStatus(500);
+        });
+    },
+    deletePointOfInterest (req, res) {
+        if (!global.devMode && (!req.session || req.session.osmUserName !== process.env.OSM_ADMIN_NAME)) {
+            log.err(" <= RES /pointofinterest/:id forbidden.", req.session);
+            res.sendStatus(401);
+            return;
+        }
+        if (!req.params) {
+            log.err(" <= RES /pointofinterest/:id invalid or no req params.", req.body);
+            res.sendStatus(400);
+            return;
+        }
+        if (!req.params.id) {
+            log.err(" <= RES /pointofinterest/:id invalid or no req param id.", req.body);
+            res.sendStatus(400);
+            return;
+        }
+
+        pointOfInterestService.deletePointOfInterest(req.params.id).then(() => {
+            res.send();
+        }).catch((err) => {
+            log.err(" <= RES /pointofinterest/:id ERROR db error.", err);
             res.sendStatus(500);
         });
     }

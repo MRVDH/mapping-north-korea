@@ -5,14 +5,18 @@
         "description": "Description",
         "categories": "Categories",
         "btn-edit": "Edit",
-        "btn-delete": "Delete"
+        "btn-delete": "Delete",
+        "request-success-poi-delete": "Point of interest successfully deleted",
+        "request-error-poi-delete": "An error occured while deleting the point of interest"
     },
     "ko": {
         "poi-title": null,
         "description": null,
         "categories": null,
         "btn-edit": null,
-        "btn-delete": null
+        "btn-delete": null,
+        "request-success-poi-delete": null,
+        "request-error-poi-delete": null
     }
 }
 </i18n>
@@ -95,6 +99,11 @@
 </template>
 
 <script>
+import MapApiService from '@/services/MapApiService';
+import EventBus from '@/events/EventBus';
+import { MESSAGE_SUCCESS, MESSAGE_ERROR } from '@/events/eventTypes';
+import { START_LOADING, STOP_LOADING, SELECT_POI, SET_POINT_OF_INTERESTS } from "@/store/mutationTypes";
+
 export default {
     name: 'MenuRightPointOfInterest',
     data () {
@@ -115,6 +124,9 @@ export default {
         },
         adminLoggedIn () {
             return this.loggedInUser && (location.href.includes(`localhost`) || this.loggedInUser.name === `Artemis64` || this.loggedInUser.name === `Artemis64dev`);
+        },
+        pointOfInterests () {
+            return this.$store.state.pointOfInterests;
         }
     },
     methods: {
@@ -122,7 +134,18 @@ export default {
             // open popup
         },
         deletePoi () {
-            // send delete request and update list
+            this.$store.dispatch(START_LOADING, 'deletePointOfInterest');
+            MapApiService.deletePointOfInterest(this.selectedPoi._id).then(() => {
+                let newPoiArray = this.pointOfInterests.filter(x => x._id != this.selectedPoi._id);
+
+                this.$store.dispatch(SELECT_POI, null);
+                this.$store.dispatch(SET_POINT_OF_INTERESTS, newPoiArray);
+                EventBus.$emit(MESSAGE_SUCCESS, this.$t('request-success-poi-delete'));
+            }).catch(() => {
+                EventBus.$emit(MESSAGE_ERROR, this.$t('request-error-poi-delete'));
+            }).finally(() => {
+                this.$store.dispatch(STOP_LOADING, 'deletePointOfInterest');
+            });
         }
     }
 };

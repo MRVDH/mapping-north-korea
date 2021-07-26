@@ -40,5 +40,17 @@ export default {
                 reject(err);
             }
         });
+    },
+    deletePointOfInterest (id) {
+        return new Promise(async (resolve, reject) => {
+            try {
+                await PointOfInterestLike.deleteMany({ pointOfInterest: id })
+                await PointOfInterest.deleteOne({ _id: id }).exec();
+                
+                resolve();
+            } catch (err) {
+                reject(err);
+            }
+        });
     }
 }

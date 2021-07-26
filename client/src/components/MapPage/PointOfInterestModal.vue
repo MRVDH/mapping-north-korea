@@ -91,7 +91,7 @@ import store from '@/store';
 import { START_LOADING, STOP_LOADING, SET_ADD_MODE, SET_ADD_MODE_MODAL, SET_ADD_MODE_LONGITUDE, SET_ADD_MODE_LATITUDE, SET_POINT_OF_INTERESTS } from "@/store/mutationTypes";
 
 export default {
-    name: 'AddPointOfInterestModal',
+    name: 'PointOfInterestModal',
     data () {
         return {
             poiTitle: null,
@@ -128,7 +128,7 @@ export default {
             let categories = this.selectedCategories.map(x => this.pointOfInterestCategories.find(y => y.title === x));
 
             this.$store.dispatch(START_LOADING, 'savePointOfInterest');
-            MapApiService.addPointOfInterests({
+            MapApiService.addPointOfInterest({
                 title: this.poiTitle,
                 description: this.poiDescription,
                 longitude: this.$store.state.addModeLongitude,

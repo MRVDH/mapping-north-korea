@@ -12,21 +12,21 @@
             </v-layout>
         </v-container>
         <CustomMenuRight />
-        <AddPointOfInterestModal />
+        <PointOfInterestModal />
     </v-main>
 </template>
 
 <script>
 import CustomMap from '@/components/MapPage/CustomMap';
 import CustomMenuRight from '@/components/MapPage/MenuRight';
-import AddPointOfInterestModal from '@/components/MapPage/AddPointOfInterestModal';
+import PointOfInterestModal from '@/components/MapPage/PointOfInterestModal';
 
 export default {
     name: 'MapPage',
     components: {
         CustomMap,
         CustomMenuRight,
-        AddPointOfInterestModal
+        PointOfInterestModal
     },
     data () {
         return {
