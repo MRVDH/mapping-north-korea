@@ -5,6 +5,7 @@
         "description": "Description",
         "categories": "Categories",
         "btn-go-to": "Go to",
+        "btn-like": "Like",
         "btn-edit": "Edit",
         "btn-delete": "Delete",
         "request-success-poi-delete": "Point of interest successfully deleted",
@@ -15,6 +16,7 @@
         "description": null,
         "categories": null,
         "btn-go-to": null,
+        "btn-like": null,
         "btn-edit": null,
         "btn-delete": null,
         "request-success-poi-delete": null,
@@ -77,10 +79,19 @@
             </v-col>
         </v-row>
         <v-row>
+            <v-col cols="12 py-0">
+                <v-btn
+                    class="mb-0 ml-1 mt-0 mr-0"
+                    fab
+                    :title="$t('btn-like')"
+                    @click="like()"
+                    >
+                    <v-icon>mdi-thumb-up</v-icon>
+                </v-btn>
+            </v-col>
             <v-col cols="12">
                 <v-btn
                     class="ma-0"
-                    color="info"
                     @click="goTo()"
                     >
                     {{ $t('btn-go-to') }}
@@ -88,7 +99,7 @@
                 <v-btn
                     class="mb-0 ml-1 mt-0 mr-0"
                     color="warning"
-                    :disabled="!loggedInUser"
+                    :disabled="!loggedInUserIsOwner"
                     @click="edit()"
                     >
                     {{ $t('btn-edit') }}
@@ -131,6 +142,9 @@ export default {
         loggedInUser () {
             return this.$store.state.loggedInUser;
         },
+        loggedInUserIsOwner () {
+            return this.loggedInUser && (location.href.includes(`localhost`) || (this.selectedPoi.osmUserId === this.loggedInUser.id && this.selectedPoi.osmUserName === this.loggedInUser.name));
+        },
         adminLoggedIn () {
             return this.loggedInUser && (location.href.includes(`localhost`) || this.loggedInUser.name === `Artemis64` || this.loggedInUser.name === `Artemis64dev`);
         },
@@ -158,6 +172,9 @@ export default {
         },
         goTo () {
             EventBus.$emit('mnk:go-to-poi', this.selectedPoi);
+        },
+        like () {
+
         }
     }
 };
