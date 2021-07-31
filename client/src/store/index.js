@@ -18,7 +18,15 @@ export default new Vuex.Store({
         sectorSets: [],
         recentEvents: [],
         selectedSectorSet: null,
-        sectorEvents: []
+        sectorEvents: [],
+        pointOfInterests: [],
+        poisVisible: true,
+        addMode: false,
+        poiModal: false,
+        addModeLongitude: null,
+        addModeLatitude: null,
+        selectedPoi: null,
+        pointOfInterestCategories: []
     },
     mutations: {
         [mt.TOGGLE_DARK_MODE] (state) {
@@ -68,6 +76,30 @@ export default new Vuex.Store({
         },
         [mt.SET_SECTOR_EVENTS] (state, sectorEvents) {
             state.sectorEvents = sectorEvents;
+        },
+        [mt.SET_POINT_OF_INTERESTS] (state, pointOfInterests) {
+            state.pointOfInterests = pointOfInterests;
+        },
+        [mt.SET_POIS_VISIBLE] (state, poisVisible) {
+            state.poisVisible = poisVisible;
+        },
+        [mt.SET_ADD_MODE] (state, addMode) {
+            state.addMode = addMode;
+        },
+        [mt.SET_POI_MODAL] (state, poiModal) {
+            state.poiModal = poiModal;
+        },
+        [mt.SET_ADD_MODE_LONGITUDE] (state, addModeLongitude) {
+            state.addModeLongitude = addModeLongitude;
+        },
+        [mt.SET_ADD_MODE_LATITUDE] (state, addModeLatitude) {
+            state.addModeLatitude = addModeLatitude;
+        },
+        [mt.SELECT_POI] (state, poi) {
+            state.selectedPoi = poi;
+        },
+        [mt.SET_POINT_OF_INTEREST_CATEGORIES] (state, poiCategories) {
+            state.pointOfInterestCategories = poiCategories;
         }
     },
     actions: {
@@ -118,6 +150,30 @@ export default new Vuex.Store({
         },
         [mt.SET_SECTOR_EVENTS] ({ commit }, sectorEvents) {
             commit(mt.SET_SECTOR_EVENTS, sectorEvents);
+        },
+        [mt.SET_POINT_OF_INTERESTS] ({ commit }, pointOfInterests) {
+            commit(mt.SET_POINT_OF_INTERESTS, pointOfInterests);
+        },
+        [mt.SET_POIS_VISIBLE] ({ commit }, poisVisible) {
+            commit(mt.SET_POIS_VISIBLE, poisVisible);
+        },
+        [mt.SET_ADD_MODE] ({ commit }, addMode) {
+            commit(mt.SET_ADD_MODE, addMode);
+        },
+        [mt.SET_POI_MODAL] ({ commit }, poiModal) {
+            commit(mt.SET_POI_MODAL, poiModal);
+        },
+        [mt.SET_ADD_MODE_LONGITUDE] ({ commit }, addModeLongitude) {
+            commit(mt.SET_ADD_MODE_LONGITUDE, addModeLongitude);
+        },
+        [mt.SET_ADD_MODE_LATITUDE] ({ commit }, addModeLatitude) {
+            commit(mt.SET_ADD_MODE_LATITUDE, addModeLatitude);
+        },
+        [mt.SELECT_POI] ({ commit }, poi) {
+            commit(mt.SELECT_POI, poi);
+        },
+        [mt.SET_POINT_OF_INTEREST_CATEGORIES] ({ commit }, poiCategories) {
+            commit(mt.SET_POINT_OF_INTEREST_CATEGORIES, poiCategories);
         }
     },
     plugins: [new VuexPersistence({

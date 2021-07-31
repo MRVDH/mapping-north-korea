@@ -38,5 +38,23 @@ export default {
     },
     splitSectorById (id) {
         return axios.get(host + '/api/sector/split/' + id);
+    },
+    getAllPointOfInterests () {
+        return axios.get(host + '/api/pointofinterest');
+    },
+    getAllPointOfInterestCategories () {
+        return axios.get(host + '/api/pointofinterestcategories');
+    },
+    addPointOfInterest (data) {
+        return axios.post(host + '/api/pointofinterest', data);
+    },
+    deletePointOfInterest (id) {
+        return axios.delete(host + '/api/pointofinterest/' + id);
+    },
+    updatePointOfInterest (data) {
+        return axios.put(host + '/api/pointofinterest', data);
+    },
+    likePointOfInterest (id) {
+        return axios.post(host + '/api/pointofinterestlike/' + id);
     }
 };

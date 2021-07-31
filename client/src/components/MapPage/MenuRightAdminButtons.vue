@@ -27,21 +27,25 @@
 
 <template>
     <div>
-        <br/>
+        <br>
         <v-btn
             v-if="adminLoggedIn"
             class="ma-0"
             color="warning"
-            @click.stop="splitSector()"
             :disabled="!loggedInUser"
-            >{{ $t('button_split') }}</v-btn>
+            @click="splitSector()"
+            >
+            {{ $t('button_split') }}
+        </v-btn>
         <v-btn
             v-if="adminLoggedIn"
             class="mb-0 ml-1 mt-0 mr-0"
             color="error"
-            @click.stop="deleteSector()"
             :disabled="!loggedInUser"
-            >{{ $t('button_delete') }}</v-btn>
+            @click="deleteSector()"
+            >
+            {{ $t('button_delete') }}
+        </v-btn>
     </div>
 </template>
 
@@ -64,7 +68,7 @@ export default {
             return this.$store.state.loggedInUser;
         },
         adminLoggedIn () {
-            return this.loggedInUser && (this.loggedInUser.name === `Artemis64` || this.loggedInUser.name === `Artemis64dev`);
+            return this.loggedInUser && (location.href.includes(`localhost`) || this.loggedInUser.name === `Artemis64` || this.loggedInUser.name === `Artemis64dev`);
         }
     },
     methods: {
@@ -74,7 +78,8 @@ export default {
                 MapApiService.deleteSectorById(this.selectedSector.properties._id).then(function () {
                     MapApiService.recountSectorSetCounts(this.selectedSector.properties.sectorSet);
                     location.reload();
-                }).catch(() => {
+                }).catch((error) => {
+                    console.error(error);
                     EventBus.$emit(MESSAGE_ERROR, this.$t('request.deletion'));
                 }).finally(() => {
                     this.$store.dispatch(STOP_LOADING, 'deleteSectorById');
@@ -87,7 +92,8 @@ export default {
                 MapApiService.splitSectorById(this.selectedSector.properties._id).then(() => {
                     MapApiService.recountSectorSetCounts(this.selectedSector.properties.sectorSet);
                     location.reload();
-                }).catch(() => {
+                }).catch((error) => {
+                    console.error(error);
                     EventBus.$emit(MESSAGE_ERROR, this.$t('request.split'));
                 }).finally(() => {
                     this.$store.dispatch(STOP_LOADING, 'splitSectorById');

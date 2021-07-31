@@ -5,17 +5,19 @@
         clipped
         mobile-breakpoint="0"
         app
-        width="300">
-        <v-list
-            v-if="!selectedSectorSet"
-            class="pt-0 pb-0">
-            <CustomMenuRightRegions/>
-            <v-divider v-if="recentEvents.length > 0"></v-divider>
-            <CustomMenuRightRecentEvents/>
-        </v-list>
-        <CustomMenuRightButtonBack v-if="selectedSectorSet"/>
-        <CustomMenuRightRegion v-if="selectedSectorSet && !selectedSector"/>
-        <CustomMenuRightSector v-if="selectedSector"/>
+        width="300"
+        >
+        <div v-if="!selectedSectorSet && !selectedSector && !selectedPoi">
+            <CustomMenuRightRegions />
+            <v-divider />
+            <CustomMenuRightRecentEvents />
+            <v-divider />
+            <CustomMenuRightPointOfInterests />
+        </div>
+        <CustomMenuRightButtonBack v-if="selectedSectorSet || selectedPoi" />
+        <CustomMenuRightRegion v-if="selectedSectorSet && !selectedSector && !selectedPoi" />
+        <CustomMenuRightSector v-if="selectedSector && !selectedPoi" />
+        <MenuRightPointOfInterest v-if="selectedPoi" />
     </v-navigation-drawer>
 </template>
 
@@ -25,13 +27,21 @@ import CustomMenuRightSector from './MenuRightSector';
 import CustomMenuRightRecentEvents from './MenuRightRecentEvents';
 import CustomMenuRightButtonBack from './MenuRightButtonBack';
 import CustomMenuRightRegion from './MenuRightRegion';
+import CustomMenuRightPointOfInterests from './MenuRightPointOfInterests';
+import MenuRightPointOfInterest from './MenuRightPointOfInterest';
 
 import { SET_DRAWER_RIGHT } from "@/store/mutationTypes";
 
 export default {
     name: 'MenuRight',
-    data () {
-        return { };
+    components: {
+        CustomMenuRightRegions,
+        CustomMenuRightSector,
+        CustomMenuRightRecentEvents,
+        CustomMenuRightButtonBack,
+        CustomMenuRightRegion,
+        CustomMenuRightPointOfInterests,
+        MenuRightPointOfInterest
     },
     computed: {
         drawerRight: {
@@ -45,6 +55,9 @@ export default {
         selectedSector () {
             return this.$store.state.selectedSector;
         },
+        selectedPoi () {
+            return this.$store.state.selectedPoi;
+        },
         recentEvents () {
             return this.$store.state.recentEvents;
         },
@@ -54,13 +67,6 @@ export default {
     },
     mounted () {
         this.$store.dispatch(SET_DRAWER_RIGHT, !this.$vuetify.breakpoint.xs);
-    },
-    components: {
-        CustomMenuRightRegions,
-        CustomMenuRightSector,
-        CustomMenuRightRecentEvents,
-        CustomMenuRightButtonBack,
-        CustomMenuRightRegion
     }
 };
 </script>

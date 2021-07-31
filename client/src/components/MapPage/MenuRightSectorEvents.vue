@@ -26,33 +26,50 @@
 <template>
     <div>
         <v-container
+            v-if="loggedInUser"
             text-center
             grid-list-xs
             style="padding: 0 16px;"
-            v-if="loggedInUser">
-            <v-layout class="row" wrap>
+            >
+            <v-layout
+                class="row"
+                wrap
+                >
                 <v-flex xs12>
                     <v-textarea
                         v-model="newComment"
                         append-outer-icon="send"
-                        @click:append-outer="postComment();"
                         :counter="500"
                         :rules="[v => v.length <= 500 || $t('comment_less_than')]"
                         :label="$t('comment')"
-                    ></v-textarea>
+                        @click:append-outer="postComment();"
+                        />
                 </v-flex>
             </v-layout>
         </v-container>
-        <v-container grid-list-md text-center style="padding: 16px;">
-            <v-layout class="row" v-for="(event, index) in sectorEvents" :key="index">
+        <v-container
+            grid-list-md
+            text-center
+            style="padding: 16px;"
+            >
+            <v-layout
+                v-for="(event, index) in sectorEvents"
+                :key="index"
+                class="row"
+                >
                 <v-flex xs12>
                     <div class="text-left">{{ event.description }}</div>
-                    <div class="text-right grey--text text--lighten-1 caption">{{ event.osmUserName }}
+                    <div class="text-right grey--text caption">
+                        {{ event.osmUserName }}
                         <a
                             :href="'https://www.openstreetmap.org/user/' + event.osmUserName"
                             target="_blank"
-                            style="text-decoration: none;">
-                            <v-icon small style="font-size: 10px; vertical-align: initial;">launch</v-icon>
+                            style="text-decoration: none;"
+                            >
+                            <v-icon
+                                small
+                                style="font-size: 10px; vertical-align: initial;"
+                                >launch</v-icon>
                         </a> - <span :title="new Date(event.time)">{{ calculateDateOutput(new Date(event.time)) }}</span>
                     </div>
                 </v-flex>
@@ -124,7 +141,8 @@ export default {
                 this.newComment = '';
 
                 EventBus.$emit(MESSAGE_SUCCESS, this.$t('request.new_comment_success'));
-            }).catch(() => {
+            }).catch((error) => {
+                console.error(error);
                 EventBus.$emit(MESSAGE_ERROR, this.$t('request.new_comment_failed'));
             }).finally(() => {
                 this.$store.dispatch(STOP_LOADING, 'addEvent');
@@ -136,7 +154,7 @@ export default {
             }
 
             this.$store.dispatch(START_LOADING, 'getEventsBySectorId');
-            MapApiService.getEventsBySectorId(this.selectedSector.properties._id).then((res) => {
+            MapApiService.getEventsBySectorId(this.selectedSector._id).then((res) => {
                 if (!res.data.length) {
                     return;
                 }
@@ -144,7 +162,8 @@ export default {
                 let events = res.data.sort(function (a, b) { return new Date(b.time.date) - new Date(a.time.date); }).reverse();
 
                 this.$store.dispatch(SET_SECTOR_EVENTS, events);
-            }).catch(() => {
+            }).catch((error) => {
+                console.error(error);
                 EventBus.$emit(MESSAGE_ERROR, this.$t('request.sector_events'));
             }).finally(() => {
                 this.$store.dispatch(STOP_LOADING, 'getEventsBySectorId');

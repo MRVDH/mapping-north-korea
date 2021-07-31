@@ -2,8 +2,7 @@ import rateLimit from "express-rate-limit";
 import mongoose from "mongoose";
 import session from "express-session";
 import log from "../utils/log.js";
-import connectMongo from 'connect-mongo';
-const MongoStore = connectMongo(session);
+import MongoStore from 'connect-mongo';
 
 export default {
     cors (req, res, next) {
@@ -39,8 +38,10 @@ export default {
     },
     session () {
         return session({
-            store: new MongoStore({
-                mongooseConnection: mongoose.connection,
+            store: MongoStore.create({
+                client: mongoose.connection.getClient(),
+                autoRemove: 'interval',
+                autoRemoveInterval: 1
             }),
             secret: process.env.SESSION_SECRET,
             resave: false,

@@ -28,16 +28,17 @@
         </v-list-item-content>
         <v-list-item-action>
             <v-menu
+                v-model="stateEditOpen"
                 offset-y
-                v-model="stateEditOpen">
+                >
                 <template v-slot:activator="{ on }">
                     <v-btn
                         outlined
-                        v-on="on"
                         class="mb-1 ml-0 mt-0 mr-0"
                         :disabled="!loggedInUser"
+                        v-on="on"
                         >
-                        {{ selectedSector.properties.state.title }}
+                        {{ selectedSector.state.title }}
                     </v-btn>
                 </template>
                 <v-list>
@@ -90,7 +91,8 @@ export default {
         this.$store.dispatch(START_LOADING, 'getAllStates');
         MapApiService.getAllStates().then((res) => {
             this.states = res.data;
-        }).catch(() => {
+        }).catch((error) => {
+            console.error(error);
             EventBus.$emit(MESSAGE_ERROR, this.$t('request.get_sector_states'));
         }).finally(() => {
             this.$store.dispatch(STOP_LOADING, 'getAllStates');
@@ -102,12 +104,11 @@ export default {
     },
     methods: {
         updateSector (state) {
-            var apiSector = this.geoJsonSectorToApiSector(this.selectedSector);
             this.stateEditOpen = false;
 
             this.$store.dispatch(START_LOADING, 'updateSector');
             MapApiService.updateSector({
-                sector: apiSector,
+                sector: this.selectedSector,
                 state: state
             }).then((res) => {
                 let newEvents = [
@@ -118,38 +119,17 @@ export default {
                 this.$store.dispatch(SET_SECTOR_EVENTS, newEvents);
                 this.$store.dispatch(ADD_TO_RECENT_EVENTS, event);
 
-                this.selectedSector = this.sectorToGeoJson(res.data.sector);
+                this.selectedSector = res.data.sector;
 
                 MapApiService.recountSectorSetCounts(res.data.sector.sectorSet);
 
                 EventBus.$emit(MESSAGE_SUCCESS, this.$t('request.sector_updated'));
-            }).catch(() => {
+            }).catch((error) => {
+                console.error(error);
                 EventBus.$emit(MESSAGE_ERROR, this.$t('request.sector_update'));
             }).finally(() => {
                 this.$store.dispatch(STOP_LOADING, 'updateSector');
             });
-        },
-        geoJsonSectorToApiSector (sect) {
-            return {
-                _id: sect.properties._id,
-                sectorSet: sect.properties.sectorSet,
-                state: sect.properties.state,
-                coordinates: sect.geometry.coordinates
-            };
-        },
-        sectorToGeoJson (sector) {
-            return {
-                type: 'Feature',
-                properties: {
-                    _id: sector._id,
-                    state: sector.state,
-                    sectorSet: sector.sectorSet
-                },
-                geometry: {
-                    type: 'Polygon',
-                    coordinates: sector.coordinates
-                }
-            };
         }
     }
 };

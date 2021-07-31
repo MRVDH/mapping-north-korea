@@ -1,28 +1,47 @@
 <template>
     <v-main>
-        <v-container id="content-container" fluid fill-height>
+        <v-container
+            id="content-container"
+            fluid
+            fill-height
+            >
             <v-layout>
                 <v-flex>
-                    <CustomMap/>
+                    <CustomMap :key="componentKey" />
                 </v-flex>
             </v-layout>
         </v-container>
-        <CustomMenuRight/>
+        <CustomMenuRight />
+        <PointOfInterestModal />
     </v-main>
 </template>
 
 <script>
 import CustomMap from '@/components/MapPage/CustomMap';
 import CustomMenuRight from '@/components/MapPage/MenuRight';
+import PointOfInterestModal from '@/components/MapPage/PointOfInterestModal';
 
 export default {
     name: 'MapPage',
-    data () {
-        return { };
-    },
     components: {
         CustomMap,
-        CustomMenuRight
+        CustomMenuRight,
+        PointOfInterestModal
+    },
+    data () {
+        return {
+            componentKey: 1
+        };
+    },
+    computed: {
+        darkMode () {
+            return this.$store.state.darkMode;
+        }
+    },
+    watch: {
+        darkMode () {
+            this.componentKey++;
+        }
     }
 };
 </script>

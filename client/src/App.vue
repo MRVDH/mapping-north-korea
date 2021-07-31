@@ -6,7 +6,8 @@
         "request": {
             "user_details": "Something went wrong while trying to get your user details.",
             "logged_in": "Something went wrong while trying to check if you are logged in.",
-            "current_iteration": "Something went wrong while trying to get the current iteration."
+            "current_iteration": "Something went wrong while trying to get the current iteration.",
+            "categories": "An error occurd while retrieving the categories"
         }
     },
     "ko": {
@@ -15,27 +16,33 @@
         "request": {
             "user_details": null,
             "logged_in": null,
-            "current_iteration": null
+            "current_iteration": null,
+            "categories": null
         }
     }
 }
 </i18n>
 
 <template>
-    <v-app id="app" v-cloak>
-        <CustomMenuLeft/>
-        <CustomHeader/>
-        <router-view/>
-        <CustomFooter/>
+    <v-app
+        v-cloak
+        id="app"
+        >
+        <CustomMenuLeft />
+        <CustomHeader />
+        <router-view />
+        <CustomFooter />
         <v-snackbar
-            left
             v-model="snackbar"
+            left
             :color="snackbarOptions.color"
-            :timeout="snackbarOptions.timeout">
+            :timeout="snackbarOptions.timeout"
+            >
             {{ snackbarOptions.text }}
             <v-btn
                 text
-                @click="snackbar = false">
+                @click="snackbar = false"
+                >
                 {{ $t('dismiss') }}
             </v-btn>
         </v-snackbar>
@@ -44,16 +51,21 @@
 
 <script>
 import CustomMenuLeft from '@/components/Navigation/MenuLeft';
-import CustomHeader from '@/components/Navigation/Header';
-import CustomFooter from '@/components/Navigation/Footer';
+import CustomHeader from '@/components/Navigation/CustomHeader';
+import CustomFooter from '@/components/Navigation/CustomFooter';
 import OAuthService from '@/services/OAuthService';
 import MapApiService from '@/services/MapApiService';
 import EventBus from '@/events/EventBus';
 import { MESSAGE_ERROR, MESSAGE_SUCCESS, MESSAGE_INFO } from '@/events/eventTypes';
-import { SET_LOGGED_IN_USER, START_LOADING, STOP_LOADING, SET_CURRENT_ITERATION } from "@/store/mutationTypes";
+import { SET_LOGGED_IN_USER, START_LOADING, STOP_LOADING, SET_CURRENT_ITERATION, SET_POINT_OF_INTEREST_CATEGORIES } from "@/store/mutationTypes";
 
 export default {
     name: 'App',
+    components: {
+        CustomMenuLeft,
+        CustomHeader,
+        CustomFooter
+    },
     data: () => {
         return {
             snackbar: false,
@@ -97,12 +109,14 @@ export default {
             this.$store.dispatch(START_LOADING, 'getUserDetails');
             OAuthService.getUserDetails().then((res) => {
                 this.$store.dispatch(SET_LOGGED_IN_USER, res.data);
-            }).catch(() => {
+            }).catch((error) => {
+                console.error(error);
                 EventBus.$emit(MESSAGE_ERROR, this.$t('request.user_details'));
             }).finally(() => {
                 this.$store.dispatch(STOP_LOADING, 'getUserDetails');
             });
-        }).catch(() => {
+        }).catch((error) => {
+            console.error(error);
             EventBus.$emit(MESSAGE_ERROR, this.$t('request.logged_in'));
         }).finally(() => {
             this.$store.dispatch(STOP_LOADING, 'isuserloggedin');
@@ -112,10 +126,22 @@ export default {
         this.$store.dispatch(START_LOADING, 'getCurrentIteration');
         MapApiService.getCurrentIteration().then((res) => {
             this.$store.dispatch(SET_CURRENT_ITERATION, res.data);
-        }).catch(() => {
+        }).catch((error) => {
+            console.error(error);
             EventBus.$emit(MESSAGE_ERROR, this.$t('request.current_iteration'));
         }).finally(() => {
             this.$store.dispatch(STOP_LOADING, 'getCurrentIteration');
+        });
+
+        // Get the poi categories
+        this.$store.dispatch(START_LOADING, 'loadPointOfInterestCategories');
+        MapApiService.getAllPointOfInterestCategories().then((res) => {
+            this.$store.dispatch(SET_POINT_OF_INTEREST_CATEGORIES, res.data);
+        }).catch((error) => {
+            console.error(error);
+            EventBus.$emit(MESSAGE_ERROR, this.$t('request.categories'));
+        }).finally(() => {
+            this.$store.dispatch(STOP_LOADING, 'loadPointOfInterestCategories');
         });
 
         // Set the toast event listeners.
@@ -134,11 +160,6 @@ export default {
             this.snackbarOptions.color = 'error';
             this.snackbarOptions.text = text;
         });
-    },
-    components: {
-        CustomMenuLeft,
-        CustomHeader,
-        CustomFooter
     }
 };
 </script>

@@ -1,0 +1,19 @@
+{
+    "artificialDelayMilliseconds": 500,
+    "keepExistingTerminalsOpen": false,
+    "runOnStartup": true,
+    "terminals": [
+        {
+            "splitTerminals": [
+                {
+                    "name": "server",
+                    "commands": ["node .\\app.js dev testuser"]
+                },
+                {
+                    "name": "client",
+                    "commands": ["cd client", "npm run serve"]
+                }
+            ]
+        }
+    ]
+ }

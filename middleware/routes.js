@@ -4,6 +4,9 @@ import sectorSetController from "../controllers/sectorSetController.js";
 import stateController from "../controllers/stateController.js";
 import eventController from "../controllers/eventController.js";
 import iterationController from "../controllers/iterationController.js";
+import pointOfInterestController from "../controllers/pointOfInterestController.js";
+import pointOfInterestLikeController from "../controllers/pointOfInterestLikeController.js";
+import pointOfInterestCategoryController from "../controllers/pointOfInterestCategoryController.js";
 
 export default {
     async setUpRouting(app) {
@@ -30,5 +33,14 @@ export default {
         app.get("/api/event/sectorid/:id", eventController.getBySectorId);
 
         app.get('/api/iteration/current', iterationController.getCurrentIteration);
+
+        app.get('/api/pointofinterest', pointOfInterestController.getAllPointOfInterests);
+        app.put('/api/pointofinterest', pointOfInterestController.updatePointOfInterest);
+        app.post('/api/pointofinterest', pointOfInterestController.addPointOfInterest);
+        app.delete('/api/pointofinterest/:id', pointOfInterestController.deletePointOfInterest);
+
+        app.get('/api/pointofinterestcategories', pointOfInterestCategoryController.getAllPointOfInterestCategories);
+
+        app.post('/api/pointofinterestlike/:id', pointOfInterestLikeController.likePointOfInterest);
     }
 }
