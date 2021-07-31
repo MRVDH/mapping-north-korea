@@ -107,7 +107,8 @@ export default {
         this.$store.dispatch(START_LOADING, 'getAllEvents');
         MapApiService.getAllEvents(25).then((res) => {
             this.$store.dispatch(SET_RECENT_EVENTS, res.data);
-        }).catch(() => {
+        }).catch((error) => {
+            console.error(error);
             EventBus.$emit(MESSAGE_ERROR, this.$t('request.recent_events'));
         }).finally(() => {
             this.$store.dispatch(STOP_LOADING, 'getAllEvents');

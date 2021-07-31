@@ -91,7 +91,8 @@ export default {
         this.$store.dispatch(START_LOADING, 'getAllStates');
         MapApiService.getAllStates().then((res) => {
             this.states = res.data;
-        }).catch(() => {
+        }).catch((error) => {
+            console.error(error);
             EventBus.$emit(MESSAGE_ERROR, this.$t('request.get_sector_states'));
         }).finally(() => {
             this.$store.dispatch(STOP_LOADING, 'getAllStates');
@@ -123,7 +124,8 @@ export default {
                 MapApiService.recountSectorSetCounts(res.data.sector.sectorSet);
 
                 EventBus.$emit(MESSAGE_SUCCESS, this.$t('request.sector_updated'));
-            }).catch(() => {
+            }).catch((error) => {
+                console.error(error);
                 EventBus.$emit(MESSAGE_ERROR, this.$t('request.sector_update'));
             }).finally(() => {
                 this.$store.dispatch(STOP_LOADING, 'updateSector');

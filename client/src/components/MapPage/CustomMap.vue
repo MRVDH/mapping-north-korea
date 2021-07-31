@@ -122,7 +122,8 @@ export default {
                 this.$store.dispatch(START_LOADING, 'loadPointOfInterests');
                 MapApiService.getAllPointOfInterests().then((res) => {
                     this.$store.dispatch(SET_POINT_OF_INTERESTS, res.data);
-                }).catch(() => {
+                }).catch((error) => {
+                    console.error(error);
                     EventBus.$emit(MESSAGE_ERROR, this.$t('request.load_point_of_interests'));
                 }).finally(() => {
                     this.$store.dispatch(STOP_LOADING, 'loadPointOfInterests');
@@ -135,7 +136,8 @@ export default {
                 this.$store.dispatch(START_LOADING, 'loadingsectors');
                 MapApiService.getAllSectorSetsByIterationId(iterationId).then((res) => {
                     this.$store.dispatch(SET_SECTOR_SETS, res.data);
-                }).catch(() => {
+                }).catch((error) => {
+                    console.error(error);
                     EventBus.$emit(MESSAGE_ERROR, this.$t('request.load_sector_sets'));
                 }).finally(() => {
                     this.$store.dispatch(STOP_LOADING, 'loadingsectors');

@@ -124,7 +124,8 @@ export default {
             };
 
             this.$store.dispatch(START_LOADING, 'sendJOSMCommand');
-            JOSMService.sendJOSMCommand('http://127.0.0.1:8111/load_and_zoom', loadAndZoomParams).catch(() => {
+            JOSMService.sendJOSMCommand('http://127.0.0.1:8111/load_and_zoom', loadAndZoomParams).catch((error) => {
+                console.error(error);
                 EventBus.$emit(MESSAGE_ERROR, this.$t('request.josm_failed'));
             }).finally(() => {
                 this.$store.dispatch(STOP_LOADING, 'sendJOSMCommand');

@@ -139,6 +139,7 @@ export default {
         this.selectPoi(poi._id);
         this.map.flyTo({
             center: [ poi.longitude, poi.latitude ],
+            speed: 1.5,
             essential: true,
             zoom: 17
         });
@@ -150,7 +151,9 @@ export default {
             throw `selectedPoi: ${selectedPoi} should exist in sectors array but can't be found.`;
         }
 
-        store.dispatch(SELECT_POI, selectedPoi);
+        if (!store.state.selectedPoi || selectedPoi._id !== store.state.selectedPoi._id) {
+            store.dispatch(SELECT_POI, selectedPoi);
+        }
         this.map.setFilter(LAYER.SELECTED_POI_LAYER, [ "==", [ "get", "_id" ], poiId || "" ]);
     },
     deselectPoi () {
@@ -295,9 +298,9 @@ export default {
             } else {
                 this.routeToSectorSet(sectorSetId);
             }
-        }).catch((err) => {
+        }).catch((error) => {
+            console.error(error);
             EventBus.$emit(MESSAGE_ERROR, this.component.$t('request.load_sectors'));
-            throw err;
         }).finally(() => {
             store.dispatch(STOP_LOADING, 'loadingSectors');
         });

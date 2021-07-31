@@ -109,12 +109,14 @@ export default {
             this.$store.dispatch(START_LOADING, 'getUserDetails');
             OAuthService.getUserDetails().then((res) => {
                 this.$store.dispatch(SET_LOGGED_IN_USER, res.data);
-            }).catch(() => {
+            }).catch((error) => {
+                console.error(error);
                 EventBus.$emit(MESSAGE_ERROR, this.$t('request.user_details'));
             }).finally(() => {
                 this.$store.dispatch(STOP_LOADING, 'getUserDetails');
             });
-        }).catch(() => {
+        }).catch((error) => {
+            console.error(error);
             EventBus.$emit(MESSAGE_ERROR, this.$t('request.logged_in'));
         }).finally(() => {
             this.$store.dispatch(STOP_LOADING, 'isuserloggedin');
@@ -124,7 +126,8 @@ export default {
         this.$store.dispatch(START_LOADING, 'getCurrentIteration');
         MapApiService.getCurrentIteration().then((res) => {
             this.$store.dispatch(SET_CURRENT_ITERATION, res.data);
-        }).catch(() => {
+        }).catch((error) => {
+            console.error(error);
             EventBus.$emit(MESSAGE_ERROR, this.$t('request.current_iteration'));
         }).finally(() => {
             this.$store.dispatch(STOP_LOADING, 'getCurrentIteration');
@@ -134,7 +137,8 @@ export default {
         this.$store.dispatch(START_LOADING, 'loadPointOfInterestCategories');
         MapApiService.getAllPointOfInterestCategories().then((res) => {
             this.$store.dispatch(SET_POINT_OF_INTEREST_CATEGORIES, res.data);
-        }).catch(() => {
+        }).catch((error) => {
+            console.error(error);
             EventBus.$emit(MESSAGE_ERROR, this.$t('request.categories'));
         }).finally(() => {
             this.$store.dispatch(STOP_LOADING, 'loadPointOfInterestCategories');

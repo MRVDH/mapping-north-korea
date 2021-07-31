@@ -7,7 +7,7 @@ export default {
         pointOfInterestCategoryService.getAllPointOfInterestCategories().then((pointOfInterestCategories) => {
             res.send(pointOfInterestCategories);
         }).catch((err) => {
-            log.err(" <= RES /pointofinterest ERROR db error.", err);
+            log.err(" <= RES /pointofinterestcategory ERROR db error.", err);
             res.sendStatus(500);
         });
     }

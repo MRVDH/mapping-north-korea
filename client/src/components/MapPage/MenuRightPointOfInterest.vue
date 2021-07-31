@@ -4,23 +4,27 @@
         "poi-title": "Title",
         "description": "Description",
         "categories": "Categories",
+        "likes": "Likes",
         "btn-go-to": "Go to",
         "btn-like": "Like",
         "btn-edit": "Edit",
         "btn-delete": "Delete",
         "request-success-poi-delete": "Point of interest successfully deleted",
-        "request-error-poi-delete": "An error occured while deleting the point of interest"
+        "request-error-poi-delete": "An error occured while deleting the point of interest",
+        "request-error-poi-like": "An error occured while liking the point of interest"
     },
     "ko": {
         "poi-title": null,
         "description": null,
         "categories": null,
+        "likes": null,
         "btn-go-to": null,
         "btn-like": null,
         "btn-edit": null,
         "btn-delete": null,
         "request-success-poi-delete": null,
-        "request-error-poi-delete": null
+        "request-error-poi-delete": null,
+        "request-error-poi-like": null
     }
 }
 </i18n>
@@ -79,16 +83,29 @@
             </v-col>
         </v-row>
         <v-row>
-            <v-col cols="12 py-0">
+            <v-col
+                cols="12"
+                class="text-subtitle-2 pb-1 "
+                >
+                {{ $t('likes') }}
+            </v-col>
+            <v-col
+                cols="12"
+                class="pt-0"
+                >
+                {{ selectedPoi.likeCount }}
                 <v-btn
-                    class="mb-0 ml-1 mt-0 mr-0"
-                    fab
+                    icon
+                    small
                     :title="$t('btn-like')"
+                    :disabled="!loggedInUser"
                     @click="like()"
                     >
-                    <v-icon>mdi-thumb-up</v-icon>
+                    <v-icon :color="selectedPoi.likedByCurrentUser ? 'blue' : 'default'">mdi-thumb-up</v-icon>
                 </v-btn>
             </v-col>
+        </v-row>
+        <v-row>
             <v-col cols="12">
                 <v-btn
                     class="ma-0"
@@ -97,9 +114,9 @@
                     {{ $t('btn-go-to') }}
                 </v-btn>
                 <v-btn
+                    v-if="loggedInUserIsOwner"
                     class="mb-0 ml-1 mt-0 mr-0"
                     color="warning"
-                    :disabled="!loggedInUserIsOwner"
                     @click="edit()"
                     >
                     {{ $t('btn-edit') }}
@@ -164,7 +181,8 @@ export default {
                 this.$store.dispatch(SELECT_POI, null);
                 this.$store.dispatch(SET_POINT_OF_INTERESTS, newPoiArray);
                 EventBus.$emit(MESSAGE_SUCCESS, this.$t('request-success-poi-delete'));
-            }).catch(() => {
+            }).catch((error) => {
+                console.error(error);
                 EventBus.$emit(MESSAGE_ERROR, this.$t('request-error-poi-delete'));
             }).finally(() => {
                 this.$store.dispatch(STOP_LOADING, 'deletePointOfInterest');
@@ -174,7 +192,22 @@ export default {
             EventBus.$emit('mnk:go-to-poi', this.selectedPoi);
         },
         like () {
+            this.$store.dispatch(START_LOADING, 'likePointOfInterest');
+            MapApiService.likePointOfInterest(this.selectedPoi._id).then((res) => {
+                let newPoiArray = this.pointOfInterests.filter(x => x._id !== this.selectedPoi._id);
 
+                newPoiArray.push(res.data);
+
+                newPoiArray = newPoiArray.sort((first, second) => second.likeCount - first.likeCount);
+
+                this.$store.dispatch(SELECT_POI, res.data);
+                this.$store.dispatch(SET_POINT_OF_INTERESTS, newPoiArray);
+            }).catch((error) => {
+                console.error(error);
+                EventBus.$emit(MESSAGE_ERROR, this.$t('request-error-poi-like'));
+            }).finally(() => {
+                this.$store.dispatch(STOP_LOADING, 'likePointOfInterest');
+            });
         }
     }
 };
@@ -184,5 +217,8 @@ export default {
 .col {
     font-size: 1rem;
     line-height: 1.2;
+}
+.v-btn--icon {
+    transform: translateY(-4px);
 }
 </style>

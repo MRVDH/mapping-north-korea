@@ -147,12 +147,13 @@ export default {
                 }).then((res) => {
                     let newPoiArray = this.pointOfInterests;
                     newPoiArray.push(res.data);
-                    newPoiArray = newPoiArray.sort((first, second) => { return first.likes.length - second.likes.length });
+                    newPoiArray = newPoiArray.sort((first, second) => second.likeCount - first.likeCount);
 
                     this.$store.dispatch(SET_POINT_OF_INTERESTS, newPoiArray);
                     EventBus.$emit(MESSAGE_SUCCESS, this.$t('request-success-poi-save'));
                     this.close();
-                }).catch(() => {
+                }).catch((error) => {
+                    console.error(error);
                     EventBus.$emit(MESSAGE_ERROR, this.$t('request-error-poi-save'));
                 }).finally(() => {
                     this.$store.dispatch(STOP_LOADING, 'savePointOfInterest');
@@ -170,13 +171,14 @@ export default {
                     let newPoiArray = this.pointOfInterests.filter(x => x._id !== updatedPoi._id);
                     newPoiArray.push(res.data);
 
-                    newPoiArray = newPoiArray.sort((first, second) => { return first.likes.length - second.likes.length });
+                    newPoiArray = newPoiArray.sort((first, second) => second.likeCount - first.likeCount);
 
                     this.$store.dispatch(SELECT_POI, res.data);
                     this.$store.dispatch(SET_POINT_OF_INTERESTS, newPoiArray);
                     EventBus.$emit(MESSAGE_SUCCESS, this.$t('request-success-poi-save'));
                     this.close();
-                }).catch(() => {
+                }).catch((error) => {
+                    console.error(error);
                     EventBus.$emit(MESSAGE_ERROR, this.$t('request-error-poi-save'));
                 }).finally(() => {
                     this.$store.dispatch(STOP_LOADING, 'updatePointOfInterest');

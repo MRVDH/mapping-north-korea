@@ -53,5 +53,8 @@ export default {
     },
     updatePointOfInterest (data) {
         return axios.put(host + '/api/pointofinterest', data);
+    },
+    likePointOfInterest (id) {
+        return axios.post(host + '/api/pointofinterestlike/' + id);
     }
 };

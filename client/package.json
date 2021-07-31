@@ -32,18 +32,17 @@
     "@vue/test-utils": "1.2.2",
     "babel-eslint": "^10.1.0",
     "chai": "^4.3.4",
-    "eslint": "^7.31.0",
+    "eslint": "^6.8.0",
     "eslint-plugin-vue": "^7.14.0",
     "eslint-plugin-vuetify": "^1.0.1",
     "sass": "^1.36.0",
-    "sass-loader": "^10.1.1",
+    "sass-loader": "^7.3.1",
     "stylus": "^0.54.8",
-    "stylus-loader": "^6.1.0",
+    "stylus-loader": "^4.3.3",
     "vue-cli-plugin-i18n": "^1.0.1",
     "vue-cli-plugin-vuetify": "^2.0.8",
     "vue-template-compiler": "^2.6.14",
-    "vuetify-loader": "^1.7.2",
-    "webpack": "^4.0.0"
+    "vuetify-loader": "^1.7.2"
   },
   "eslintConfig": {
     "root": true,

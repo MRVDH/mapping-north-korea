@@ -42,7 +42,7 @@
                 @click="selectPointOfInterest(poi)"
                 >
                 {{ poi.title }}
-                <div class="grey--text caption"><v-icon class="grey--text">mdi-thumb-up</v-icon> {{ poi.likes.length }}</div>
+                <div class="grey--text caption"><v-icon class="grey--text">mdi-thumb-up</v-icon> {{ poi.likeCount }}</div>
             </v-col>
         </v-row>
         <v-row>

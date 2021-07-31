@@ -185,7 +185,8 @@ export default {
             this.$store.dispatch(START_LOADING, 'getrequesttoken');
             OAuthService.getRequestToken().then((res) => {
                 this.loginLink = res.data;
-            }).catch(() => {
+            }).catch((error) => {
+                console.error(error);
                 EventBus.$emit(MESSAGE_ERROR, this.$t('request.oauth_token'));
             }).finally(() => {
                 this.$store.dispatch(STOP_LOADING, 'getrequesttoken');

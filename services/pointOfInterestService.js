@@ -2,20 +2,62 @@ import PointOfInterest from "../models/PointOfInterest.js";
 import PointOfInterestLike from "../models/PointOfInterestLike.js";
 
 export default {
-    getAllPointOfInterests () {
-        return new Promise((resolve, reject) => {
-            PointOfInterest.find({}).populate({
-                path: "likes"
-            }).exec((err, pointOfInterests) => { 
-                if (err) {
-                    reject(err);
-                    return;
+    getById (id, currentUserId, currentUserName) {
+        return new Promise(async (resolve, reject) => {
+            try {
+                let pointOfInterest = await PointOfInterest.findById(id);
+
+                const likeCount = await PointOfInterestLike.countDocuments({ pointOfInterest: id }).exec();
+                const likedByCurrentUser = currentUserId && currentUserName && await PointOfInterestLike.exists({ pointOfInterest: id, osmUserId: currentUserId, osmUserName: currentUserName });
+
+                const finalPointOfInterest = {
+                    categories: pointOfInterest.categories,
+                    _id: pointOfInterest._id,
+                    title: pointOfInterest.title,
+                    description: pointOfInterest.description,
+                    time: pointOfInterest.time,
+                    longitude: pointOfInterest.longitude,
+                    latitude: pointOfInterest.latitude,
+                    likeCount,
+                    likedByCurrentUser
+                };
+
+                resolve(finalPointOfInterest);
+            } catch (err) {
+                reject(err);
+            }
+        });
+    },
+    getAllPointOfInterests (currentUserId, currentUserName) {
+        return new Promise(async (resolve, reject) => {
+            try {
+                const pointOfInterests = await PointOfInterest.find({}).exec();
+
+                let finalPointOfInterests = [];
+
+                for (let poi of pointOfInterests) {
+                    const likeCount = await PointOfInterestLike.countDocuments({ pointOfInterest: poi._id }).exec();
+                    const likedByCurrentUser = currentUserId && currentUserName && await PointOfInterestLike.exists({ pointOfInterest: poi._id.toString(), osmUserId: currentUserId, osmUserName: currentUserName });
+
+                    finalPointOfInterests.push({
+                        categories: poi.categories,
+                        _id: poi._id,
+                        title: poi.title,
+                        description: poi.description,
+                        time: poi.time,
+                        longitude: poi.longitude,
+                        latitude: poi.latitude,
+                        likeCount,
+                        likedByCurrentUser
+                    });
                 }
 
-                pointOfInterests = pointOfInterests.sort((first, second) => { return first.likes.length - second.likes.length });
+                finalPointOfInterests = finalPointOfInterests.sort((first, second) => second.likeCount - first.likeCount);
 
-                resolve(pointOfInterests);
-            });
+                resolve(finalPointOfInterests);
+            } catch (err) {
+                reject(err);
+            }
         });
     },
     addPointOfInterest (title, description, longitude, latitude, categories, osmUserId, osmUserName) {

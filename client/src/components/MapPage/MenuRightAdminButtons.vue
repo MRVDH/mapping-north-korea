@@ -78,7 +78,8 @@ export default {
                 MapApiService.deleteSectorById(this.selectedSector.properties._id).then(function () {
                     MapApiService.recountSectorSetCounts(this.selectedSector.properties.sectorSet);
                     location.reload();
-                }).catch(() => {
+                }).catch((error) => {
+                    console.error(error);
                     EventBus.$emit(MESSAGE_ERROR, this.$t('request.deletion'));
                 }).finally(() => {
                     this.$store.dispatch(STOP_LOADING, 'deleteSectorById');
@@ -91,7 +92,8 @@ export default {
                 MapApiService.splitSectorById(this.selectedSector.properties._id).then(() => {
                     MapApiService.recountSectorSetCounts(this.selectedSector.properties.sectorSet);
                     location.reload();
-                }).catch(() => {
+                }).catch((error) => {
+                    console.error(error);
                     EventBus.$emit(MESSAGE_ERROR, this.$t('request.split'));
                 }).finally(() => {
                     this.$store.dispatch(STOP_LOADING, 'splitSectorById');

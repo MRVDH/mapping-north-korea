@@ -141,7 +141,8 @@ export default {
                 this.newComment = '';
 
                 EventBus.$emit(MESSAGE_SUCCESS, this.$t('request.new_comment_success'));
-            }).catch(() => {
+            }).catch((error) => {
+                console.error(error);
                 EventBus.$emit(MESSAGE_ERROR, this.$t('request.new_comment_failed'));
             }).finally(() => {
                 this.$store.dispatch(STOP_LOADING, 'addEvent');
@@ -161,7 +162,8 @@ export default {
                 let events = res.data.sort(function (a, b) { return new Date(b.time.date) - new Date(a.time.date); }).reverse();
 
                 this.$store.dispatch(SET_SECTOR_EVENTS, events);
-            }).catch(() => {
+            }).catch((error) => {
+                console.error(error);
                 EventBus.$emit(MESSAGE_ERROR, this.$t('request.sector_events'));
             }).finally(() => {
                 this.$store.dispatch(STOP_LOADING, 'getEventsBySectorId');

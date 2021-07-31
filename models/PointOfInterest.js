@@ -8,6 +8,5 @@ export default mongoose.model("PointOfInterest", new mongoose.Schema({
     longitude: { type: String, required: true },
     latitude: { type: String, required: true },
     time: { type: Date, required: true },
-    categories: [{ type: mongoose.Schema.Types.ObjectId, ref: "PointOfInterestCategory", required: true }],
-    likes: [{ type: mongoose.Schema.Types.ObjectId, ref: "PointOfInterestLike", required: true }]
+    categories: [{ type: mongoose.Schema.Types.ObjectId, ref: "PointOfInterestCategory", required: true }]
 }));
