@@ -12,7 +12,7 @@
     "child_process": "^1.0.2",
     "connect-mongo": "^4.4.1",
     "dotenv": "^10.0.0",
-    "express": "^4.17.1",
+    "express": "^4.17.3",
     "express-rate-limit": "^5.3.0",
     "express-session": "^1.17.2",
     "fast-xml-parser": "^3.19.0",
