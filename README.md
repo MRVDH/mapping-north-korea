@@ -1,3 +1,6 @@
+> [!CAUTION]
+> This project is no longer maintained. Consider using an alternative or forking if needed.
+
 # MappingNorthKorea.com
 A collaborative effort to map one of the most isolated countries on earth. This is the front-end and back-end for the tool.
 
